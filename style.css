@@ -1,0 +1,48 @@
+
+html, body {
+    height: 90%;
+    margin-top: 50px;
+    margin-bottom: 50px;
+    display: flex;
+    justify-content: center;
+}
+.header {
+    text-align: center;
+}
+.outline {
+   flex:100;
+    padding: 20px;
+    border: 1px solid #ff0000
+}
+
+.television {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid rebeccapurple;
+    
+}
+
+.sideL {
+    display: flex;
+    align-self: center;
+    text-align: center;
+    margin: auto;
+    border: 1px solid rosybrown
+}
+
+
+.sideR {
+    display: flex;
+    align-self: center;
+    text-align: center;
+    margin: auto;
+    border: 1px solid rosybrown
+}
+
+.
+.knob_bank {
+  
+    text-align: center;
+    border: 1px solid rosybrown
+}
