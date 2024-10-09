@@ -1,62 +1,352 @@
-
-html, body {
-    height: 90%;
-    margin-top: 50px;
-    margin-bottom: 50px;
+body {
     display: flex;
     justify-content: center;
-}
-
-.outline {
-    flex:100%;
-
-}
-
-.header {
-    text-align: center;
-}
-.outline {
-   flex:100;
-    padding: 20px;
-    border: 1px solid #ff0000
-}
-
-.television {
-    display: flex;
-    justify-content: center; 
     align-items: center;
-    max-height: 700px;
-    width: auto;
-    border: 1px solid rebeccapurple;
-    
+    height: 100vh;
+    margin: 0;
+    background: white;
 }
 
-.sideL {
-    display: flex;
-    align-self: center;
-    margin: auto;
+.container {
+    width: 1200px;
     height: 700px;
-    border: 1px solid rosybrown
-}
-
-
-.sideR {
     display: flex;
-    align-self: center;
-    margin: auto;
-    height: 700px;
-    border: 1px solid rosybrown
+    flex-direction: column;
+    border-radius: 15px;
 }
 
-.tv_center{
-    align-self: center;
+.row {
+    display: flex;
+    flex: 1;
+}
+
+.column {
+    width: 200px;
+    border-radius: 7%;
+    border: black solid;
+    background-color: rgb(84, 46, 46);
+}
+
+.center_box_container {
+    width: 800px;
+    height: 450px;
+    background-color: #d2b48c; /* Tan color to match vintage TV cabinet */
+    border-radius: 3%;
+    border: black solid;
+    display: flex;
+    justify-content: center;
     align-items: center;
-    margin: auto;
-    border: 1px solid rosybrown
+    position: relative;
 }
 
-.knob_bank {
-    height: fit-content;
-    width: 100;
-   
+.center-box {
+    width: 750px;
+    height: 410px;
+    border-radius: 10%;
+    margin: 60px;
+    background-color: black; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
 }
+
+.bottom-box {
+    width: 800px;
+    height: 250px;
+    border: black, solid, 1px;
+    border-radius: 7%;
+    background-color: #a0522d; /* Sienna color for a vintage look */
+}
+
+.knob-surround {
+    position: relative;
+    background-color: grey;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    border: solid .25rem darken(black, 100%);
+    margin: 4rem auto; 
+}
+
+.knob {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transform: rotate(0deg);
+    z-index: 10;
+}
+
+.knob:before {
+    content: "";
+    position: absolute;
+    bottom: 0.4em;
+    left: 1.5em;
+    width: 10%;
+    height: 30%;
+    background-color: black;
+    border-radius: 0;
+    box-shadow: 0 0 .4rem 0 darken(black, 10%);
+    transform: translate(-10px, -0px) rotate(45deg);
+}
+
+#preview_display {
+    margin-top: 25px;
+    margin-left: 50px;
+    margin-right: 50px;
+    height: 100px;
+    width: 500px;
+    background-color: black;
+    border-radius: 15px;
+}
+
+.box__dragndrop {
+    display: none;
+}
+
+.has-advanced-upload .box__dragndrop {
+    display: inline;
+}
+
+.is-dragover {
+    background-color: grey;
+}
+
+.box.is-uploading .box__input {
+    visibility: hidden;
+}
+
+.box.is-uploading .box__uploading {
+    display: block;
+}
+
+.box__uploading,
+.box__success,
+.box__error {
+    display: none;
+}
+
+.box.is-uploading .box__uploading {
+    display: block;
+}
+
+.box.is-success .box__success {
+    display: block;
+}
+
+.box.is-error .box__error {
+    display: block;
+}
+
+
+
+/*
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: #333;
+}
+
+.container {
+    width: 1200px;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+}
+
+.row {
+    display: flex;
+    flex: 1;
+}
+
+.column {
+    width: 200px;
+    background-color: rgb(84, 46, 46);
+}
+
+.center-box {
+    width: 800px;
+    height: 450px;
+    background-color: #d2b48c; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.bottom-box {
+    width: 800px;
+    height: 250px;
+    background-color: #a0522d; 
+}
+
+.knob-surround {
+    position: relative;
+    background-color: grey;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    border: solid .25rem darken(black, 100%);
+    margin: 4rem auto; 
+}
+
+.knob {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transform: rotate(0deg);
+    z-index: 10;
+}
+
+.knob:before {
+    content: "";
+    position: absolute;
+    bottom: 0.4em;
+    left: 1.5em;
+    width: 10%;
+    height: 30%;
+    background-color: black;
+    border-radius: 0;
+    box-shadow: 0 0 .4rem 0 darken(black, 10%);
+    transform: translate(-10px, -0px) rotate(45deg);
+}
+
+#preview_display {
+    margin-top: 25px;
+    margin-left: 50px;
+    margin-right: 50px;
+    height: 100px;
+    width: 500px;
+    background-color: black;
+    border-radius: 15px;
+}
+
+.box__dragndrop {
+    display: none;
+}
+
+.has-advanced-upload .box__dragndrop {
+    display: inline;
+}
+
+.is-dragover {
+    background-color: grey;
+}
+
+.box.is-uploading .box__input {
+    visibility: hidden;
+}
+
+.box.is-uploading .box__uploading {
+    display: block;
+}
+*/
+
+
+/*
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background: #333;
+}
+
+.container {
+    width: 1200px;
+    height: 700px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+}
+
+.row {
+    display: flex;
+    flex: 1;
+}
+
+.column {
+    width: 200px;
+    background-color: rgb(84, 46, 46);
+}
+
+.center-box {
+    width: 800px;
+    height: 450px;
+    background-color: #d2b48c; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.bottom-box {
+    width: 800px;
+    height: 250px;
+    background-color: #a0522d; 
+}
+
+.knob-surround {
+    position: relative;
+    background-color: grey;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    border: solid .25rem darken(black, 100%);
+    margin: 4rem auto; 
+}
+
+.knob {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transform: rotate(0deg);
+    z-index: 10;
+}
+
+.knob:before {
+    content: "";
+    position: absolute;
+    bottom: 0.4em;
+    left: 1.5em;
+    width: 10%;
+    height: 30%;
+    background-color: black;
+    border-radius: 0;
+    box-shadow: 0 0 .4rem 0 darken(black, 10%);
+    transform: translate(-10px, -0px) rotate(45deg);
+}
+
+#preview_display {
+    margin-top: 25px;
+    margin-left: 50px;
+    margin-right: 50px;
+    height: 100px;
+    width: 500px;
+    background-color: black;
+    border-radius: 15px;
+}
+
+.box__dragndrop {
+    display: none;
+}
+
+.has-advanced-upload .box__dragndrop {
+    display: inline;
+}
+
+.is-dragover {
+    background-color: grey;
+}
+
+
+
+
