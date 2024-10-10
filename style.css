@@ -4,7 +4,7 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background: white;
+    background: #333;
 }
 
 .container {
@@ -12,7 +12,18 @@ body {
     height: 700px;
     display: flex;
     flex-direction: column;
+    background-color: #000000;
+    border: solid black 2px;
+    box-shadow: inset 0px 0px 10px 20px;
     border-radius: 15px;
+}
+
+.container {
+    content: "";
+    border-radius: 20px;
+    box-shadow: -3px -3px 3px 0px black,
+     0px 0px 5px 8px rgb(78, 9, 9),
+     0px 0px 0px 10px black;
 }
 
 .row {
@@ -30,38 +41,49 @@ body {
 .center_box_container {
     width: 800px;
     height: 450px;
-    background-color: #d2b48c; /* Tan color to match vintage TV cabinet */
+    background-color: rgb(249, 214, 168); 
     border-radius: 3%;
     border: black solid;
+    box-shadow: inset 0px 0px 60px 25px rgb(88, 61, 26);
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
 }
 
+
 .center-box {
-    width: 750px;
-    height: 410px;
+    width: 710px;
+    height: 400px;
     border-radius: 10%;
     margin: 60px;
-    background-color: black; 
+    background-color:rgb(170, 179, 189); 
+    box-shadow: 0px 0px 1px 10px black, 
+        inset 0px 0px 100px 30px slategray,
+        inset -30px -15px 30px 10px rgb(81, 78, 78),
+        inset 30px 15px 20px 10px whitesmoke,
+        10px 10px 5px 1px rgb(66, 19, 19);
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
 }
+
 
 .bottom-box {
     width: 800px;
     height: 250px;
     border: black, solid, 1px;
     border-radius: 7%;
-    background-color: #a0522d; /* Sienna color for a vintage look */
+    background-color: #a0522d; 
+
 }
 
 .knob-surround {
     position: relative;
-    background-color: grey;
+    background-color: rgb(213, 172, 117);
+    box-shadow: inset 0px 0px 0px 3px #4a240d,
+        6px 3px 4px 0px rgb(79, 7, 7);
     width: 4rem;
     height: 4rem;
     border-radius: 50%;
@@ -88,7 +110,7 @@ body {
     background-color: black;
     border-radius: 0;
     box-shadow: 0 0 .4rem 0 darken(black, 10%);
-    transform: translate(-10px, -0px) rotate(45deg);
+    transform: translate(-10px, 0px) rotate(45deg);
 }
 
 #preview_display {
@@ -98,6 +120,9 @@ body {
     height: 100px;
     width: 500px;
     background-color: black;
+    border: 5px wheat solid;
+    box-shadow: inset 10px 5px 10px 1px black, 
+    inset 0px 0px 100px 30px slategray;
     border-radius: 15px;
 }
 
