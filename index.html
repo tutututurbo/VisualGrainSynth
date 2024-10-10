@@ -145,10 +145,16 @@
 </head>
 <body>
     <div class="container">
-        <div class="row">
-            <div class="column"></div>
+        <div class="column" id="column_left"> <!-- Colonna sinistra -->
+            <div class="row">
+                <button class="button">Salvatore's button</button>
+            </div>
+        </div> 
+        
+        <div class="center-column"> <!-- Colonna centrale con contenuto -->
             <div class="center_box_container">
                 <div class="center-box">
+                    <!-- Contenuto form centrale -->
                     <form class="box" method="post" action="/upload" enctype="multipart/form-data">
                         <div class="box__input">
                             <input class="box__file" type="file" name="files[]" id="file" accept="video/*" />
@@ -160,297 +166,28 @@
                     </form>
                 </div>
             </div>
-            <div class="column"></div>
-        </div>
-        <div class="row">
-            <div class="column"></div>
-            <div class="bottom-box">
-                <div class="row">
-                    <div class="knob-surround"> 
-                        <div class="knob" id="knob1"></div>
-                    </div>
-                    <div id="preview_display"></div>
-                    <div class="knob-surround"> 
-                        <div class="knob" id="knob2"></div>
+            
+            <div class="row">
+                <div class="bottom-box">
+                    <div class="row">
+                        <div class="knob-surround"> 
+                            <div class="knob" id="knob1"></div>
+                        </div>
+                        <div id="preview_display"></div>
+                        <div class="knob-surround"> 
+                            <div class="knob" id="knob2"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="column"></div>
         </div>
+        
+        <div class="column" id="column_right"></div> <!-- Colonna destra -->
     </div>
+    
     <script type="text/javascript" src="/jquery-3.7.1.js"></script>
     <script type="text/javascript" src="/java.js"></script>
 </body>
 </html>
-
-
-
-<!--
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web App Layout</title>
-    <link rel="stylesheet" href="style.css">
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var isAdvancedUpload = function() {
-                var div = document.createElement('div');
-                return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
-            }();
-
-            var $form = document.querySelector('.center-box');
-
-            if (isAdvancedUpload) {
-                $form.classList.add('has-advanced-upload');
-
-                var droppedFiles = false;
-
-                $form.addEventListener('drag', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-
-                $form.addEventListener('dragstart', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-
-                $form.addEventListener('dragend', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-
-                $form.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $form.classList.add('is-dragover');
-                });
-
-                $form.addEventListener('dragenter', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $form.classList.add('is-dragover');
-                });
-
-                $form.addEventListener('dragleave', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $form.classList.remove('is-dragover');
-                });
-
-                $form.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $form.classList.remove('is-dragover');
-                    droppedFiles = e.dataTransfer.files;
-
-                    var videoElement = document.createElement('video');
-                    videoElement.controls = true;
-                    videoElement.width = 320;
-                    videoElement.height = 240;
-
-                    var file = droppedFiles;
-                    var reader = new FileReader();
-
-                    reader.onload = function(event) {
-                        videoElement.src = event.target.result;
-                        $form.appendChild(videoElement);
-                    };
-
-                    reader.readAsDataURL(file);
-                });
-
-                $form.addEventListener('submit', function(e) {
-                    if ($form.classList.contains('is-uploading')) return false;
-
-                    $form.classList.add('is-uploading').classList.remove('is-error');
-
-                    if (isAdvancedUpload) {
-                        e.preventDefault();
-
-                        var ajaxData = new FormData($form);
-
-                        if (droppedFiles) {
-                            Array.from(droppedFiles).forEach(function(file) {
-                                ajaxData.append('file', file);
-                            });
-                        }
-
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('POST', $form.getAttribute('action'), true);
-
-                        xhr.onload = function() {
-                            $form.classList.remove('is-uploading');
-                            if (xhr.status >= 200 && xhr.status < 400) {
-                                var data = JSON.parse(xhr.responseText);
-                                $form.classList.add(data.success ? 'is-success' : 'is-error');
-                                if (!data.success) {
-                                    var errorMsg = document.querySelector('.box__error span');
-                                    errorMsg.textContent = data.error;
-                                }
-                            } else {
-                                // Log the error, show an alert
-                            }
-                        };
-
-                        xhr.send(ajaxData);
-                    }
-                });
-            }
-        });
-    </script>
-</head>
-<body>
-    <div class="container">
-        <div class="row">
-            <div class="column"></div>
-            <div class="center-box">
-                <form class="box" method="post" action="/upload" enctype="multipart/form-data">
-                    <div class="box__input">
-                        <input class="box__file" type="file" name="files[]" id="file" data-multiple-caption="{count} files selected" multiple />
-                        <label for="file"><strong>Choose a file</strong><span class="box__dragndrop"> or drag it here</span>.</label>
-                        <button class="box__button" type="submit">Upload</button>
-                    </div>
-                    <div class="box__uploading">Uploading…</div>
-                    <div class="box__success">Done!</div>
-                    <div class="box__error">Error! <span></span>.</div>
-                </form>
-            </div>
-            <div class="column"></div>
-        </div>
-        <div class="row">
-            <div class="column"></div>
-            <div class="bottom-box">
-                <div class="row">
-                    <div class="knob-surround"> 
-                        <div class="knob" id="knob"></div>
-                    </div>
-                    <div id="preview_display"></div>
-                    <div class="knob-surround"> 
-                        <div class="knob" id="knob"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="column"></div>
-        </div>
-    </div>
-    <script type="text/javascript" src="VisualGrainSynth/jquery-3.7.1.js"></script>
-    <script type="text/javascript" src="VisualGrainSynth/java.js"></script>
-</body>
-</html>
-
-
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Web App Layout</title>
-    <link rel="stylesheet" href="style.css">
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var isAdvancedUpload = function() {
-                var div = document.createElement('div');
-                return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
-            }();
-
-            var $form = document.querySelector('.center-box');
-
-            if (isAdvancedUpload) {
-                $form.classList.add('has-advanced-upload');
-
-                var droppedFiles = false;
-
-                $form.addEventListener('drag', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-
-                $form.addEventListener('dragstart', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-
-                $form.addEventListener('dragend', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-
-                $form.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $form.classList.add('is-dragover');
-                });
-
-                $form.addEventListener('dragenter', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $form.classList.add('is-dragover');
-                });
-
-                $form.addEventListener('dragleave', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $form.classList.remove('is-dragover');
-                });
-
-                $form.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $form.classList.remove('is-dragover');
-                    droppedFiles = e.dataTransfer.files;
-
-                    var videoElement = document.createElement('video');
-                    videoElement.controls = true;
-                    videoElement.width = 320;
-                    videoElement.height = 240;
-
-                    var file = droppedFiles;
-                    var reader = new FileReader();
-
-                    reader.onload = function(event) {
-                        videoElement.src = event.target.result;
-                        $form.appendChild(videoElement);
-                    };
-
-                    reader.readAsDataURL(file);
-                });
-            }
-        });
-    </script>
-</head>
-<body>
-    <div class="container">
-        <div class="row">
-            <div class="column"></div>
-            <div class="center-box">
-                <p class="box__dragndrop">Drag & drop a video file here</p>
-            </div>
-            <div class="column"></div>
-        </div>
-        <div class="row">
-            <div class="column"></div>
-            <div class="bottom-box">
-                <div class="row">
-                    <div class="knob-surround"> 
-                        <div class="knob" id="knob"></div>
-                    </div>
-                    <div id="preview_display"></div>
-                    <div class="knob-surround"> 
-                        <div class="knob" id="knob"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="column"></div>
-        </div>
-    </div>
-    <script type="text/javascript" src="VisualGrainSynth/jquery-3.7.1.js"></script>
-    <script type="text/javascript" src="VisualGrainSynth/java.js"></script>
-</body>
-</html>
-
 
 
