@@ -7,141 +7,55 @@
     <link rel="stylesheet" href="style.css">
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            var isAdvancedUpload = function() {
-                var div = document.createElement('div');
-                return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
-            }();
-
-            var $form = document.querySelector('.center-box');
-            var $input = document.querySelector('.box__file');
-            var $label = document.querySelector('label[for="file"]');
-            var $errorMsg = document.querySelector('.box__error span');
-            var $restart = document.querySelectorAll('.box__restart');
-
-            if (isAdvancedUpload) {
-                $form.classList.add('has-advanced-upload');
-
-                var droppedFiles = false;
-
-                $form.addEventListener('drag', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-
-                $form.addEventListener('dragstart', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-
-                $form.addEventListener('dragend', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                });
-
-                $form.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $form.classList.add('is-dragover');
-                });
-
-                $form.addEventListener('dragenter', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $form.classList.add('is-dragover');
-                });
-
-                $form.addEventListener('dragleave', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $form.classList.remove('is-dragover');
-                });
-
-                $form.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    $form.classList.remove('is-dragover');
-                    droppedFiles = e.dataTransfer.files;
-
-                    var videoElement = document.createElement('video');
-                    videoElement.controls = true;
-                    videoElement.width = 320;
-                    videoElement.height = 240;
-
-                    var file = droppedFiles;
+            var $input = document.querySelector('.box__file'); // L'input file del form
+            var $form = document.querySelector('.center-box'); // Il contenitore center-box
+            var videoElement = null; // Dichiarare fuori per l'uso globale
+    
+            $input.addEventListener('change', function(e) {
+                var files = e.target.files; // Ottiene il file selezionato
+                if (files.length > 0) {
+                    var file = files[0]; // Prendi il primo file (video)
+                    
                     if (file.type.startsWith('video/')) {
-                        var reader = new FileReader();
-
+                        var reader = new FileReader(); // Creiamo un oggetto FileReader
+                        
                         reader.onload = function(event) {
-                            videoElement.src = event.target.result;
+                            videoElement = document.createElement('video'); // Creiamo un elemento video
+                            videoElement.classList.add('custom-video'); // Aggiungiamo una classe per lo stile
+                            videoElement.src = event.target.result; // Imposta la sorgente del video dal file caricato
+                            videoElement.muted = true; // Muto per prevenire audio automatico
+                            videoElement.controls = false; // Disabilita i controlli nativi
+    
+                            // Pulisce eventuali video precedenti dalla center-box
+                            $form.innerHTML = ''; 
+    
+                            // Inserisce il video dentro la center-box
                             $form.appendChild(videoElement);
                         };
-
-                        reader.readAsDataURL(file);
+    
+                        reader.readAsDataURL(file); // Legge il file come URL
                     } else {
-                        alert('Please upload a video file.');
+                        alert('Per favore carica un file video.'); // Messaggio di errore se il file non è un video
                     }
-                });
-
-                $form.addEventListener('submit', function(e) {
-                    if ($form.classList.contains('is-uploading')) return false;
-
-                    $form.classList.add('is-uploading').classList.remove('is-error');
-
-                    if (isAdvancedUpload) {
-                        e.preventDefault();
-
-                        var ajaxData = new FormData($form);
-
-                        if (droppedFiles) {
-                            Array.from(droppedFiles).forEach(function(file) {
-                                ajaxData.append('file', file);
-                            });
-                        }
-
-                        var xhr = new XMLHttpRequest();
-                        xhr.open('POST', $form.getAttribute('action'), true);
-
-                        xhr.onload = function() {
-                            $form.classList.remove('is-uploading');
-                            if (xhr.status >= 200 && xhr.status < 400) {
-                                var data = JSON.parse(xhr.responseText);
-                                $form.classList.add(data.success ? 'is-success' : 'is-error');
-                                if (!data.success) {
-                                    $errorMsg.textContent = data.error;
-                                }
-                            } else {
-                                // Log the error, show an alert
-                            }
-                        };
-
-                        xhr.send(ajaxData);
+                }
+            });
+    
+            // Aggiungi un listener globale per la barra spaziatrice
+            document.addEventListener('keydown', function(event) {
+                if (event.code === 'Space' && videoElement) {
+                    event.preventDefault(); // Previene il comportamento predefinito della barra spaziatrice
+                    if (videoElement.paused) {
+                        videoElement.play(); // Se il video è in pausa, fallo partire
+                    } else {
+                        videoElement.pause(); // Se il video è in riproduzione, mettilo in pausa
                     }
-                });
-            }
-
-            $input.addEventListener('change', function(e) {
-                var files = e.target.files;
-                var videoElement = document.createElement('video');
-                videoElement.controls = true;
-                videoElement.width = 320;
-                videoElement.height = 240;
-
-                var file = files;
-                if (file.type.startsWith('video/')) {
-                    var reader = new FileReader();
-
-                    reader.onload = function(event) {
-                        videoElement.src = event.target.result;
-                        $form.appendChild(videoElement);
-                    };
-
-                    reader.readAsDataURL(file);
-                } else {
-                    alert('Please upload a video file.');
                 }
             });
         });
     </script>
+    
+    
+    
 </head>
 <body>
     <div class="container">
@@ -173,9 +87,16 @@
                         <div class="knob-surround"> 
                             <div class="knob" id="knob1"></div>
                         </div>
-                        <div id="preview_display"></div>
+                        <div id="preview_display">
+                            <div class="line" id="movingLine"></div>
+                        </div>
                         <div class="knob-surround"> 
                             <div class="knob" id="knob2"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="signature">
+                            Les Lunettes de Dalì
                         </div>
                     </div>
                 </div>
