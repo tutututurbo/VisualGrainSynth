@@ -113,7 +113,7 @@
                             videoElement = document.createElement('video');
                             videoElement.classList.add('custom-video');
                             videoElement.src = event.target.result;
-                            videoElement.muted = true;
+                            videoElement.muted = false;
                             videoElement.controls = false;
                             $form.innerHTML = '';
                             $form.appendChild(videoElement);
@@ -161,11 +161,11 @@
         lamps.forEach((lamp, lampIndex) => {
             if (lampIndex !== index) {
                 lamp.classList.remove('on'); // Spegni lamp non selezionato
-                if (movablePoint[lampIndex]) {
-                    // Nascondi le small_line corrispondenti
-                    movablePoint[lampIndex].style.visibility = 'hidden';
-                    movablePoint[lampIndex].style.opacity = 0;
-                }
+                // if (movablePoint[lampIndex]) {
+                //     // Nascondi le small_line corrispondenti
+                //    // movablePoint[lampIndex].style.visibility = 'hidden';
+                //    // movablePoint[lampIndex].style.opacity = 0;
+                // }
             }
         })
             // Toggle dello stato del lamp (accende/spegne)
@@ -175,23 +175,30 @@
             }
 
             // Rendi visibile la small_line corrispondente solo se il lamp è acceso
-            if (movablePoint[index]) {
-                if (lamps[index].classList.contains('on')) {
+            // if (movablePoint[index]) {
+            //     if (lamps[index].classList.contains('on')) {
                     movablePoint[index].style.visibility = 'visible';
-                    movablePoint[index].style.opacity = 1;
-              
-                } else {
-                    // Se il lamp è spento, nascondi la small_line
-                    movablePoint[index].style.visibility = 'hidden';
-                    movablePoint[index].style.opacity = 0;
-                }
-            }
+           //         movablePoint[index].style.opacity = 1;
+                   
+            //     } else {
+            //         // Se il lamp è spento, nascondi la small_line
+            //         movablePoint[index].style.visibility = 'hidden';
+            //         movablePoint[index].style.opacity = 0;
+            //     }
+            // }
+
         });
+       
+       
     });
-});
 
     
-        
+
+
+       
+
+});
+  
     </script>
     <script type="text/javascript" src="/jquery-3.7.1.js"></script>
     <script type="text/javascript" src="/java.js"></script>

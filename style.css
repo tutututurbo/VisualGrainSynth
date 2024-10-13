@@ -317,7 +317,7 @@ body {
     text-shadow: 0.5px 0.5px 1px #000000;
     transform: translateX(-50%); /* Centra il testo orizzontalmente */
     color: black; /* Colore del testo per vederlo sopra il cerchio nero */
-    font-size: 10px; /* Puoi modificare la dimensione del testo */
+    font-size: 8px; /* Puoi modificare la dimensione del testo */
 }
 
 

@@ -15,33 +15,55 @@ var videoElement = document.getElementById('videoElement');
         if (newAngle >= minangle && newAngle <= maxangle) {
             angles[knobIndex] = newAngle;
             setAngle(knobIndex, newAngle);
-            updateVideoTime();
+           // updateVideoTime();
         }
     }
-
+    var selectedSmallLine; 
     // Set angle and update corresponding value
     function setAngle(knobIndex, angle) {
         var knob = knobs[knobIndex];
         knob.style.transform = 'rotate(' + angle + 'deg)';
         var pc = Math.round((angle / 270) * videoDuration); // Map angle to video duration
-        document.getElementById('value' + (knobIndex + 1)).textContent = pc; // Update corresponding value
-        if (knobIndex === 0) {
-            updateSmallLinePosition(angle);
-        }
+        document.getElementById('knob' + (knobIndex + 1)).textContent = pc; // Update corresponding value
+        
+        if(knobIndex === 0){
+        const lamps1 = document.querySelectorAll('.lamp');
+        
+        lamps1.forEach((lamp, index) => {
+            
+            if (lamps1[index].classList.contains('on')) {
+                 // Mappa l'angolo da 0 a 270 gradi a una posizione orizzontale da 0px a 500px
+                 const maxPosition = 500;
+                 const position = (angles[0] / 270) * maxPosition; // Calcola la posizione orizzontale
+
+                  // Trova la small_line e aggiorna la sua posizione
+                 const smallLine = document.querySelectorAll('.small_line'); // Assicurati che la classe sia corretta
+             if (smallLine[index]) {
+                 smallLine[index].style.left = position + 'px'; // Imposta la posizione orizzontale
+              }
+             
+            }
+            
+             
+      
+        });
+    }
+ 
+    
     }
 
     // Funzione per aggiornare la posizione della small_line
-function updateSmallLinePosition(angle) {
-    // Mappa l'angolo da 0 a 270 gradi a una posizione orizzontale da 0px a 500px
-    const maxPosition = 500;
-    const position = (angle / 270) * maxPosition; // Calcola la posizione orizzontale
+// function updateSmallLinePosition(angle) {
+//     // Mappa l'angolo da 0 a 270 gradi a una posizione orizzontale da 0px a 500px
+//     const maxPosition = 500;
+//     const position = (angle / 270) * maxPosition; // Calcola la posizione orizzontale
 
-    // Trova la small_line e aggiorna la sua posizione
-    const smallLine = document.querySelector('.small_line'); // Assicurati che la classe sia corretta
-    if (smallLine) {
-        smallLine.style.left = position + 'px'; // Imposta la posizione orizzontale
-    }
-}
+//     // Trova la small_line e aggiorna la sua posizione
+//     const smallLine = document.querySelectorAll('.small_line'); // Assicurati che la classe sia corretta
+//     if (smallLine[lamps1.index]) {
+//         smallLine.style.left = position + 'px'; // Imposta la posizione orizzontale
+//     }
+// }
 
     // Calculate the new angle based on mouse position
     function calculateAngleDelta(lastY, currentY, currentAngle) {
@@ -56,7 +78,7 @@ function updateSmallLinePosition(angle) {
         return newAngle;
     }
 
-    // Update the video time based on knob values
+    // // Update the video time based on knob values
     function updateVideoTime() {
         var startAngle = angles[0];
         var endAngle = angles[1];
@@ -95,7 +117,7 @@ function updateSmallLinePosition(angle) {
         document.removeEventListener('mouseup', stopDrag); // Remove mouseup listener
     }
 
-    // Initialize the video duration and set up event listeners
+    // // Initialize the video duration and set up event listeners
     function initVideo() {
         var videoSource = document.getElementById('videoSource');
         videoSource.src = 'path_to_your_video.mp4'; // Set your video path here
@@ -117,12 +139,13 @@ function updateSmallLinePosition(angle) {
             lastAngle = angles[currentKnob]; // Store the initial angle of the knob
             // Attach the move and mouseup event listeners to the document for global handling
             document.addEventListener('mousemove', onDrag);
+        
             document.addEventListener('mouseup', stopDrag);
             e.preventDefault();
         });
     });
 
-    // Touch support for mobile devices
+    // // Touch support for mobile devices
     document.addEventListener('touchmove', function(e) {
         if (isDragging && currentKnob !== null) {
             var touch = e.touches[0];
@@ -132,13 +155,13 @@ function updateSmallLinePosition(angle) {
             lastAngle = newAngle;
             e.preventDefault();
         }
-    });
+     });
 
     document.addEventListener('touchend', function() {
         stopDrag();
     });
 
-    // Call initVideo to start everything
+   // Call initVideo to start everything
     initVideo();
 
 
