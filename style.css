@@ -39,13 +39,6 @@ body {
         0px 0px 0px 10px black;
 }
 
-/*
-.row {
-    display: flex;
-    flex: 1;
-}
-*/
-
 .row {
     display: flex;
     justify-content: space-between; /* Ensures even spacing */
