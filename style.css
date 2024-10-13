@@ -5,7 +5,7 @@
 @font-face {
     font-family: 'MioFont';
     src: url('Assets/Photograph Signature.ttf') format('truetype');
-    font-weight: normal;
+    font-weight: bold;
     font-style: normal;
 }
 
@@ -39,10 +39,18 @@ body {
         0px 0px 0px 10px black;
 }
 
+/*
 .row {
     display: flex;
     flex: 1;
 }
+*/
+
+.row {
+    display: flex;
+    justify-content: space-between; /* Ensures even spacing */
+}
+
 
 .column {
     width: 200px;  /* Larghezza fissa per le colonne laterali */
@@ -150,26 +158,59 @@ body {
 
 }
 
-.button {
-    padding: 15px 25px;
-    font-size: 24px;
-    text-align: center;
+.button-row, .lamp-row {
+    position: relative;
+    left: 225px;
+    bottom: 70px;
+    width: 500px; /* Make sure the rows span the full width */
+    margin: 10px 0;
+    max-width: 350px;
+}
+.button, .lamp {
+    width: 15px;
+    height: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    box-shadow: 1px 2px 2px #250b0b;
     cursor: pointer;
-    outline: none;
+  
+}
+
+.button {
+    background-color: #911e1e;
     color: #fff;
-    background-color: #a0522d;
-    border: none;
-    border-radius: 10px;
-    box-shadow: 0 3px #999;
-  }
+    transition: background-color 0.1s ease;
+    box-shadow: inset -1px -1px 2px 0px rgba(65, 6, 6, 0.875),
+        inset 1px 1px 2px 0px rgb(148, 69, 69);
+}
+
+.lamp {
+    background-color: #3b0909; /* Dark background to indicate off */
+    font-size: 11px;
+    font-weight: 900;
+    color: rgb(0, 0, 0);
+    transition: background-color 0.1s ease;
+    box-shadow: inset -1px -1px 3px 1px rgb(32, 1, 1),
+        inset 1px 1px 2px 1px rgb(136, 94, 94),
+        1px 2px 2px #250b0b;
+}
+
+.lamp.on {
+    background-color: #ff0000; /* Red color for "on" state */
+    box-shadow: inset -1px -1px 3px 1px rgb(53, 2, 2),
+        inset 1px 1px 2px 1px rgb(214, 144, 144),
+        1px 2px 2px #250b0b;
+}
   
-  .button:hover {background-color: #a0522d}
+.button:hover {background-color: #a0522d}
   
-  .button:active {
+.button:active {
     background-color: #cc4b0a;
     box-shadow: 0 1px #666;
     transform: translateY(4px);
-  }
+}
 
 .knob-surround {
     position: relative;
@@ -188,8 +229,15 @@ body {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    transform: rotate(0deg);
     z-index: 10;
+}
+
+#knob1 {
+    transform: rotate(0deg);
+}
+
+#knob2 {
+    transform: rotate(270deg);
 }
 
 .knob:before {
@@ -207,32 +255,76 @@ body {
 
 #preview_display {
     margin-top: 25px;
-    margin-left: 50px;
-    margin-right: 50px;
     height: 100px;
     width: 500px;
-    background-color: black;
-    border: 5px wheat solid;
-    box-shadow: inset 10px 5px 10px 1px black, 
-    inset 0px 0px 100px 30px slategray;
+    background-color: #f4d77a; /* Warm yellow for vintage effect */
+    border: 5px solid #000000; /* Darker yellow-brown border */
+    box-shadow: inset 10px 5px 10px 1px rgba(0, 0, 0, 0.5), /* Subtle shadows to give a recessed look */
+                inset 0px 0px 50px 30px rgba(159, 70, 6, 0.727),
+                inset -10px -5px 5px 1px rgb(96, 88, 88),
+                inset 10px 5px 15px 15px rgb(255, 255, 255); /* Brownish glow for depth */
     border-radius: 15px;
+    background: linear-gradient(145deg, #f6d58e, #e0be61); /* Subtle gradient for texture */
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
 }
 
 .line {
-    position: relative;
-    top: 50%; /* Posiziona la linea al centro verticalmente */
-    left: 0; /* A sinistra */
-    height: 2px; /* Altezza della linea */
-    width: 100%; /* Larghezza della linea */
-    background-color: black; /* Colore della linea */
-    transition: height 0.1s; /* Aggiungi una transizione per un movimento fluido */
-    transform: translateY(-50%); /* Centra la linea verticalmente */
+    position: absolute; /* Use absolute to position it relative to the parent */
+    height: 100px;
+    width: 2px;
+    background-color: #000000;
+    left: 200px; /* Initial position */
+    box-shadow: 1px 1px 3px 0px black;
+    transition: left 0.1s ease; /* Smooth movement */
 }
+
+
+.small_line {
+    position: absolute; /* Use absolute to position it relative to the parent */
+    height: 65px;
+    top: 25px;
+    width: 2px;
+    background-color: #000000;
+    left: 0px; /* Initial position */
+    box-shadow: 1px 1px 3px 0px rgb(0, 0, 0);
+    transition: left 0.1s ease; /* Smooth movement */
+}
+
+.movablePoint {
+    visibility: hidden;
+}
+
+.movablePoint {
+    position: relative; /* Use absolute to position it relative to the parent */
+    height: 13px;
+    width: 13px;
+    top: -12px;
+    border-radius: 50%;
+    border:  #000000 solid;
+    background-color: transparent;
+    left: 0px; /* Initial position */
+    transform: translate(-50%);
+    box-shadow: 1px 1px 3px 0px black;
+    transition: left 0.1s ease; /* Smooth movement */
+}
+
+.pointText {
+    position: absolute; /* Posiziona il testo rispetto al cerchio */
+    top: -1px; /* Sposta il testo di 10px più in alto rispetto al cerchio */
+    left: 50%;
+    text-shadow: 0.5px 0.5px 1px #000000;
+    transform: translateX(-50%); /* Centra il testo orizzontalmente */
+    color: black; /* Colore del testo per vederlo sopra il cerchio nero */
+    font-size: 10px; /* Puoi modificare la dimensione del testo */
+}
+
 
 .signature {
     position: relative;
     left: 270px;
-    bottom: 40px;
+    bottom: 80px;
     font-family: 'MioFont', sans-serif;
     font-size: 36px;
     color: #b8860b; /* Colore di fallback dorato */

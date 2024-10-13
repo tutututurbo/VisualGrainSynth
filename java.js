@@ -25,7 +25,23 @@ var videoElement = document.getElementById('videoElement');
         knob.style.transform = 'rotate(' + angle + 'deg)';
         var pc = Math.round((angle / 270) * videoDuration); // Map angle to video duration
         document.getElementById('value' + (knobIndex + 1)).textContent = pc; // Update corresponding value
+        if (knobIndex === 0) {
+            updateSmallLinePosition(angle);
+        }
     }
+
+    // Funzione per aggiornare la posizione della small_line
+function updateSmallLinePosition(angle) {
+    // Mappa l'angolo da 0 a 270 gradi a una posizione orizzontale da 0px a 500px
+    const maxPosition = 500;
+    const position = (angle / 270) * maxPosition; // Calcola la posizione orizzontale
+
+    // Trova la small_line e aggiorna la sua posizione
+    const smallLine = document.querySelector('.small_line'); // Assicurati che la classe sia corretta
+    if (smallLine) {
+        smallLine.style.left = position + 'px'; // Imposta la posizione orizzontale
+    }
+}
 
     // Calculate the new angle based on mouse position
     function calculateAngleDelta(lastY, currentY, currentAngle) {
@@ -99,11 +115,9 @@ var videoElement = document.getElementById('videoElement');
             currentKnob = index;
             lastY = e.pageY; // Store the initial Y position
             lastAngle = angles[currentKnob]; // Store the initial angle of the knob
-
             // Attach the move and mouseup event listeners to the document for global handling
             document.addEventListener('mousemove', onDrag);
             document.addEventListener('mouseup', stopDrag);
-
             e.preventDefault();
         });
     });
@@ -127,61 +141,13 @@ var videoElement = document.getElementById('videoElement');
     // Call initVideo to start everything
     initVideo();
 
-/* VIDEO OVERLAY*/ 
 
-reader.onload = function(event) {
-    videoElement = document.createElement('video'); // Creiamo un elemento video
-    videoElement.classList.add('custom-video'); // Aggiungiamo una classe per lo stile
-    videoElement.src = event.target.result; // Imposta la sorgente del video dal file caricato
-    videoElement.muted = true; // Muto per prevenire audio automatico
-    videoElement.controls = false; // Disabilita i controlli nativi
+//#########################################################
 
-    // Pulisce eventuali video precedenti dalla center-box
-    $form.innerHTML = ''; 
 
-    // Inserisce il video dentro la center-box
-    $form.appendChild(videoElement);
 
-    // Aggiungi l'overlay per effetto 3D
-    var overlay = document.createElement('div'); // Crea un nuovo div per l'overlay
-    overlay.classList.add('video-overlay'); // Aggiungi la classe per l'overlay
-    $form.appendChild(overlay); // Aggiungi l'overlay alla center-box
-};
 
-document.addEventListener('DOMContentLoaded', function() {
-    const previewDisplay = document.getElementById('preview_display');
-    const movingLine = document.getElementById('movingLine');
 
-    previewDisplay.addEventListener('mousemove', function(event) {
-        const rect = previewDisplay.getBoundingClientRect(); // Ottiene la posizione del display
-        const mouseX = event.clientX - rect.left; // Calcola la posizione orizzontale del mouse all'interno del display
 
-        // Calcola l'increspatura della linea in base alla posizione del mouse
-        const maxHeight = 30; // Altezza massima dell'increspatura
-        const width = previewDisplay.clientWidth; // Larghezza del display
-        const heightArray = [];
 
-        for (let x = 0; x < width; x++) {
-            // Calcola la distanza del mouse dalla posizione X attuale
-            const distance = Math.abs(x - mouseX);
-            
-            // Usa la funzione gaussiana per calcolare l'altezza
-            const gaussianHeight = maxHeight * Math.exp(-Math.pow(distance, 2) / (2 * Math.pow(50, 2))); // 50 è la deviazione standard
-            heightArray.push(gaussianHeight);
-        }
-
-        // Costruisci un SVG per rappresentare la linea increspata
-        let svgPath = '';
-        for (let x = 0; x < width; x++) {
-            const y = heightArray[x]; // Ottieni l'altezza calcolata
-            svgPath += (x === 0 ? 'M' : 'L') + x + ' ' + (50 - y); // Inverti y per l'SVG
-        }
-        svgPath += ' L ' + width + ' 50 L 0 50 Z'; // Chiudi il percorso
-
-        // Crea un SVG e impostalo come sfondo della linea
-        movingLine.innerHTML = `<svg width="${width}" height="100" style="position:absolute; top:0; left:0;">
-            <path d="${svgPath}" fill="black" />
-        </svg>`;
-    });
-});
 
