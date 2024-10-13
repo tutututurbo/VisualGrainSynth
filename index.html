@@ -5,70 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web App Layout</title>
     <link rel="stylesheet" href="style.css">
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var $input = document.querySelector('.box__file'); // L'input file del form
-            var $form = document.querySelector('.center-box'); // Il contenitore center-box
-            var videoElement = null; // Dichiarare fuori per l'uso globale
-    
-            $input.addEventListener('change', function(e) {
-                var files = e.target.files; // Ottiene il file selezionato
-                if (files.length > 0) {
-                    var file = files[0]; // Prendi il primo file (video)
-                    
-                    if (file.type.startsWith('video/')) {
-                        var reader = new FileReader(); // Creiamo un oggetto FileReader
-                        
-                        reader.onload = function(event) {
-                            videoElement = document.createElement('video'); // Creiamo un elemento video
-                            videoElement.classList.add('custom-video'); // Aggiungiamo una classe per lo stile
-                            videoElement.src = event.target.result; // Imposta la sorgente del video dal file caricato
-                            videoElement.muted = true; // Muto per prevenire audio automatico
-                            videoElement.controls = false; // Disabilita i controlli nativi
-    
-                            // Pulisce eventuali video precedenti dalla center-box
-                            $form.innerHTML = ''; 
-    
-                            // Inserisce il video dentro la center-box
-                            $form.appendChild(videoElement);
-                        };
-    
-                        reader.readAsDataURL(file); // Legge il file come URL
-                    } else {
-                        alert('Per favore carica un file video.'); // Messaggio di errore se il file non è un video
-                    }
-                }
-            });
-    
-            // Aggiungi un listener globale per la barra spaziatrice
-            document.addEventListener('keydown', function(event) {
-                if (event.code === 'Space' && videoElement) {
-                    event.preventDefault(); // Previene il comportamento predefinito della barra spaziatrice
-                    if (videoElement.paused) {
-                        videoElement.play(); // Se il video è in pausa, fallo partire
-                    } else {
-                        videoElement.pause(); // Se il video è in riproduzione, mettilo in pausa
-                    }
-                }
-            });
-        });
-    </script>
-    
-    
-    
 </head>
 <body>
     <div class="container">
-        <div class="column" id="column_left"> <!-- Colonna sinistra -->
-            <div class="row">
-                <button class="button">Salvatore's button</button>
-            </div>
-        </div> 
-        
-        <div class="center-column"> <!-- Colonna centrale con contenuto -->
+        <div class="column" id="column_left"></div>
+        <div class="center-column">
             <div class="center_box_container">
                 <div class="center-box">
-                    <!-- Contenuto form centrale -->
                     <form class="box" method="post" action="/upload" enctype="multipart/form-data">
                         <div class="box__input">
                             <input class="box__file" type="file" name="files[]" id="file" accept="video/*" />
@@ -84,15 +27,63 @@
             <div class="row">
                 <div class="bottom-box">
                     <div class="row">
-                        <div class="knob-surround"> 
+                        <div class="knob-surround">
                             <div class="knob" id="knob1"></div>
                         </div>
                         <div id="preview_display">
                             <div class="line" id="movingLine"></div>
+                            <div class="small_line" id="line1">
+                                <div class="movablePoint" id="point1">
+                                    <span class="pointText">1</span>
+                                </div>
+                            </div>
+                            <div class="small_line" id="line2">
+                                <div class="movablePoint" id="point2">
+                                    <span class="pointText">2</span>
+                                </div>
+                            </div>
+                            <div class="small_line" id="line3">
+                                <div class="movablePoint" id="point3">
+                                    <span class="pointText">3</span>
+                                </div>
+                            </div>
+                            <div class="small_line" id="line4">
+                                <div class="movablePoint" id="point4">
+                                    <span class="pointText">4</span>
+                                </div>
+                            </div>
+                            <div class="small_line" id="line5">
+                                <div class="movablePoint" id="point5">
+                                    <span class="pointText">5</span>
+                                </div>
+                            </div>
+                            <div class="small_line" id="line6">
+                                <div class="movablePoint" id="point6">
+                                    <span class="pointText">6</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="knob-surround"> 
+                        <div class="knob-surround">
                             <div class="knob" id="knob2"></div>
                         </div>
+                    </div>
+                    <div class="row button-row">
+                        <!-- Buttons -->
+                        <button class="button" id="button1"></button>
+                        <button class="button" id="button2"></button>
+                        <button class="button" id="button3"></button>
+                        <button class="button" id="button4"></button>
+                        <button class="button" id="button5"></button>
+                        <button class="button" id="button6"></button>
+                    </div>
+                    <div class="row lamp-row">
+                        <!-- Lamps -->
+                        <div class="lamp" id="lamp1">1</div>
+                        <div class="lamp" id="lamp2">2</div>
+                        <div class="lamp" id="lamp3">3</div>
+                        <div class="lamp" id="lamp4">4</div>
+                        <div class="lamp" id="lamp5">5</div>
+                        <div class="lamp" id="lamp6">6</div>
                     </div>
                     <div class="row">
                         <div class="signature">
@@ -102,13 +93,107 @@
                 </div>
             </div>
         </div>
-        
-        <div class="column" id="column_right"></div> <!-- Colonna destra -->
+        <div class="column" id="column_right"></div>
     </div>
+
+    <!-- All JavaScript moved below the body content to ensure DOM elements are loaded -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var $input = document.querySelector('.box__file');
+            var $form = document.querySelector('.center-box');
+            var videoElement = null;
+
+            $input.addEventListener('change', function(e) {
+                var files = e.target.files;
+                if (files.length > 0) {
+                    var file = files[0];
+                    if (file.type.startsWith('video/')) {
+                        var reader = new FileReader();
+                        reader.onload = function(event) {
+                            videoElement = document.createElement('video');
+                            videoElement.classList.add('custom-video');
+                            videoElement.src = event.target.result;
+                            videoElement.muted = true;
+                            videoElement.controls = false;
+                            $form.innerHTML = '';
+                            $form.appendChild(videoElement);
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        alert('Per favore carica un file video.');
+                    }
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.code === 'Space' && videoElement) {
+                    event.preventDefault();
+                    if (videoElement.paused) {
+                        videoElement.play();
+                    } else {
+                        videoElement.pause();
+                    }
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const previewDisplay = document.getElementById('preview_display');
+            const line = document.querySelector('.line');
+
+            previewDisplay.addEventListener('click', function (event) {
+                const rect = previewDisplay.getBoundingClientRect();
+                const x = event.clientX - rect.left;
+                const lineX = Math.max(0, Math.min(x, previewDisplay.offsetWidth - line.offsetWidth));
+                line.style.left = lineX + 'px';
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+    // Seleziona tutti i bottoni, i lamp e le small_line
+    const lampButtons = document.querySelectorAll('.button');
+    const lamps = document.querySelectorAll('.lamp');
+    const movablePoint = document.querySelectorAll('.movablePoint');
+
+    lampButtons.forEach((button, index) => {
+        button.addEventListener('click', () => {
+        // Spegni tutti i lamp
+        lamps.forEach((lamp, lampIndex) => {
+            if (lampIndex !== index) {
+                lamp.classList.remove('on'); // Spegni lamp non selezionato
+                if (movablePoint[lampIndex]) {
+                    // Nascondi le small_line corrispondenti
+                    movablePoint[lampIndex].style.visibility = 'hidden';
+                    movablePoint[lampIndex].style.opacity = 0;
+                }
+            }
+        })
+            // Toggle dello stato del lamp (accende/spegne)
+            if (lamps[index]) {
+                lamps[index].classList.toggle('on');
+                 // Aggiunge/rimuove la classe 'on'
+            }
+
+            // Rendi visibile la small_line corrispondente solo se il lamp è acceso
+            if (movablePoint[index]) {
+                if (lamps[index].classList.contains('on')) {
+                    movablePoint[index].style.visibility = 'visible';
+                    movablePoint[index].style.opacity = 1;
+              
+                } else {
+                    // Se il lamp è spento, nascondi la small_line
+                    movablePoint[index].style.visibility = 'hidden';
+                    movablePoint[index].style.opacity = 0;
+                }
+            }
+        });
+    });
+});
+
     
+        
+    </script>
     <script type="text/javascript" src="/jquery-3.7.1.js"></script>
     <script type="text/javascript" src="/java.js"></script>
 </body>
 </html>
-
-
