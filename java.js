@@ -18,13 +18,13 @@ var videoElement = document.getElementById('videoElement');
            // updateVideoTime();
         }
     }
-    var selectedSmallLine; 
+
     // Set angle and update corresponding value
     function setAngle(knobIndex, angle) {
         var knob = knobs[knobIndex];
         knob.style.transform = 'rotate(' + angle + 'deg)';
         var pc = Math.round((angle / 270) * videoDuration); // Map angle to video duration
-        document.getElementById('knob' + (knobIndex + 1)).textContent = pc; // Update corresponding value
+        //document.getElementById('knob' + (knobIndex + 1)).textContent = pc; // Update corresponding value
         
         if(knobIndex === 0){
         const lamps1 = document.querySelectorAll('.lamp');
@@ -40,15 +40,10 @@ var videoElement = document.getElementById('videoElement');
                  const smallLine = document.querySelectorAll('.small_line'); // Assicurati che la classe sia corretta
              if (smallLine[index]) {
                  smallLine[index].style.left = position + 'px'; // Imposta la posizione orizzontale
-              }
-             
-            }
-            
-             
-      
+              }         
+            } 
         });
     }
- 
     
     }
 
@@ -118,7 +113,7 @@ var videoElement = document.getElementById('videoElement');
     }
 
     // // Initialize the video duration and set up event listeners
-    function initVideo() {
+   /* function initVideo() {
         var videoSource = document.getElementById('videoSource');
         videoSource.src = 'path_to_your_video.mp4'; // Set your video path here
         videoElement.load(); // Load the video
@@ -129,7 +124,7 @@ var videoElement = document.getElementById('videoElement');
             setAngle(0, angles[0]); // Set knob1 angle
             setAngle(1, angles[1]); // Set knob2 angle
         });
-    }
+    }*/
 
     Array.from(knobs).forEach((knob, index) => {
         knob.addEventListener('mousedown', function(e) {
@@ -162,7 +157,7 @@ var videoElement = document.getElementById('videoElement');
     });
 
    // Call initVideo to start everything
-    initVideo();
+   // initVideo();
 
 
 //#########################################################

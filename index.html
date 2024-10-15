@@ -8,7 +8,29 @@
 </head>
 <body>
     <div class="container">
-        <div class="column" id="column_left"></div>
+        <div class="column" id="column_left">
+            <div id="padPanel">
+                <div class="row">
+                    <div class="row padRow">
+                        <div class="pad"><span>1</span></div>
+                        <div class="pad"><span>2</span></div>
+                        <div class="pad"><span>3</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row padRow">
+                        <div class="pad"><span>4</span></div>
+                        <div class="pad"><span>5</span></div>
+                        <div class="pad"><span>6</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row padRow">
+                        <div class="pad" id="padManual"><span>Manual</span></div>
+                    </div>
+                </div>   
+            </div>
+        </div>
         <div class="center-column">
             <div class="center_box_container">
                 <div class="center-box">
@@ -98,6 +120,210 @@
 
     <!-- All JavaScript moved below the body content to ensure DOM elements are loaded -->
     <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const $input = document.querySelector('.box__file');
+    let videoFrames = []; // Array for video frames
+
+    // Check WebCodecs API support
+    if (!window.VideoDecoder) {
+        alert('WebCodecs API is not supported in this browser.');
+        return;
+    }
+
+    $input.addEventListener('change', function(e) {
+        const files = e.target.files;
+        if (files.length > 0) {
+            const file = files[0];
+            if (file.type.startsWith('video/')) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const videoBuffer = event.target.result;
+                    extractFramesUsingWebCodecs(videoBuffer);
+                };
+                reader.readAsArrayBuffer(file); // Read video as ArrayBuffer
+            } else {
+                alert('Please upload a video file.');
+            }
+        }
+    });
+
+    async function extractFramesUsingWebCodecs(videoBuffer) {
+        const videoFrames = [];  // Array for storing frames
+
+        const init = {
+            output: (frame) => {
+                videoFrames.push(frame);
+                console.log('Decoded frame: ', frame);
+            },
+            error: (e) => {
+                console.error('Decoding error: ', e);
+            }
+        };
+
+        const videoDecoder = new VideoDecoder(init);
+
+        const track = await createVideoTrack(videoBuffer);
+
+        // Configure the video decoder with codec information and SPS/PPS (description)
+        videoDecoder.configure({
+            codec: track.codec || 'avc1.42E01E', // Specify default H.264 codec
+            codedWidth: track.width,
+            codedHeight: track.height,
+            description: track.spsPpsData || new Uint8Array([]), // SPS/PPS data for H.264
+        });
+
+        for (const chunk of track.chunks) {
+            // Ensure each chunk is an EncodedVideoChunk object
+            const encodedChunk = new EncodedVideoChunk({
+                type: chunk.isKeyFrame ? 'key' : 'delta',
+                timestamp: chunk.timestamp,
+                duration: chunk.duration,
+                data: chunk.data, // Use chunk.data for ArrayBuffer data
+            });
+            videoDecoder.decode(encodedChunk);
+        }
+
+        console.log('Extraction completed. Frames: ', videoFrames);
+    }
+
+    async function createVideoTrack(videoBuffer) {
+        const videoTrack = {
+            codec: '',
+            width: 0,
+            height: 0,
+            chunks: [],
+            spsPpsData: null, // Store the SPS/PPS data for H.264
+        };
+
+        const mediaSource = new MediaSource();
+        const videoBlob = new Blob([videoBuffer]);
+        const videoUrl = URL.createObjectURL(videoBlob);
+        const video = document.createElement('video');
+        
+        video.src = videoUrl;
+        video.controls = true; // Add controls for user to play video
+        const centerBox = document.querySelector('.center-box');
+        centerBox.appendChild(video); // Append the video inside center-box
+
+        return new Promise((resolve) => {
+            video.addEventListener('loadedmetadata', function () {
+                videoTrack.width = video.videoWidth;
+                videoTrack.height = video.videoHeight;
+
+                // Assume codec for H.264, or use future APIs to get codec
+                videoTrack.codec = 'avc1.42E01E';
+
+                // Extract SPS and PPS data (initialization segment)
+                videoTrack.spsPpsData = extractSpsPpsData(videoBuffer);
+
+                videoTrack.chunks = splitVideoIntoChunks(videoBuffer); // Divide video buffer into chunks
+                resolve(videoTrack);
+            });
+        });
+    }
+
+    // Function to extract SPS/PPS data from H.264 bitstream
+    function extractSpsPpsData(videoBuffer) {
+        // Simplified method to extract SPS/PPS (real implementation depends on bitstream parsing)
+        // Here you can use a library to parse the NAL units (e.g., h264 NAL parser) to extract real SPS/PPS
+        const SPS_PPS_HEADER = new Uint8Array([0x00, 0x00, 0x00, 0x01]); // Example header for NAL unit
+        // Mock-up SPS/PPS data
+        const sps = new Uint8Array([0x67, 0x42, 0xE0, 0x1F, 0x89, 0x8B]);
+        const pps = new Uint8Array([0x68, 0xCE, 0x06, 0xE2]);
+        return new Uint8Array([...SPS_PPS_HEADER, ...sps, ...SPS_PPS_HEADER, ...pps]);
+    }
+
+    function splitVideoIntoChunks(videoBuffer) {
+        const chunkSize = 1024 * 1024; // Define suitable chunk size
+        const chunks = [];
+        let offset = 0;
+
+        while (offset < videoBuffer.byteLength) {
+            const chunkData = videoBuffer.slice(offset, offset + chunkSize);
+            
+            // Create an EncodedVideoChunk-like structure for demo purposes
+            const chunk = {
+                timestamp: offset, // Use offset as a mock timestamp
+                duration: 0,       // You can estimate the duration here if needed
+                isKeyFrame: (offset === 0), // Assume the first chunk is a key frame
+                data: chunkData     // Actual chunk data
+            };
+            
+            chunks.push(chunk);
+            offset += chunkSize;
+        }
+
+        return chunks;
+    }
+
+
+            //PAD BUTTONS
+            // Funzione per cambiare il colore di sfondo a rosso acceso
+ // Variabile per tenere traccia dell'elemento attivo
+ let activeElement = null;
+
+// Aggiungi l'evento di click a tutti gli elementi con la classe 'pad' e l'elemento con l'id 'padManual'
+document.querySelectorAll(".pad").forEach(function(pad) {
+    pad.addEventListener("click", function() {
+        if (activeElement) {
+            activeElement.classList.remove('active'); // Rimuove la classe 'active' dall'elemento attivo
+        }
+        if (activeElement === pad) {
+            activeElement = null; // Nessun elemento attivo
+        } else {
+            pad.classList.add('active'); // Aggiunge la classe 'active' all'elemento cliccato
+            activeElement = pad; // Imposta l'elemento cliccato come attivo
+        }
+    });
+});
+
+            //SPACEBAR TO START VIDEO
+            document.addEventListener('keydown', function(event) {
+                if (event.code === 'Space' && videoElement) {
+                    event.preventDefault();
+                    if (videoElement.paused) {
+                        videoElement.play();
+                    } else {
+                        videoElement.pause();
+                    }
+                }
+            });
+
+            // Funzione per estrarre i frame dal video
+            function extractFramesFromVideo(video) {
+                var duration = video.duration;  // Durata totale del video
+                var fps = 25;  // Frame per secondo (modificabile in base al frame rate desiderato)
+                var interval = 1 / fps;  // Intervallo tra i frame
+
+                video.currentTime = 0;  // Inizia dal tempo zero
+
+                video.addEventListener('seeked', function onSeeked() {
+                    // Disegna il frame corrente su canvas
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    var frameData = canvas.toDataURL();  // Ottieni il frame come base64
+                    videoFrames.push(frameData);  // Aggiungi il frame all'array
+
+                    if (video.currentTime < duration) {
+                        // Avanza al prossimo frame
+                        video.currentTime += interval;
+                    } else {
+                        // Rimuovi il listener quando il video è finito
+                        video.removeEventListener('seeked', onSeeked);
+                        console.log('Estrazione frame completata', videoFrames);
+                    }
+                });
+            }
+
+
+        });
+
+
+
+
+
+
+////////////////////////////
+/*
         document.addEventListener('DOMContentLoaded', function() {
             var $input = document.querySelector('.box__file');
             var $form = document.querySelector('.center-box');
@@ -136,7 +362,7 @@
                 }
             });
         });
-
+*/
         document.addEventListener('DOMContentLoaded', function () {
             const previewDisplay = document.getElementById('preview_display');
             const line = document.querySelector('.line');
@@ -187,17 +413,11 @@
             //     }
             // }
 
-        });
-       
-       
-    });
-
-    
-
-
-       
-
+        });      
+    });       
 });
+
+
   
     </script>
     <script type="text/javascript" src="/jquery-3.7.1.js"></script>

@@ -39,12 +39,6 @@ body {
         0px 0px 0px 10px black;
 }
 
-/*
-.row {
-    display: flex;
-    flex: 1;
-}
-*/
 
 .row {
     display: flex;
@@ -62,13 +56,67 @@ body {
 
 #column_left {
     box-shadow: inset 6px 0px 3px 0px black,
-        inset -10px 0px 20px 0px rgb(59, 36, 36);
+        inset -10px 0px 20px 0px rgb(59, 36, 36),
+        inset 20px 0px 40px 0px rgb(36, 14, 14);
 }
 
 #column_right {
     box-shadow: inset -6px 0px 5px 0px black,
-        inset 10px 0px 20px 0px rgb(59, 36, 36);
+        inset 10px 0px 20px 0px rgb(59, 36, 36),
+        inset -20px 0px 40px 0px rgb(36, 14, 14);
 }
+
+/* Colore di sfondo originale */
+.pad {
+    background-color: rgb(177, 136, 82);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+    width: 45px;
+    height: 35px;
+    color: #2b2929;
+    border-radius: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 2px 1px 3px 2px rgb(67, 38, 8),
+        0px 0px 0.5px 2.5px rgb(223, 180, 111),
+        4px 2px 10px 0px black;
+    user-select: none; /* Impedisce la selezione del testo */
+}
+
+/* Colore rosso quando attivo */
+.active {
+    box-shadow: inset 2px 1px 2px 1px black;
+    transform: translateY(1px);
+}
+
+/* Sposta il testo di 1px verso il basso quando attivo */
+.active span {
+    position: relative;
+    top: 2px; /* Sposta il testo di 1px verso il basso */
+}
+
+
+/* Resto del CSS */
+#padPanel {
+    position: relative;
+    top: 445px;
+}
+
+.padRow {
+    position: relative;
+    width: 200px;
+    max-width: 160px;
+    left: 20px;
+    top: 20px;
+    margin-top: 20px;
+}
+
+#padManual {
+    width: 160px;
+    border-radius: 15%;
+}
+
 
 /* Contenitore centrale */
 .center-column {
@@ -107,15 +155,17 @@ body {
         10px 10px 5px 1px rgb(66, 19, 19);
     display: flex;
     justify-content: center;
+    object-fit: cover;
     align-items: center;
     position: relative;
     overflow: hidden; 
 }
 
 .center-box video {
-    max-width: 110%;
+    max-width: 140%;
     max-height: 150%;
     border-radius: 10%; /* Arrotonda gli angoli del video */
+    object-fit: cover;
 }
 
 .video-overlay {
@@ -167,47 +217,49 @@ body {
     max-width: 350px;
 }
 .button, .lamp {
-    width: 15px;
-    height: 15px;
+    width: 18px;
+    height: 18px;
     display: flex;
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-    box-shadow: 1px 2px 2px #250b0b;
-    cursor: pointer;
   
 }
 
 .button {
-    background-color: #911e1e;
+    background-color: #711028;
     color: #fff;
     transition: background-color 0.1s ease;
-    box-shadow: inset -1px -1px 2px 0px rgba(65, 6, 6, 0.875),
-        inset 1px 1px 2px 0px rgb(148, 69, 69);
+    box-shadow: inset -2px -1px 2px 0px rgba(65, 6, 6, 0.875),
+        inset 2px 1px 2px 0px rgb(148, 69, 69),
+        2px 1px 3px #000000;;
+    cursor: pointer;
 }
 
 .lamp {
-    background-color: #3b0909; /* Dark background to indicate off */
+    background-color: #3b0909; 
     font-size: 11px;
     font-weight: 900;
+    text-shadow: 0.3px 0.5px 1px black;
     color: rgb(0, 0, 0);
+    border: 1px #250000 solid;
     transition: background-color 0.1s ease;
-    box-shadow: inset -1px -1px 3px 1px rgb(32, 1, 1),
-        inset 1px 1px 2px 1px rgb(136, 94, 94),
-        1px 2px 2px #250b0b;
+    box-shadow: inset -2px -1px 3px 1px rgb(32, 1, 1),
+        inset 2px 1px 2px 1px rgb(136, 94, 94),
+        2px 1px 2px #000000;
 }
 
 .lamp.on {
     background-color: #ff0000; /* Red color for "on" state */
-    box-shadow: inset -1px -1px 3px 1px rgb(53, 2, 2),
-        inset 1px 1px 2px 1px rgb(214, 144, 144),
-        1px 2px 2px #250b0b;
+    box-shadow: inset -1.5px -0.75px 3px 0.5px rgb(53, 2, 2),
+        inset 2px 1px 2px 1px rgb(214, 144, 144),
+        2px 1px 2px #460606;
 }
   
-.button:hover {background-color: #a0522d}
+.button:hover {background-color: #870000}
   
 .button:active {
-    background-color: #cc4b0a;
+    background-color: #870000;
     box-shadow: 0 1px #666;
     transform: translateY(4px);
 }
@@ -216,7 +268,8 @@ body {
     position: relative;
     background-color: rgb(213, 172, 117);
     box-shadow: inset 0px 0px 0px 3px #4a240d,
-        6px 3px 4px 0px rgb(79, 7, 7);
+        0px 0px 0px 2px rgb(94, 53, 0),
+        8px 4px 8px 2px rgb(57, 12, 12);
     width: 4rem;
     height: 4rem;
     border-radius: 50%;
@@ -248,8 +301,8 @@ body {
     width: 10%;
     height: 30%;
     background-color: black;
-    border-radius: 0;
-    box-shadow: 0 0 .4rem 0 darken(black, 10%);
+    border-radius: 0px;
+    box-shadow: 0px 0px .4rem 0px darken(black, 10%);
     transform: translate(-10px, 0px) rotate(45deg);
 }
 
@@ -276,7 +329,7 @@ body {
     width: 2px;
     background-color: #000000;
     left: 200px; /* Initial position */
-    box-shadow: 1px 1px 3px 0px black;
+    box-shadow: 1.5px 0.75px 3px 0px black;
     transition: left 0.1s ease; /* Smooth movement */
 }
 
@@ -288,7 +341,7 @@ body {
     width: 2px;
     background-color: #000000;
     left: 0px; /* Initial position */
-    box-shadow: 1px 1px 3px 0px rgb(0, 0, 0);
+    box-shadow: 1.5px 0.75px 3px 0px rgb(0, 0, 0);
     transition: left 0.1s ease; /* Smooth movement */
 }
 
@@ -298,26 +351,26 @@ body {
 
 .movablePoint {
     position: relative; /* Use absolute to position it relative to the parent */
-    height: 13px;
-    width: 13px;
-    top: -12px;
+    height: 18px;
+    width: 18px;
+    top: -18px;
     border-radius: 50%;
     border:  #000000 solid;
     background-color: transparent;
     left: 0px; /* Initial position */
     transform: translate(-50%);
-    box-shadow: 1px 1px 3px 0px black;
+    box-shadow: 1.5px 0.75px 3px 0px black;
     transition: left 0.1s ease; /* Smooth movement */
 }
 
 .pointText {
-    position: absolute; /* Posiziona il testo rispetto al cerchio */
-    top: -1px; /* Sposta il testo di 10px più in alto rispetto al cerchio */
+    position: absolute; /* Posiziona il testo rispetto al cerchio */ /* Sposta il testo di 10px più in alto rispetto al cerchio */
     left: 50%;
-    text-shadow: 0.5px 0.5px 1px #000000;
+    bottom: 0px;
+    text-shadow: 0.5px 0.25px 1px #000000;
     transform: translateX(-50%); /* Centra il testo orizzontalmente */
     color: black; /* Colore del testo per vederlo sopra il cerchio nero */
-    font-size: 8px; /* Puoi modificare la dimensione del testo */
+    font-size: 14px; /* Puoi modificare la dimensione del testo */
 }
 
 
