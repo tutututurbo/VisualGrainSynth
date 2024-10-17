@@ -9,19 +9,21 @@
 <body>
     <div class="container">
         <div class="column" id="column_left">
+            <div class="midiToggle"></div>
+            <div class="pad" id="pad8"></div>
             <div id="padPanel">
                 <div class="row">
                     <div class="row padRow">
-                        <div class="pad"><span>1</span></div>
-                        <div class="pad"><span>2</span></div>
-                        <div class="pad"><span>3</span></div>
+                        <div class="pad" id="pad1"><span>1</span></div>
+                        <div class="pad" id="pad2"><span>2</span></div>
+                        <div class="pad" id="pad3"><span>3</span></div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="row padRow">
-                        <div class="pad"><span>4</span></div>
-                        <div class="pad"><span>5</span></div>
-                        <div class="pad"><span>6</span></div>
+                        <div class="pad" id="pad4"><span>4</span></div>
+                        <div class="pad" id="pad5"><span>5</span></div>
+                        <div class="pad" id="pad6"><span>6</span></div>
                     </div>
                 </div>
                 <div class="row">
@@ -48,7 +50,7 @@
             
             <div class="row">
                 <div class="bottom-box">
-                    <div class="row">
+                    <div class="row">                       
                         <div class="knob-surround">
                             <div class="knob" id="knob1"></div>
                         </div>
@@ -164,12 +166,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const track = await createVideoTrack(videoBuffer);
 
+        // Ensure the description is valid and non-detached
+        const description = track.spsPpsData ? new Uint8Array(track.spsPpsData).buffer : null;
+
         // Configure the video decoder with codec information and SPS/PPS (description)
         videoDecoder.configure({
             codec: track.codec || 'avc1.42E01E', // Specify default H.264 codec
             codedWidth: track.width,
             codedHeight: track.height,
-            description: track.spsPpsData || new Uint8Array([]), // SPS/PPS data for H.264
+            description: description, // SPS/PPS data as ArrayBuffer
         });
 
         for (const chunk of track.chunks) {
@@ -224,13 +229,61 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to extract SPS/PPS data from H.264 bitstream
     function extractSpsPpsData(videoBuffer) {
-        // Simplified method to extract SPS/PPS (real implementation depends on bitstream parsing)
-        // Here you can use a library to parse the NAL units (e.g., h264 NAL parser) to extract real SPS/PPS
-        const SPS_PPS_HEADER = new Uint8Array([0x00, 0x00, 0x00, 0x01]); // Example header for NAL unit
-        // Mock-up SPS/PPS data
-        const sps = new Uint8Array([0x67, 0x42, 0xE0, 0x1F, 0x89, 0x8B]);
-        const pps = new Uint8Array([0x68, 0xCE, 0x06, 0xE2]);
-        return new Uint8Array([...SPS_PPS_HEADER, ...sps, ...SPS_PPS_HEADER, ...pps]);
+        const SPS_NAL_UNIT = 7;
+        const PPS_NAL_UNIT = 8;
+
+        let sps = null;
+        let pps = null;
+
+        // Search for NAL units in the buffer
+        let i = 0;
+        while (i < videoBuffer.byteLength) {
+            // Look for the start of a NAL unit (0x00 00 00 01)
+            if (videoBuffer[i] === 0x00 && videoBuffer[i+1] === 0x00 && videoBuffer[i+2] === 0x00 && videoBuffer[i+3] === 0x01) {
+                const nalUnitType = videoBuffer[i+4] & 0x1F;
+
+                if (nalUnitType === SPS_NAL_UNIT) {
+                    // Found SPS
+                    const spsStart = i + 4;
+                    const spsEnd = findNalUnitEnd(videoBuffer, spsStart);
+                    sps = new Uint8Array(videoBuffer.slice(spsStart, spsEnd));
+                } else if (nalUnitType === PPS_NAL_UNIT) {
+                    // Found PPS
+                    const ppsStart = i + 4;
+                    const ppsEnd = findNalUnitEnd(videoBuffer, ppsStart);
+                    pps = new Uint8Array(videoBuffer.slice(ppsStart, ppsEnd));
+                }
+
+                if (sps && pps) {
+                    break; // Stop searching once we've found both SPS and PPS
+                }
+            }
+            i++;
+        }
+
+        if (sps && pps) {
+            const spsPpsHeader = new Uint8Array([0x00, 0x00, 0x00, 0x01]);
+            // Concatenate SPS and PPS with start code (non-detached buffer)
+            const spsPpsData = new Uint8Array(spsPpsHeader.length + sps.length + spsPpsHeader.length + pps.length);
+            spsPpsData.set(spsPpsHeader, 0);
+            spsPpsData.set(sps, spsPpsHeader.length);
+            spsPpsData.set(spsPpsHeader, spsPpsHeader.length + sps.length);
+            spsPpsData.set(pps, spsPpsHeader.length + sps.length + spsPpsHeader.length);
+
+            return spsPpsData.buffer; // Return as ArrayBuffer
+        } else {
+            console.error('Failed to extract SPS/PPS');
+            return null;
+        }
+    }
+
+    function findNalUnitEnd(buffer, start) {
+        for (let i = start; i < buffer.byteLength - 4; i++) {
+            if (buffer[i] === 0x00 && buffer[i+1] === 0x00 && buffer[i+2] === 0x00 && buffer[i+3] === 0x01) {
+                return i;
+            }
+        }
+        return buffer.byteLength; // If no next NAL unit found, return the end of the buffer
     }
 
     function splitVideoIntoChunks(videoBuffer) {
@@ -257,22 +310,40 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
+
             //PAD BUTTONS
             // Funzione per cambiare il colore di sfondo a rosso acceso
  // Variabile per tenere traccia dell'elemento attivo
  let activeElement = null;
-
-// Aggiungi l'evento di click a tutti gli elementi con la classe 'pad' e l'elemento con l'id 'padManual'
-document.querySelectorAll(".pad").forEach(function(pad) {
+let mapActive = false;
+// Video position in time
+var videoPosition = 0;
+document.querySelectorAll(".pad").forEach(function(pad, index) {
     pad.addEventListener("click", function() {
         if (activeElement) {
-            activeElement.classList.remove('active'); // Rimuove la classe 'active' dall'elemento attivo
+            activeElement.classList.remove('active');
+            // Rimuove la classe 'active' dall'elemento attivo
+            if(activeElement === 'pad8') {
+                
+                mapActive = false;
+            }
         }
         if (activeElement === pad) {
             activeElement = null; // Nessun elemento attivo
         } else {
             pad.classList.add('active'); // Aggiunge la classe 'active' all'elemento cliccato
             activeElement = pad; // Imposta l'elemento cliccato come attivo
+            if(activeElement === 'pad8') {
+                mapActive = true;
+                
+            }
+            if(mapActive) {
+          
+            } else { 
+                videoPosition = lampPosition[index];
+            }
+
+           
         }
     });
 });
@@ -363,6 +434,10 @@ document.querySelectorAll(".pad").forEach(function(pad) {
             });
         });
 */
+
+
+// This is the positions of the 7 indicators
+let lampPosition = new Array(7);
         document.addEventListener('DOMContentLoaded', function () {
             const previewDisplay = document.getElementById('preview_display');
             const line = document.querySelector('.line');
@@ -370,8 +445,8 @@ document.querySelectorAll(".pad").forEach(function(pad) {
             previewDisplay.addEventListener('click', function (event) {
                 const rect = previewDisplay.getBoundingClientRect();
                 const x = event.clientX - rect.left;
-                const lineX = Math.max(0, Math.min(x, previewDisplay.offsetWidth - line.offsetWidth));
-                line.style.left = lineX + 'px';
+                lampPosition[6] = Math.max(0, Math.min(x, previewDisplay.offsetWidth - line.offsetWidth));
+                line.style.left = lampPosition[6] + 'px';
             });
         });
 
@@ -380,6 +455,79 @@ document.querySelectorAll(".pad").forEach(function(pad) {
     const lampButtons = document.querySelectorAll('.button');
     const lamps = document.querySelectorAll('.lamp');
     const movablePoint = document.querySelectorAll('.movablePoint');
+    const midiToggle = document.querySelector('.midiToggle');
+
+    navigator.permissions.query({ name: "midi", sysex: true }).then((result) => {
+    if (result.state === "granted") {
+    } else if (result.state === "prompt") {
+        alert('Allow MIDI Connection')
+    }
+    // Permission was denied by user prompt or permission policy
+    });
+
+    let midi = null; // global MIDIAccess object
+    function onMIDISuccess(midiAccess) {
+    console.log("MIDI ready!");
+    midi = midiAccess; // store in the global (in real usage, would probably keep in an object instance)
+    listInputsAndOutputs(midiAccess);
+    }
+
+    function onMIDIFailure(msg) {
+    console.error(`Failed to get MIDI access - ${msg}`);
+    }
+
+
+    function onMIDIMessage(event) {
+    let str = `MIDI message received at timestamp ${event.timeStamp}[${event.data.length} bytes]: `;
+    for (const character of event.data) {
+        str += `0x${character.toString(16)} `;
+    }
+        console.log(str);
+    }
+
+    function startLoggingMIDIInput(midiAccess) {
+        midiAccess.inputs.forEach((entry) => {
+        entry.onmidimessage = onMIDIMessage;
+    });
+    }
+
+    navigator.requestMIDIAccess().then((access) => {
+    // Get lists of available MIDI controllers
+    const inputs = access.inputs.values();
+    const outputs = access.outputs.values();
+
+    access.onstatechange = (event) => {
+        // Print information about the (dis)connected MIDI controller
+        console.log(event.port.name, event.port.manufacturer, event.port.state);
+    };
+    });
+
+  
+
+    navigator.requestMIDIAccess().then((midiAccess) => {
+    Array.from(midiAccess.inputs).forEach((input) => {
+        input[1].onmidimessage = (msg) => {
+            midiToggle.classList.toggle('on');
+            setTimeout(() => {
+                midiToggle.classList.toggle('on');
+            }, 100);
+
+            if(msg.data[1]===24 && msg.data[2]>0){
+               
+                    let salvatore = document.getElementById('pad1')
+                    salvatore.click();
+                }
+           
+        };
+    });
+    });
+
+
+
+
+
+
+
 
     lampButtons.forEach((button, index) => {
         button.addEventListener('click', () => {

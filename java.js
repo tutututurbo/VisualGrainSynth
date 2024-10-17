@@ -34,12 +34,12 @@ var videoElement = document.getElementById('videoElement');
             if (lamps1[index].classList.contains('on')) {
                  // Mappa l'angolo da 0 a 270 gradi a una posizione orizzontale da 0px a 500px
                  const maxPosition = 500;
-                 const position = (angles[0] / 270) * maxPosition; // Calcola la posizione orizzontale
+                 lampPosition[index] = (angles[0] / 270) * maxPosition; // Calcola la posizione orizzontale
 
                   // Trova la small_line e aggiorna la sua posizione
                  const smallLine = document.querySelectorAll('.small_line'); // Assicurati che la classe sia corretta
              if (smallLine[index]) {
-                 smallLine[index].style.left = position + 'px'; // Imposta la posizione orizzontale
+                 smallLine[index].style.left = lampPosition[index] + 'px'; // Imposta la posizione orizzontale
               }         
             } 
         });

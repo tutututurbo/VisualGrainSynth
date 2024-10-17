@@ -66,34 +66,34 @@ body {
         inset -20px 0px 40px 0px rgb(36, 14, 14);
 }
 
-/* Colore di sfondo originale */
+
 .pad {
     background-color: rgb(177, 136, 82);
     transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
     cursor: pointer;
     width: 45px;
-    height: 35px;
+    height: 45px;
     color: #2b2929;
     border-radius: 30%;
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 2px 1px 3px 2px rgb(67, 38, 8),
-        0px 0px 0.5px 2.5px rgb(223, 180, 111),
-        4px 2px 10px 0px black;
-    user-select: none; /* Impedisce la selezione del testo */
+    box-shadow: inset -2px -1px 3px 0px rgb(67, 38, 8),
+        inset 0px 0px 0.5px 2.5px rgb(223, 180, 111),
+        4px 2px 7px 0px black;
+    user-select: none; 
 }
 
-/* Colore rosso quando attivo */
 .active {
-    box-shadow: inset 2px 1px 2px 1px black;
-    transform: translateY(1px);
+    box-shadow: inset 3px 1.5px 3px 1px black;
+    transform: translateY(2px);
 }
 
 /* Sposta il testo di 1px verso il basso quando attivo */
 .active span {
     position: relative;
-    top: 2px; /* Sposta il testo di 1px verso il basso */
+    left: 1px; /* Sposta il testo di 1px verso il basso */
+    top: 1px;
 }
 
 
@@ -117,6 +117,10 @@ body {
     border-radius: 15%;
 }
 
+#pad8 {
+    width: 20px;
+    height: 20px;
+}
 
 /* Contenitore centrale */
 .center-column {
@@ -234,6 +238,32 @@ body {
         inset 2px 1px 2px 0px rgb(148, 69, 69),
         2px 1px 3px #000000;;
     cursor: pointer;
+}
+
+.midiToggle {
+    position: relative;
+    width: 13px;
+    height: 13px;
+    left: 250px;
+    top: 475px;
+    border-radius: 50%;
+    background-color: #3b0909; 
+    text-shadow: 0.3px 0.5px 1px black;
+    border: 1px #250000 solid;
+    transition: background-color 0.0s ease;
+    box-shadow: inset -2px -1px 3px 1px rgb(32, 1, 1),
+        inset 2px 1px 2px 1px rgb(136, 94, 94),
+        2px 1px 2px #000000;
+}
+
+.midiToggle.on {
+    background-color: #ff0000; /* Red color for "on" state */
+    box-shadow: inset -1.5px -0.75px 3px 0.5px rgb(53, 2, 2),
+        inset 2px 1px 2px 1px rgb(214, 144, 144),
+        0px 0px 20px 5px #ff0000,
+        0px 0px 100px 5px #ffdcdc;
+    object-fit: cover !important ;
+
 }
 
 .lamp {
@@ -365,7 +395,7 @@ body {
 
 .pointText {
     position: absolute; /* Posiziona il testo rispetto al cerchio */ /* Sposta il testo di 10px più in alto rispetto al cerchio */
-    left: 50%;
+    left: 7.5px;
     bottom: 0px;
     text-shadow: 0.5px 0.25px 1px #000000;
     transform: translateX(-50%); /* Centra il testo orizzontalmente */
