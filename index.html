@@ -227,126 +227,74 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Function to extract SPS/PPS data from H.264 bitstream
-    function extractSpsPpsData(videoBuffer) {
-        const SPS_NAL_UNIT = 7;
-        const PPS_NAL_UNIT = 8;
-
-        let sps = null;
-        let pps = null;
-
-        // Search for NAL units in the buffer
-        let i = 0;
-        while (i < videoBuffer.byteLength) {
-            // Look for the start of a NAL unit (0x00 00 00 01)
-            if (videoBuffer[i] === 0x00 && videoBuffer[i+1] === 0x00 && videoBuffer[i+2] === 0x00 && videoBuffer[i+3] === 0x01) {
-                const nalUnitType = videoBuffer[i+4] & 0x1F;
-
-                if (nalUnitType === SPS_NAL_UNIT) {
-                    // Found SPS
-                    const spsStart = i + 4;
-                    const spsEnd = findNalUnitEnd(videoBuffer, spsStart);
-                    sps = new Uint8Array(videoBuffer.slice(spsStart, spsEnd));
-                } else if (nalUnitType === PPS_NAL_UNIT) {
-                    // Found PPS
-                    const ppsStart = i + 4;
-                    const ppsEnd = findNalUnitEnd(videoBuffer, ppsStart);
-                    pps = new Uint8Array(videoBuffer.slice(ppsStart, ppsEnd));
-                }
-
-                if (sps && pps) {
-                    break; // Stop searching once we've found both SPS and PPS
-                }
-            }
-            i++;
-        }
-
-        if (sps && pps) {
-            const spsPpsHeader = new Uint8Array([0x00, 0x00, 0x00, 0x01]);
-            // Concatenate SPS and PPS with start code (non-detached buffer)
-            const spsPpsData = new Uint8Array(spsPpsHeader.length + sps.length + spsPpsHeader.length + pps.length);
-            spsPpsData.set(spsPpsHeader, 0);
-            spsPpsData.set(sps, spsPpsHeader.length);
-            spsPpsData.set(spsPpsHeader, spsPpsHeader.length + sps.length);
-            spsPpsData.set(pps, spsPpsHeader.length + sps.length + spsPpsHeader.length);
-
-            return spsPpsData.buffer; // Return as ArrayBuffer
-        } else {
-            console.error('Failed to extract SPS/PPS');
-            return null;
-        }
-    }
-
-    function findNalUnitEnd(buffer, start) {
-        for (let i = start; i < buffer.byteLength - 4; i++) {
-            if (buffer[i] === 0x00 && buffer[i+1] === 0x00 && buffer[i+2] === 0x00 && buffer[i+3] === 0x01) {
-                return i;
-            }
-        }
-        return buffer.byteLength; // If no next NAL unit found, return the end of the buffer
-    }
-
-    function splitVideoIntoChunks(videoBuffer) {
-        const chunkSize = 1024 * 1024; // Define suitable chunk size
-        const chunks = [];
-        let offset = 0;
-
-        while (offset < videoBuffer.byteLength) {
-            const chunkData = videoBuffer.slice(offset, offset + chunkSize);
-            
-            // Create an EncodedVideoChunk-like structure for demo purposes
-            const chunk = {
-                timestamp: offset, // Use offset as a mock timestamp
-                duration: 0,       // You can estimate the duration here if needed
-                isKeyFrame: (offset === 0), // Assume the first chunk is a key frame
-                data: chunkData     // Actual chunk data
-            };
-            
-            chunks.push(chunk);
-            offset += chunkSize;
-        }
-
-        return chunks;
-    }
-
-
 
             //PAD BUTTONS
             // Funzione per cambiare il colore di sfondo a rosso acceso
  // Variabile per tenere traccia dell'elemento attivo
  let activeElement = null;
-let mapActive = false;
-// Video position in time
-var videoPosition = 0;
+let mapActive = false; // Stato di pad8
+let videoPosition = 0; // Posizione del video
+let pad8 = document.getElementById('pad8'); // Assumendo che pad8 abbia id 'pad8'
+
+// Funzione per disattivare tutti i pad (escluso pad8)
+function deactivateAllPads(excludePad8 = false) {
+    document.querySelectorAll(".pad").forEach(function(pad) {
+        if (!excludePad8 || pad !== pad8) {
+            pad.classList.remove('active'); // Rimuove la classe 'active' da tutti i pad
+        }
+    });
+    if (!excludePad8) {
+        activeElement = null;
+    }
+}
+
 document.querySelectorAll(".pad").forEach(function(pad, index) {
     pad.addEventListener("click", function() {
-        if (activeElement) {
-            activeElement.classList.remove('active');
-            // Rimuove la classe 'active' dall'elemento attivo
-            if(activeElement === 'pad8') {
-                
+        if (pad === pad8) {
+            // Se clicchi su pad8
+            if (mapActive) {
+                // Se è già attivo, disattivalo e disattiva tutti gli altri pad
+                pad8.classList.remove('active');
                 mapActive = false;
-            }
-        }
-        if (activeElement === pad) {
-            activeElement = null; // Nessun elemento attivo
-        } else {
-            pad.classList.add('active'); // Aggiunge la classe 'active' all'elemento cliccato
-            activeElement = pad; // Imposta l'elemento cliccato come attivo
-            if(activeElement === 'pad8') {
+                deactivateAllPads(); // Disattiva anche gli altri pad
+            } else {
+                // Altrimenti attivalo e disattiva tutti gli altri pad
+                pad8.classList.add('active');
                 mapActive = true;
-                
+                deactivateAllPads(true); // Disattiva tutti gli altri pad ma non pad8
+                activeElement = pad8;
             }
-            if(mapActive) {
-          
-            } else { 
-                videoPosition = lampPosition[index];
+        } else {
+            // Se clicchi su un pad diverso da pad8 (da 1 a 7)
+            if (mapActive) {
+                // Se pad8 è attivo, non disattivarlo, ma attiva il nuovo pad e chiama la funzione 'salvatore'
+                if (activeElement !== pad) {
+                    // Attiva il nuovo pad solo se non è già attivo
+                    if (activeElement && activeElement !== pad8) {
+                        // Disattiva il vecchio pad attivo se non è pad8
+                        activeElement.classList.remove('active');
+                    }
+                    pad.classList.add('active');
+                    activeElement = pad; // Imposta il nuovo pad come attivo
+                    midiConnectionFunction(); // Funzione da eseguire per fare la mappatura midi del bottone
+                }
+            } else {
+                // Se pad8 non è attivo, attiva solo un pad alla volta
+                if (activeElement) {
+                    activeElement.classList.remove('active');
+                }
+                pad.classList.add('active');
+                activeElement = pad;
+                videoPosition = lampPosition[index]; // Aggiorna la posizione del video in base all'indice del pad
             }
-
-           
         }
     });
 });
+
+
+
+
+
 
             //SPACEBAR TO START VIDEO
             document.addEventListener('keydown', function(event) {
@@ -360,30 +308,6 @@ document.querySelectorAll(".pad").forEach(function(pad, index) {
                 }
             });
 
-            // Funzione per estrarre i frame dal video
-            function extractFramesFromVideo(video) {
-                var duration = video.duration;  // Durata totale del video
-                var fps = 25;  // Frame per secondo (modificabile in base al frame rate desiderato)
-                var interval = 1 / fps;  // Intervallo tra i frame
-
-                video.currentTime = 0;  // Inizia dal tempo zero
-
-                video.addEventListener('seeked', function onSeeked() {
-                    // Disegna il frame corrente su canvas
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    var frameData = canvas.toDataURL();  // Ottieni il frame come base64
-                    videoFrames.push(frameData);  // Aggiungi il frame all'array
-
-                    if (video.currentTime < duration) {
-                        // Avanza al prossimo frame
-                        video.currentTime += interval;
-                    } else {
-                        // Rimuovi il listener quando il video è finito
-                        video.removeEventListener('seeked', onSeeked);
-                        console.log('Estrazione frame completata', videoFrames);
-                    }
-                });
-            }
 
 
         });
@@ -459,6 +383,7 @@ let lampPosition = new Array(7);
 
     navigator.permissions.query({ name: "midi", sysex: true }).then((result) => {
     if (result.state === "granted") {
+        alert('MIDI Connection Allowed')
     } else if (result.state === "prompt") {
         alert('Allow MIDI Connection')
     }
@@ -495,7 +420,7 @@ let lampPosition = new Array(7);
     // Get lists of available MIDI controllers
     const inputs = access.inputs.values();
     const outputs = access.outputs.values();
-
+    
     access.onstatechange = (event) => {
         // Print information about the (dis)connected MIDI controller
         console.log(event.port.name, event.port.manufacturer, event.port.state);
@@ -512,10 +437,9 @@ let lampPosition = new Array(7);
                 midiToggle.classList.toggle('on');
             }, 100);
 
-            if(msg.data[1]===24 && msg.data[2]>0){
-               
-                    let salvatore = document.getElementById('pad1')
-                    salvatore.click();
+            if(msg.data[1]===24 && msg.data[2]>0){               
+                    let pad1 = document.getElementById('pad1')
+                    pad1.click();
                 }
            
         };
