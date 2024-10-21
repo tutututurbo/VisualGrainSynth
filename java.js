@@ -159,6 +159,20 @@ var videoElement = document.getElementById('videoElement');
    // Call initVideo to start everything
    // initVideo();
 
+document.querySelector('input[type="file"]').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('file', file);  // Mettiamo il video nella lettera
+
+    // Inviamo la lettera (AJAX) al cuoco (Flask)
+    fetch('/upload', {
+        method: 'POST',
+        body: formData
+    }).then(response => response.json())
+      .then(data => {
+          console.log('Frames saved:', data.frames_saved);  // Riceviamo la risposta del cuoco
+      });
+});
 
 //#########################################################
 
