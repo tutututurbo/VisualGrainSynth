@@ -1,3 +1,4 @@
+
 from flask import Flask, request, jsonify, send_file
 import os
 import cv2
@@ -10,6 +11,8 @@ if not os.path.exists(output_dir):
 
 # Funzione per estrarre frame
 def extract_frames(video_path):
+
+
     for file in os.listdir(output_dir):
         file_path = os.path.join(output_dir, file)
         if os.path.isfile(file_path):
@@ -22,11 +25,13 @@ def extract_frames(video_path):
     if not video_capture.isOpened():
         return jsonify({'error': 'Errore nel caricamento del video con OpenCV'}), 500
 
+
     frame_count = 0
     while video_capture.isOpened():
         ret, frame = video_capture.read()
         if not ret:
             break
+
         frame_filename = os.path.join(output_dir, f'frame_{frame_count}.jpg')
         cv2.imwrite(frame_filename, frame)
         frame_count += 1
@@ -41,10 +46,12 @@ def upload_video():
 
     video = request.files['video']
     video_path = os.path.join('videos', video.filename)
+
     if not os.path.exists('videos'):
         os.makedirs('videos')
     
     video.save(video_path)
+
     num_frames = extract_frames(video_path)
 
     return jsonify({'message': f'Extracted {num_frames} frames from {video.filename}'})
@@ -57,3 +64,4 @@ def get_port():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
+
