@@ -10,8 +10,8 @@
     <div class="container">
         <div class="column" id="column_left">
             <div class="midiToggle"></div>
-            <div class="pad" id="pad8"></div>
             <div id="padPanel">
+                <div class="pad" id="pad8"><span>Map</span></div>
                 <div class="row">
                     <div class="row padRow">
                         <div class="pad" id="pad1"><span>1</span></div>
@@ -36,15 +36,9 @@
         <div class="center-column">
             <div class="center_box_container">
                 <div class="center-box">
-                    <form class="box" method="post" action="/upload" enctype="multipart/form-data">
-                        <div class="box__input">
-                            <input class="box__file" type="file" name="files[]" id="file" accept="video/*" />
-                            <label for="file"><strong>Drag it here</strong></label>
-                        </div>
-                        <div class="box__uploading">Uploading…</div>
-                        <div class="box__success">Done!</div>
-                        <div class="box__error">Error! <span></span>.</div>
-                    </form>
+                    <div id="videoplayer">
+                        <img id="video_frame" src="/frames/frame_0.jpg" alt="Video Frame" width="680" height="410">
+                    </div>
                 </div>
             </div>
             
@@ -117,9 +111,20 @@
                 </div>
             </div>
         </div>
-        <div class="column" id="column_right"></div>
+        <div class="column" id="column_right">
+            <div class="upload">
+                <form class="box" method="post" action="/upload" enctype="multipart/form-data">
+                    <div class="box__input">
+                        <input class="box__file" type="file" name="files[]" id="file" accept="video/*" />
+                    </div>
+                    <div class="box__uploading">Uploading…</div>
+                    <div class="box__success">Done!</div>
+                    <div class="box__error">Error! <span></span>.</div>
+                </form>
+            </div>
+        </div>
     </div>
-    <script type="text/javascript" src="jquery-3.7.1.js"></script>
-    <script type="text/javascript" src="java.js"></script>
+    <script type="text/javascript" src="/jquery-3.7.1.js"></script>
+    <script type="text/javascript" src="/java.js"></script>
 </body>
 </html>
