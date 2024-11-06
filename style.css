@@ -402,6 +402,7 @@ body {
     font-size: 36px;
     color: #b8860b; /* Colore di fallback dorato */
     background: linear-gradient(45deg, #f7d794, #f9a825, #c7881d, #b6861b, #ffc107);
+    background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: bold;

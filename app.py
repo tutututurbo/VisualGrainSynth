@@ -2,7 +2,14 @@ from flask import Flask, request, jsonify
 import os
 import cv2
 
+from flask_cors import CORS  # Importa la libreria CORS
+
 app = Flask(__name__)
+
+# Abilita CORS per tutte le route
+CORS(app, origins=["http://127.0.0.1:5500"])
+
+
 
 # Cartella in cui salvare i frame
 output_dir = "frames"

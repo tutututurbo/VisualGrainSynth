@@ -1,11 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-
+  
 //--------------------- VIDEO -------------------------
 const $input = document.querySelector('.box__file');
 var videoDuration = 0; // Duration of the video
 let videoElement = document.getElementById('videoElement');
+const numeroDiFrame = 0; // Variabile per immagazzinare il numero di frame estratti
+let isUploading = false; // Flag per evitare invii multipli
 
-$input.addEventListener('change', function(e) {
+  // Funzione che INVIA il video al server Python
+  $input.addEventListener('change', function(e) {
     const files = e.target.files;
     if (files.length > 0) {
         const file = files[0];
@@ -37,7 +40,10 @@ $input.addEventListener('change', function(e) {
     }
 });
 
+
+/*
 function loadVideo(videoBuffer) {
+  
     const videoBlob = new Blob([videoBuffer], { type: 'video/mp4' }); // Aggiungi tipo MIME per MP4
     const videoUrl = URL.createObjectURL(videoBlob);
     
@@ -57,7 +63,7 @@ function loadVideo(videoBuffer) {
         console.log('Durata del video:', videoDuration);
     });
 }
-
+*/
 //SPACEBAR TO START/PAUSE VIDEO
 document.addEventListener('keydown', function(event) {
     if (event.code === 'Space' && videoElement) {
@@ -74,12 +80,13 @@ document.addEventListener('keydown', function(event) {
 // Update the video start and end times based on knob angles
 function updateVideoTime(knobIndex) {
     const lamp1 = document.querySelectorAll('.lamp')[0]; // Seleziona lamp1
+    // Al posto di 270, usa la durata del video in frames.
     
     if (knobIndex === 0 && !lamp1.classList.contains('on')) {
         // knob1 controls the start time, but only if lamp1 is NOT on
         startVideoTime = (angles[0] / 270) * videoDuration;
         console.log('Knob 1 (Start):', startVideoTime, 'seconds');
-        updateVideoFrame(startVideoTime); // Visualizza il frame corrispondente
+      //  updateVideoFrame(startVideoTime); // Visualizza il frame corrispondente
     } else if (knobIndex === 0 && lamp1.classList.contains('on')) {
         console.log('Lamp 1 is ON. Start time will not be updated.');
     }
@@ -100,11 +107,14 @@ function updateVideoTime(knobIndex) {
 }
 
 
-const frameIndexMax = 217;
+const frameIndexMax = 374; //Numero di frame estratti
+
 // Funzione per aggiornare il frame in base all'angolo del knob
 function updateFrameFromKnob(degrees) {
-    // Calcola il frameIndex usando la proporzione
-    const frameIndex = Math.floor((degrees / maxangle) * (frameIndexMax - 1));
+
+  
+    const frameIndex = Math.floor((degrees / maxangle) * (frameIndexMax - 1));  // Calcola il frameIndex usando la proporzione
+    
     // Imposta il percorso dell'immagine corrispondente al frame
     document.getElementById("video_frame").src = `/frames/frame_${frameIndex}.jpg`;
 }
@@ -228,7 +238,9 @@ document.addEventListener('touchend', function() {
 let activeElement = null;  // Variabile per tenere traccia dell'elemento attivo
 let mapActive = false; // Stato di pad8 (Map pad)
 let videoPosition = 0; // Posizione del video
-let pad8 = document.getElementById('pad8'); 
+let pad8 = document.getElementById('pad8');  // Seleziona pad8, il pad che mappa i tasti MIDI
+let padManual = document.getElementById('padManual');  // Seleziona pad7, il pad che attiva la modalità manuale
+
 
 // Funzione per disattivare tutti i pad (escluso pad8)
 function deactivateAllPads(excludePad8 = false) {
@@ -245,6 +257,7 @@ function deactivateAllPads(excludePad8 = false) {
 document.querySelectorAll(".pad").forEach(function(pad, index) {
     pad.addEventListener("click", function() {
         if (pad === pad8) {
+            alert('Mappatura MIDI attivata');
             // Se clicchi su pad8
             if (mapActive) {
                 // Se è già attivo, disattivalo e disattiva tutti gli altri pad
@@ -262,6 +275,8 @@ document.querySelectorAll(".pad").forEach(function(pad, index) {
             // Se clicchi su un pad diverso da pad8 (da 1 a 7)
             if (mapActive) {
                 // Se pad8 è attivo, non disattivarlo, ma attiva il nuovo pad e chiama la funzione 'salvatore'
+                
+                
                 if (activeElement !== pad) {
                     // Attiva il nuovo pad solo se non è già attivo
                     if (activeElement && activeElement !== pad8) {
@@ -273,13 +288,18 @@ document.querySelectorAll(".pad").forEach(function(pad, index) {
                     midiConnectionFunction(pad); // Funzione da eseguire per fare la mappatura midi del bottone
                 }
             } else {
+               
+                videoPosition = parseInt((lampPosition[index-1])/500 * frameIndexMax, 10); // Aggiorna la posizione del video in base all'indice del pad e cast a integer
+                document.getElementById("video_frame").src = `/frames/frame_${videoPosition}.jpg`;
+                //alert('Video Position: ' + videoPosition);
+                
                 // Se pad8 non è attivo, attiva solo un pad alla volta
                 if (activeElement) {
                     activeElement.classList.remove('active');
                 }
                 pad.classList.add('active');
                 activeElement = pad;
-                videoPosition = lampPosition[index]; // Aggiorna la posizione del video in base all'indice del pad
+        
             }
         }
     });
@@ -316,7 +336,7 @@ lampButtons.forEach((button, index) => {
 }); 
 
 // Map the position of the 7 indicators on the preview display
-let lampPosition = new Array(7);
+let lampPosition = new Array(7).fill(0);
 const previewDisplay = document.getElementById('preview_display');
 const line = document.querySelector('.line');
 previewDisplay.addEventListener('click', function (event) {
@@ -324,13 +344,22 @@ previewDisplay.addEventListener('click', function (event) {
     const x = event.clientX - rect.left;
     lampPosition[6] = Math.max(0, Math.min(x, previewDisplay.offsetWidth - line.offsetWidth));
     line.style.left = lampPosition[6] + 'px';
+    videoPosition = parseInt((lampPosition[6])/500 * frameIndexMax, 10);
+
+
+  if (padManual.classList.contains('active')) {
+        document.getElementById("video_frame").src = `/frames/frame_${videoPosition}.jpg`;
+    
+  }
+
 });
+
 
 //---------------- MIDI -------------------
 let midiConnectionCounter = true;
 navigator.permissions.query({ name: "midi", sysex: true }).then((result) => {
     if (result.state === "granted" && midiConnectionCounter) {
-
+      //  alert('MIDI Connection Allowed');
     } else if (result.state === "prompt") {
         alert('Allow MIDI Connection');
     }

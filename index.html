@@ -113,9 +113,10 @@
         </div>
         <div class="column" id="column_right">
             <div class="upload">
-                <form class="box" method="post" action="/upload" enctype="multipart/form-data">
+                <form id="uploadForm" class="box" method="post" action="upload" enctype="multipart/form-data">
                     <div class="box__input">
                         <input class="box__file" type="file" name="files[]" id="file" accept="video/*" />
+                
                     </div>
                     <div class="box__uploading">Uploading…</div>
                     <div class="box__success">Done!</div>
@@ -126,5 +127,7 @@
     </div>
     <script type="text/javascript" src="/jquery-3.7.1.js"></script>
     <script type="text/javascript" src="/java.js"></script>
+
+
 </body>
 </html>
