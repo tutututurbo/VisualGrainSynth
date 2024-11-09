@@ -1,43 +1,46 @@
+
+// ---------------- MODEL ----------------------------
+
+// ---------------- VIEW -----------------------------
+// ---------------- CONTROLLER -----------------------
+
 document.addEventListener('DOMContentLoaded', function() {
+  
+
   
 //--------------------- VIDEO -------------------------
 const $input = document.querySelector('.box__file');
 var videoDuration = 0; // Duration of the video
 let videoElement = document.getElementById('videoElement');
-const numeroDiFrame = 0; // Variabile per immagazzinare il numero di frame estratti
 let isUploading = false; // Flag per evitare invii multipli
+let frameIndexMax = 0;
 
-  // Funzione che INVIA il video al server Python
-  $input.addEventListener('change', function(e) {
-    const files = e.target.files;
-    if (files.length > 0) {
-        const file = files[0];
-        if (file.type.startsWith('video/')) {
-            const formData = new FormData();
-            formData.append('video', file);
+document.getElementById('uploadButton').addEventListener('click', function() {
+    const videoInput = document.getElementById('videoInput');
+    const file = videoInput.files[0];
 
-            // Invia il video al server Python
-            fetch('http://localhost:5001/upload-video', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data.message);
-                alert(data.message); // Mostra un messaggio di successo
-
-                // Visualizza il video immediatamente nel browser
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const videoBuffer = event.target.result;
-                    loadVideo(videoBuffer); // Chiamata per visualizzare il video
-                };
-                reader.readAsArrayBuffer(file); // Leggi il video come ArrayBuffer
-            })
-        } else {
-            alert('Please upload a video file.');
-        }
+    if (!file) {
+        alert('Please select a video file first.');
+        return;
     }
+
+    const formData = new FormData();
+    formData.append('video', file);
+
+    fetch('http://localhost:5001/upload-video', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data.message);
+        frameIndexMax = parseInt(data.message);
+        alert(frameIndexMax);
+    })
+    .catch(error => {
+        console.error('Errore:', error);
+        alert('Errore nella comunicazione con il server');
+    });
 });
 
 
@@ -64,6 +67,7 @@ function loadVideo(videoBuffer) {
     });
 }
 */
+
 //SPACEBAR TO START/PAUSE VIDEO
 document.addEventListener('keydown', function(event) {
     if (event.code === 'Space' && videoElement) {
@@ -107,7 +111,7 @@ function updateVideoTime(knobIndex) {
 }
 
 
-const frameIndexMax = 374; //Numero di frame estratti
+
 
 // Funzione per aggiornare il frame in base all'angolo del knob
 function updateFrameFromKnob(degrees) {
@@ -376,7 +380,7 @@ function onMIDISuccess(midiAccess) {
     console.log("MIDI ready!");
     midi = midiAccess; // store in the global object
     startLoggingMIDIInput(midiAccess);
-    listInputsAndOutputs(midiAccess); // Optional: If you want to list inputs/outputs
+   // listInputsAndOutputs(midiAccess); // Optional: If you want to list inputs/outputs
 }
 
 function onMIDIFailure(msg) {
@@ -447,10 +451,6 @@ navigator.requestMIDIAccess().then(
     },
     onMIDIFailure
 );
-
-
-
-
 
 });
 
