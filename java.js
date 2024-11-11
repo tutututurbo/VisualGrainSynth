@@ -70,7 +70,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var currentKnob = null;
     var lastY = 0; // Track the last Y position
     var lastAngle = 0; // Keep track of the last angle
-    
+    const maxPosition = 500; // Length in pixel of the previewDisplay
+
     // Function to move the knob
     function moveKnob(knobIndex, newAngle) {
         if (newAngle >= minangle && newAngle <= maxangle) {
@@ -84,25 +85,41 @@ document.addEventListener('DOMContentLoaded', function() {
         var knob = knobs[knobIndex];
         knob.style.transform = 'rotate(' + angle + 'deg)';
         
-        if(knobIndex === 0){
+        if(knobIndex === 0 && editModeActive){
+ 
             const lamps1 = document.querySelectorAll('.lamp');
-            
-            lamps1.forEach((lamp, index) => {
-                
-                if (lamps1[index].classList.contains('on')) {
-                        // Mappa l'angolo da 0 a 270 gradi a una posizione orizzontale da 0px a 500px
-                        const maxPosition = 500;
-                        lampPosition[index] = (angles[0] / 270) * maxPosition; // Calcola la posizione orizzontale
+            if(activeLamp.length==0){
     
-                        // Trova la small_line e aggiorna la sua posizione
-                        const smallLine = document.querySelectorAll('.small_line'); // Assicurati che la classe sia corretta
-                    if (smallLine[index]) {
-                        smallLine[index].style.left = lampPosition[index] + 'px'; // Imposta la posizione orizzontale
-                    }         
-                } 
-            });
-        }      
+                lampPosition[6] = (angles[0] / 270) * maxPosition;
+                line.style.left = lampPosition[6] + 'px';
+                videoPosition = parseInt((lampPosition[6])/500 * frameIndexMax, 10);
+            }else{
+                
+                lamps1.forEach((lamp, index) => {
+                    
+                    if (lamps1[index].classList.contains('on')) {
+                            // Mappa l'angolo da 0 a 270 gradi a una posizione orizzontale da 0px a 500px
+                   
+                            lampPosition[index] = (angles[0] / 270) * maxPosition; // Calcola la posizione orizzontale
+        
+                            // Trova la small_line e aggiorna la sua posizione
+                            const smallLine = document.querySelectorAll('.small_line'); // Assicurati che la classe sia corretta
+                        if (smallLine[index]) {
+                            smallLine[index].style.left = lampPosition[index] + 'px'; // Imposta la posizione orizzontale
+                        }         
+                    } 
+                });
+            }
+
+
+        }  else {
+
+            // Qui non siamo più in edit mode: il knob ora sarà assegnato all'effetto speciale live
+
+        }    
     }
+
+
     
     // Calculate the new angle based on mouse position
     function calculateAngleDelta(lastY, currentY, currentAngle) {
@@ -192,6 +209,62 @@ document.addEventListener('DOMContentLoaded', function() {
         stopDrag();
     });
     
+
+    // --------------------- SWITCH ------------------
+
+    let editModeActive = true; 
+   
+     // Funzione per gestire l'accensione e lo spegnimento della levetta e del LED
+     function toggleSwitch() {
+        const switchElement = document.getElementById('editMode');
+        const led = document.getElementById('led');
+        switchElement.classList.toggle('off');
+        led.classList.toggle('off');
+        editModeActive = !editModeActive; // Inverti lo stato di editModeActive
+        deactivateAllPads();
+
+
+
+    
+    if (!editModeActive) {
+        // Rimuovi tutti i lampButton dal DOM e li memorizza per il ripristino
+        // lampButtons.forEach(button => {
+        //     button.remove();
+        // });
+        // lamps.forEach(button => {
+        //     button.remove();
+        // });
+
+
+    } else {
+        // Reinserisce tutti i lampButton nel loro contenitore originale
+        // lampButtons.forEach(button => {
+       
+        //     document.getElementsByClassName("row button-row").appendChild(button);
+        // });
+        //   lamps.forEach(button => {
+        //     document.getElementsByClassName("row lamp-row").appendChild(button);
+        // });
+
+
+
+    }
+  
+    }
+
+
+    // Aggiunge un evento per ascoltare la pressione del tasto "E"
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'e' || event.key === 'E') { // Verifica se il tasto è "E" o "e"
+            toggleSwitch();
+        }
+    });
+    // Funzione per gestire l'accensione e lo spegnimento di un interruttore
+
+    document.getElementById('editMode').addEventListener('click', function() {
+        toggleSwitch(this);
+    });
+
     
     //---------------- PAD BUTTONS -------------------
     // Funzione per cambiare il colore di sfondo a rosso acceso
@@ -206,32 +279,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     document.querySelectorAll(".pad").forEach(function (pad, index) {
         pad.addEventListener("click", function () {
+
+            deactivateAllPads();
             // Quando viene cliccato pad8, attiva/disattiva la modalità mappatura MIDI
-            if (pad === pad8) {
-                if (mapActive) {
-                    pad8.classList.remove('active');
-                    mapActive = false;
-                    deactivateAllPads();
-                } else {
-                    pad8.classList.add('active');
-                    mapActive = true;
-                    deactivateAllPads(true);
-                    activeElement = pad8;
-                }
-            } else {
-                // Quando si clicca un pad diverso da pad8
-                if (mapActive) {
-                    if (activeElement !== pad) {
-                        if (activeElement && activeElement !== pad8) {
-                            activeElement.classList.remove('active');
-                        }
-                        pad.classList.add('active');
-                        activeElement = pad;
-                        midiConnectionFunction(pad);
+            if (editModeActive) {
+                if (activeElement !== pad) {
+                    if (activeElement && activeElement !== pad8) {
+                        activeElement.classList.remove('active');
                     }
+                    midiConnectionFunction(pad);
+                }
                 } else {
-                    videoPosition = parseInt((lampPosition[index - 1]) / 500 * frameIndexMax, 10);
-                    currentGrainLength = Math.max(1, grainLength[index - 1]); // Assicurati che grainLength sia almeno 1
+                    videoPosition = parseInt((lampPosition[index]) / 500 * frameIndexMax, 10);
+                    currentGrainLength = Math.max(1, grainLength[index]); // Assicurati che grainLength sia almeno 1
                     
                     // Avvia il loop dei frame
                     startFrameLoop(videoPosition, currentGrainLength);
@@ -240,10 +300,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (activeElement) {
                         activeElement.classList.remove('active');
                     }
-                    pad.classList.add('active');
-                    activeElement = pad;
+                   
+              
                 }
-            }
+                pad.classList.add('active');
+                activeElement = pad;
+        
+            
         });
     });
     
@@ -265,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (currentFrame >= startFrame + grainLength) {
                 currentFrame = startFrame; // Ritorna al primo frame del grain
             }
-        }, 33); // Intervallo in millisecondi (puoi regolarlo per la velocità di visualizzazione)
+        }, 1); // Intervallo in millisecondi (puoi regolarlo per la velocità di visualizzazione)
     }
     
     // Funzione per interrompere il ciclo dei frame
@@ -275,16 +338,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Assicurati di fermare il loop dei frame quando necessario, ad esempio se si clicca un altro pad
-    function deactivateAllPads(excludePad8 = false) {
+    function deactivateAllPads() {
         document.querySelectorAll(".pad").forEach(function (pad) {
-            if (!excludePad8 || pad !== pad8) {
+            
                 pad.classList.remove('active');
-            }
+            
         });
-        if (!excludePad8) {
+     
             activeElement = null;
             stopFrameLoop(); // Ferma il loop quando tutti i pad vengono disattivati
-        }
+    
     }
     
     // Funzione per avviare la mappatura MIDI
@@ -298,13 +361,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // Seleziona tutti i bottoni, i lamp e le small_line
     const lampButtons = document.querySelectorAll('.button');
     const lamps = document.querySelectorAll('.lamp');
+
     const movablePoint = document.querySelectorAll('.movablePoint');
     const midiToggle = document.querySelector('.midiToggle');
     let activeLamp = [];  // Array che tiene traccia dell'indice del lamp attivo
 
+    
     lampButtons.forEach((button, index) => {
         button.addEventListener('click', () => {
             // Spegni tutti i lamp tranne quello selezionato
+            if(editModeActive){
+
             lamps.forEach((lamp, lampIndex) => {
                 if (lampIndex !== index) {
                     lamp.classList.remove('on'); // Spegni i lampi non selezionati
@@ -326,7 +393,9 @@ document.addEventListener('DOMContentLoaded', function() {
             movablePoint[index].style.visibility = 'visible';
 
             console.log('Active lamps:', activeLamp); // Visualizza l'array activeLamps per il debug
+        }
         });
+        
     });
     
     // Map the position of the 7 indicators on the preview display
@@ -336,12 +405,16 @@ document.addEventListener('DOMContentLoaded', function() {
     previewDisplay.addEventListener('click', function (event) {
         const rect = previewDisplay.getBoundingClientRect();
         const x = event.clientX - rect.left;
+        
         lampPosition[6] = Math.max(0, Math.min(x, previewDisplay.offsetWidth - line.offsetWidth));
+        
         line.style.left = lampPosition[6] + 'px';
-        videoPosition = parseInt((lampPosition[6])/500 * frameIndexMax, 10);    
-      if (padManual.classList.contains('active')) {
-            document.getElementById("video_frame").src = `/frames/frame_${videoPosition}.jpg`;      
-      }  
+        
+        videoPosition = parseInt((lampPosition[6])/500 * frameIndexMax, 10);  
+        document.getElementById("video_frame").src = `/frames/frame_${videoPosition}.jpg`; 
+        if (!editModeActive && padManual.classList.contains('active')) {
+           startFrameLoop(videoPosition, currentGrainLength);
+        }     
     });
     
 

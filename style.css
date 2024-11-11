@@ -118,12 +118,115 @@ body {
     border-radius: 15%;
 }
 
-#pad8 {
-    position: relative;
-    top: 15px;
-    left: 50px;
-    width: 100px;
+ /* Contenitore generale */
+ .switchContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* LED */
+.led {
+    width: 20px;
     height: 20px;
+    background-color: #4d0000; /* Spento (rosso scuro) */
+    border-radius: 50%;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Stato "on" del LED */
+.led.on {
+    background-color: #ff0000; /* Rosso acceso */
+    box-shadow: 0 0 10px #ff0000; /* Glow effetto accensione */
+}
+/* Contenitore generale */
+.switchContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* LED */
+.led {
+    width: 5px;
+    height: 5px;
+    background-color:#ff0000; /* Spento (rosso scuro) */
+    box-shadow: 0 0 10px #ff0000; /* Glow effetto accensione */
+    border-radius: 50%;
+    
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Stato "on" del LED */
+.led.off {
+    background-color:  #4d0000; /* Rosso acceso */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+    
+}
+
+/* Levetta orizzontale */
+.switchLever {
+    position: relative;
+    width: 30px;
+    height: 10px;
+    background: radial-gradient(circle at center, #8b4513, #5a2e0e);
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: inset 0px 10px 15px rgba(0, 0, 0, 0.3),
+                inset 0px -5px 10px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 5px;
+}
+
+/* Pallina della levetta   */
+.switchLever::after {
+    content: "";
+    position: absolute;
+    top : 4px;
+    left: 0px;
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle at top, #f4d77a, #c6a647);
+    border-radius: 50%;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.5),
+                0px 5px 10px rgba(0, 0, 0, 0.4);
+}
+              
+
+/* Gambo della levetta 
+.switchLever::before {
+    content: "";
+    position: absolute;
+    left: -10px;
+    top: 10px; /* Posizionamento centrato rispetto alla pallina e allo sfondo 
+    width: 3px;
+            height: 0px;
+            border-left: 3px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 10px solid #c6a647; /* Colore della parte superiore 
+            border-radius: 30px;
+    rotate: 90deg; 
+    background: linear-gradient(to bottom, #c6a647, #8b4513);
+    border-radius: 3px;
+    box-shadow: inset 0px 0px 3px rgba(0, 0, 0, 0.5);
+    transform-origin: center; /* Punto di rotazione al centro della levetta 
+    transition: transform 0.3s ease;
+}*/
+
+/* Stato "on" della levetta */
+.switchLever.off::before {
+    transform: scale(1, -1); /* Sposta la pallina verso destra */
+}
+
+/* Stato "on" del gambo */
+.switchLever.off::after {
+    transform: translateX(26px) ; /* Sposta il gambo e lo inclina */
 }
 
 /* Contenitore centrale */
@@ -310,7 +413,7 @@ body {
 }
 
 #knob2 {
-    transform: rotate(270deg);
+    transform: rotate(0deg);
 }
 
 .knob:before {

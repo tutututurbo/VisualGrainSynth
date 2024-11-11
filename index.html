@@ -10,8 +10,16 @@
     <div class="container">
         <div class="column" id="column_left">
             <div class="midiToggle"></div>
+            <div class="switchContainer">
+                <!-- LED -->
+                <div class="led" id="led"></div>
+                
+                <!-- Levetta -->
+                <div class="switchLever" id="editMode" onclick="toggleSwitch(this)"></div>
+            </div>
+        
+
             <div id="padPanel">
-                <div class="pad" id="pad8"><span>Map</span></div>
                 <div class="row">
                     <div class="row padRow">
                         <div class="pad" id="pad1"><span>1</span></div>
