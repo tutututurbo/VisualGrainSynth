@@ -3,9 +3,11 @@ document.addEventListener('DOMContentLoaded', function() {
     //--------------------- VIDEO -------------------------
     const $input = document.querySelector('.box__file');
     let videoElement = document.getElementById('videoElement');
-    let frameIndexMax = 0;
-    let videoPosition = 0; // Frame of the current video position
+    let videoPosition = 0; // Frame of the current video position for each grain
     
+    // Retrieve the stored frameIndexMax value, or default to 0
+    let frameIndexMax = parseInt(localStorage.getItem('frameIndexMax')) || 0;
+
     document.getElementById('uploadButton').addEventListener('click', function() {
         const videoInput = document.getElementById('videoInput');
         const file = videoInput.files[0];
@@ -26,25 +28,16 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             console.log(data.message);
             frameIndexMax = parseInt(data.message);
-            alert(frameIndexMax);
+            
+            // Save frameIndexMax to localStorage
+            localStorage.setItem('frameIndexMax', frameIndexMax);
+            
         })
         .catch(error => {
             console.error('Errore:', error);
             alert('Errore nella comunicazione con il server');
         });
     });
-    
-    // //SPACEBAR TO START/PAUSE VIDEO
-    // document.addEventListener('keydown', function(event) {
-    //     if (event.code === 'Space' && videoElement) {
-    //         event.preventDefault();
-    //         if (videoElement.paused) {
-    //             videoElement.play();
-    //         } else {
-    //             videoElement.pause();
-    //         }
-    //     }
-    // });
     
     // Funzione per aggiornare il frame in base all'angolo del knob
     function updateFrameFromKnob(degrees) {   
@@ -56,14 +49,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Funzione per gestire l'aggiornamento del knob (simulazione dell'input)
-    document.getElementById("knob1").addEventListener("mousedown", function(event) {
-        // Supponendo che l'angolo sia in gradi da 0 a 270
-        updateFrameFromKnob(angles[0]); // Aggiorna il frame corrispondente
-    })
+    // document.getElementById("knob1").addEventListener("mousedown", function(event) {
+    //     // Supponendo che l'angolo sia in gradi da 0 a 270
+    //     updateFrameFromKnob(angles[0]); // Aggiorna il frame corrispondente
+    // })
     
     // --------------------- KNOBS ---------------------------
     var knobs = document.getElementsByClassName('knob');
     var angles = [0, 0]; // Store angles for each knob
+    var anglesStart = new Array(7).fill(0); // Keeps track of the angles related to the start of the grains
+    var anglesEnd = new Array(7).fill(0); // Keeps track of the angles related to the end of the grains
     var minangle = 0;
     var maxangle = 270;
     var isDragging = false;
@@ -71,6 +66,14 @@ document.addEventListener('DOMContentLoaded', function() {
     var lastY = 0; // Track the last Y position
     var lastAngle = 0; // Keep track of the last angle
     const maxPosition = 500; // Length in pixel of the previewDisplay
+
+    // Function to load angles when activating a lamp
+    function loadLampAngles(lampIndex, currentKnob) {
+        angles[0] = anglesStart[lampIndex];
+        angles[1] = anglesEnd[lampIndex];
+        lastAngle = angles[currentKnob]; // Reset lastAngle to current lamp's angle to prevent carryover
+    }
+
 
     // Function to move the knob
     function moveKnob(knobIndex, newAngle) {
@@ -88,24 +91,25 @@ document.addEventListener('DOMContentLoaded', function() {
         if(knobIndex === 0 && editModeActive){
  
             const lamps1 = document.querySelectorAll('.lamp');
-            if(activeLamp.length==0){
-    
+            if(activeLamp[0] === 6){
+                anglesStart[6] = angles[0]; 
                 lampPosition[6] = (angles[0] / 270) * maxPosition;
                 line.style.left = lampPosition[6] + 'px';
-                videoPosition = parseInt((lampPosition[6])/500 * frameIndexMax, 10);
-            }else{
+                document.getElementById('manualWindow').style.left = lampPosition[6] + 'px',
+                videoPosition = parseInt((lampPosition[activeLamp[0]])/500 * frameIndexMax, 10);
+            } else {
                 
                 lamps1.forEach((lamp, index) => {
                     
                     if (lamps1[index].classList.contains('on')) {
                             // Mappa l'angolo da 0 a 270 gradi a una posizione orizzontale da 0px a 500px
-                   
+                            anglesStart[index] = angles[0];
                             lampPosition[index] = (angles[0] / 270) * maxPosition; // Calcola la posizione orizzontale
-        
                             // Trova la small_line e aggiorna la sua posizione
                             const smallLine = document.querySelectorAll('.small_line'); // Assicurati che la classe sia corretta
                         if (smallLine[index]) {
                             smallLine[index].style.left = lampPosition[index] + 'px'; // Imposta la posizione orizzontale
+                            document.getElementById(`window${index + 1}`).style.left = lampPosition[index] + 'px';
                         }         
                     } 
                 });
@@ -126,11 +130,9 @@ document.addEventListener('DOMContentLoaded', function() {
         var deltaY = lastY - currentY; // Invert the change
         var sensitivity = 1; // Sensitivity of angle change
         var newAngle = currentAngle + deltaY * sensitivity;
-
         // Clamp the new angle between the min and max angles
         if (newAngle < minangle) newAngle = minangle;
-        if (newAngle > maxangle) newAngle = maxangle;
-    
+        if (newAngle > maxangle) newAngle = maxangle;  
         return newAngle;
     }
     
@@ -142,7 +144,8 @@ document.addEventListener('DOMContentLoaded', function() {
             lastAngle = angles[currentKnob]; // Store the initial angle of the knob
             // Attach the move and mouseup event listeners to the document for global handling
             updateFrameFromKnob(angles[0]);
-            if (index === 1 && activeLamp.length > 0) {
+            loadLampAngles(activeLamp[0], currentKnob);
+            if (index === 1 && editModeActive) {
                 updateGrainLengthFromKnob(angles[1]);
             }
             document.addEventListener('mousemove', onDrag);
@@ -154,20 +157,51 @@ document.addEventListener('DOMContentLoaded', function() {
 
     
     let grainLength = new Array(7).fill(0); // Number of frames to play for each pad button
-
     // Funzione per aggiornare la lunghezza del grain basata sull'angolo del knob2
-    function updateGrainLengthFromKnob(angle) {
-
-        const maxLength = 500 - lampPosition[activeLamp]; // Intervallo fino a 500px
-        const grainPixels = (angle / 270) * maxLength; // Mappa l'angolo di knob2 nell'intervallo in pixel
-
+    function updateGrainLengthFromKnob(angle) {           
         // Mappa i pixel sui frame totali del video
-        grainLength[activeLamp] = Math.floor((grainPixels / 500) * frameIndexMax);
-        console.log(`Grain length in frames for active lamp ${activeLamp}:`, grainLength[activeLamp]);
-        if (activeElement == null){
-            document.getElementById("video_frame").src = `/frames/frame_${videoPosition + grainLength[activeLamp]}.jpg`;
+        index = activeLamp[0];      
+
+        const maxLength = 500 - lampPosition[index]; // Intervallo fino a 500px
+        const grainPixels = (angle / 270) * maxLength; // Mappa l'angolo di knob2 nell'intervallo in pixel
+        if (index == 6) {
+            document.getElementById('manualWindow').style.width = `${grainPixels}px`;
+        }
+        else {
+            document.getElementById(`window${index + 1}`).style.width = `${grainPixels}px`;
+        }     
+        anglesEnd[index] = angle; 
+        grainLength[index] = Math.floor((grainPixels / 500) * frameIndexMax);
+        document.getElementById("video_frame").src = `/frames/frame_${videoPosition + grainLength[index]}.jpg`;
+        console.log(grainLength[index]);                    
+    }
+
+
+    // Function to show grain window on preview display
+    function showGrainWindow() {
+        const windows = [
+            document.getElementById('window1'),
+            document.getElementById('window2'),
+            document.getElementById('window3'),
+            document.getElementById('window4'),
+            document.getElementById('window5'),
+            document.getElementById('window6')
+        ];
+        const manualWindow = document.getElementById("manualWindow");
+    
+        // Hide all windows initially
+        windows.forEach(win => win.style.display = 'none');
+        manualWindow.style.display = 'none';
+    
+        // Show the correct window based on the active lamp
+        if (activeLamp[0] !== 6) {
+            const activeIndex = activeLamp[0];
+            windows[activeIndex].style.display = 'block'; // Show the relevant window
+        } else {
+            manualWindow.style.display = 'block'; // Show manual window if no lamps are active
         }
     }
+
     
     // Handle dragging
     function onDrag(e) {
@@ -214,18 +248,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let editModeActive = true; 
    
-     // Funzione per gestire l'accensione e lo spegnimento della levetta e del LED
-     function toggleSwitch() {
-        const switchElement = document.getElementById('editMode');
-        const led = document.getElementById('led');
-        switchElement.classList.toggle('off');
-        led.classList.toggle('off');
-        editModeActive = !editModeActive; // Inverti lo stato di editModeActive
-        deactivateAllPads();
-
-
-
-    
+    // Funzione per gestire l'accensione e lo spegnimento della levetta e del LED
+    function toggleSwitch() {
+    const switchElement = document.getElementById('editMode');
+    const led = document.getElementById('led');
+    switchElement.classList.toggle('off');
+    led.classList.toggle('off');
+    editModeActive = !editModeActive; // Inverti lo stato di editModeActive
+    deactivateAllPads();
+  
     if (!editModeActive) {
         // Rimuovi tutti i lampButton dal DOM e li memorizza per il ripristino
         // lampButtons.forEach(button => {
@@ -269,8 +300,6 @@ document.addEventListener('DOMContentLoaded', function() {
     //---------------- PAD BUTTONS -------------------
     // Funzione per cambiare il colore di sfondo a rosso acceso
     let activeElement = null;  // Variabile per tenere traccia dell'elemento attivo
-    let mapActive = false; // Stato di pad8 (Map pad)
-    let pad8 = document.getElementById('pad8');  // Seleziona pad8, il pad che mappa i tasti MIDI
     let padManual = document.getElementById('padManual');  // Seleziona pad7, il pad che attiva la modalità manuale
     
     
@@ -284,7 +313,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Quando viene cliccato pad8, attiva/disattiva la modalità mappatura MIDI
             if (editModeActive) {
                 if (activeElement !== pad) {
-                    if (activeElement && activeElement !== pad8) {
+                    if (activeElement) {
                         activeElement.classList.remove('active');
                     }
                     midiConnectionFunction(pad);
@@ -361,10 +390,9 @@ document.addEventListener('DOMContentLoaded', function() {
     // Seleziona tutti i bottoni, i lamp e le small_line
     const lampButtons = document.querySelectorAll('.button');
     const lamps = document.querySelectorAll('.lamp');
-
     const movablePoint = document.querySelectorAll('.movablePoint');
     const midiToggle = document.querySelector('.midiToggle');
-    let activeLamp = [];  // Array che tiene traccia dell'indice del lamp attivo
+    let activeLamp = [6];  // Array che tiene traccia dell'indice del lamp attivo
 
     
     lampButtons.forEach((button, index) => {
@@ -388,10 +416,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Aggiungi l'indice al array activeLamps
                 activeLamp = [index]; // Solo un lamp può essere attivo, quindi lo sovrascriviamo
             }
-
+            if (activeLamp.length === 0) {
+                activeLamp = [6];
+            }
             // Mostra il movablePoint corrispondente
             movablePoint[index].style.visibility = 'visible';
-
+            showGrainWindow();
+            knobs[0].style.transform = 'rotate(' + anglesStart[activeLamp[0]] + 'deg)';
+            knobs[1].style.transform = 'rotate(' + anglesEnd[activeLamp[0]] + 'deg)';
+            loadLampAngles(activeLamp[0], currentKnob);
+            videoPosition = parseInt((lampPosition[activeLamp[0]])/500 * frameIndexMax, 10);  
+            document.getElementById("video_frame").src = `/frames/frame_${videoPosition}.jpg`; 
             console.log('Active lamps:', activeLamp); // Visualizza l'array activeLamps per il debug
         }
         });
@@ -407,8 +442,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const x = event.clientX - rect.left;
         
         lampPosition[6] = Math.max(0, Math.min(x, previewDisplay.offsetWidth - line.offsetWidth));
-        
         line.style.left = lampPosition[6] + 'px';
+        document.getElementById('manualWindow').style.left = lampPosition[6] + 'px',
         
         videoPosition = parseInt((lampPosition[6])/500 * frameIndexMax, 10);  
         document.getElementById("video_frame").src = `/frames/frame_${videoPosition}.jpg`; 
