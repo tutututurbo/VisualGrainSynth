@@ -451,9 +451,8 @@ body {
     height: 100px;
     width: 2px;
     background-color: #000000;
-    left: 200px; /* Initial position */
-    box-shadow: 1.5px 0.75px 3px 0px black;
-    transition: left 0.1s ease; /* Smooth movement */
+    left: 0px; /* Initial position */
+    box-shadow: 1.5px 0.75px 3px 1px rgb(0, 0, 0);  
 }
 
 
@@ -464,9 +463,30 @@ body {
     width: 2px;
     background-color: #000000;
     left: 0px; /* Initial position */
-    box-shadow: 1.5px 0.75px 3px 0px rgb(0, 0, 0);
+    box-shadow: 1.5px 0.75px 3px 0px rgb(0, 0, 0); 
+}
+
+.small_line, .line {
     transition: left 0.1s ease; /* Smooth movement */
 }
+
+.grainWindow {
+    position: absolute;
+    height: 100px;
+    left: 0;
+    transition: width 0.1s ease;
+    display: none;  /* Hidden by default */
+}
+
+#manualWindow { display: block;
+    background-color: rgba(160, 19, 19, 0.388); }
+#window1 { background-color: #ff583354; }
+#window2 { background-color: #33ff5851; }
+#window3 { background-color: #3358ff5d; }
+#window4 { background-color: #75034469; }
+#window5 { background-color: #ff99335f; }
+#window6 { background-color: #33fff557; }
+
 
 .movablePoint {
     visibility: hidden;
@@ -479,12 +499,18 @@ body {
     top: -18px;
     border-radius: 50%;
     border:  #000000 solid;
-    background-color: transparent;
     left: 0px; /* Initial position */
     transform: translate(-50%);
     box-shadow: 1.5px 0.75px 3px 0px black;
     transition: left 0.1s ease; /* Smooth movement */
 }
+
+#point1 { background-color: #ff583354; }
+#point2 { background-color: #33ff5851; }
+#point3 { background-color: #3358ff5d; }
+#point4 { background-color: #75034469; }
+#point5 { background-color: #ff99335f; }
+#point6 { background-color: #33fff557; }
 
 .pointText {
     position: absolute; /* Posiziona il testo rispetto al cerchio */ /* Sposta il testo di 10px più in alto rispetto al cerchio */
@@ -537,5 +563,3 @@ body {
 .box.is-error .box__error {
     display: block;
 }
-
-
