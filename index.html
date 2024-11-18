@@ -16,9 +16,13 @@
                 
                 <!-- Levetta -->
                 <div class="switchLever" id="editMode" onclick="toggleSwitch(this)"></div>
-            </div>
-        
 
+            </div>
+
+            <select id="midi-devices" onchange="handleDeviceChange()">
+                <option value="">-- Scegli un dispositivo --</option>
+            </select>
+        
             <div id="padPanel">
                 <div class="row">
                     <div class="row padRow">
@@ -111,6 +115,7 @@
                     </div>
                     <div class="row lamp-row">
                         <!-- Lamps -->
+                    
                         <div class="lamp" id="lamp1">1</div>
                         <div class="lamp" id="lamp2">2</div>
                         <div class="lamp" id="lamp3">3</div>

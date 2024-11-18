@@ -199,6 +199,7 @@ document.addEventListener('DOMContentLoaded', function() {
             windows[activeIndex].style.display = 'block'; // Show the relevant window
         } else {
             manualWindow.style.display = 'block'; // Show manual window if no lamps are active
+
         }
     }
 
@@ -252,36 +253,29 @@ document.addEventListener('DOMContentLoaded', function() {
     function toggleSwitch() {
     const switchElement = document.getElementById('editMode');
     const led = document.getElementById('led');
+    const lampElements = document.querySelectorAll('.lamp, .button'); 
     switchElement.classList.toggle('off');
     led.classList.toggle('off');
     editModeActive = !editModeActive; // Inverti lo stato di editModeActive
     deactivateAllPads();
   
     if (!editModeActive) {
-        // Rimuovi tutti i lampButton dal DOM e li memorizza per il ripristino
-        // lampButtons.forEach(button => {
-        //     button.remove();
-        // });
-        // lamps.forEach(button => {
-        //     button.remove();
-        // });
-
-
-    } else {
-        // Reinserisce tutti i lampButton nel loro contenitore originale
-        // lampButtons.forEach(button => {
+               
+        lampElements.forEach(element => {
+            element.style.display = 'none';
+        });
+        
+        } else {
        
-        //     document.getElementsByClassName("row button-row").appendChild(button);
-        // });
-        //   lamps.forEach(button => {
-        //     document.getElementsByClassName("row lamp-row").appendChild(button);
-        // });
+        lampElements.forEach(element => {
+            element.style.display = 'flex';
+      
+        });
 
-
-
+        }
     }
   
-    }
+    
 
 
     // Aggiunge un evento per ascoltare la pressione del tasto "E"
@@ -310,30 +304,35 @@ document.addEventListener('DOMContentLoaded', function() {
         pad.addEventListener("click", function () {
 
             deactivateAllPads();
-            // Quando viene cliccato pad8, attiva/disattiva la modalità mappatura MIDI
+
             if (editModeActive) {
                 if (activeElement !== pad) {
                     if (activeElement) {
                         activeElement.classList.remove('active');
+                        activeElement = null;
                     }
-                    midiConnectionFunction(pad);
+
+                    midiConnectionFunction(pad);   
+                }     
+                          
+            } else {
+
+                videoPosition = parseInt((lampPosition[index]) / 500 * frameIndexMax, 10);
+                currentGrainLength = Math.max(1, grainLength[index]); // Assicurati che grainLength sia almeno 1
+                
+                // Avvia il loop dei frame
+                startFrameLoop(videoPosition, currentGrainLength);
+
+                // Aggiorna la classe 'active' per gestire la selezione di un solo pad
+                if (activeElement) {
+                    activeElement.classList.remove('active');
                 }
-                } else {
-                    videoPosition = parseInt((lampPosition[index]) / 500 * frameIndexMax, 10);
-                    currentGrainLength = Math.max(1, grainLength[index]); // Assicurati che grainLength sia almeno 1
-                    
-                    // Avvia il loop dei frame
-                    startFrameLoop(videoPosition, currentGrainLength);
-    
-                    // Aggiorna la classe 'active' per gestire la selezione di un solo pad
-                    if (activeElement) {
-                        activeElement.classList.remove('active');
-                    }
-                   
-              
-                }
+           
+            }
+
+         
                 pad.classList.add('active');
-                activeElement = pad;
+                
         
             
         });
@@ -374,17 +373,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
         });
      
-            activeElement = null;
+            
             stopFrameLoop(); // Ferma il loop quando tutti i pad vengono disattivati
     
     }
     
-    // Funzione per avviare la mappatura MIDI
-    function midiConnectionFunction(pad) {
-        alert("Premi una nota sulla tastiera MIDI per mappare questo pad.");
-        awaitingMIDIInput = true;  // Imposta lo stato di attesa di input MIDI
-        currentPadForMapping = pad; // Memorizza il pad da mappare
-    }
+
     
     //---------------- LAMPS AND INDICATORS -------------------
     // Seleziona tutti i bottoni, i lamp e le small_line
@@ -453,98 +447,167 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
 
+
+
     //---------------- MIDI -------------------
-    let midiConnectionCounter = true;
+
+  
+
+    let midi = null; // Global MIDIAccess object
+    let midiMappings = {}; // Mapping between MIDI notes and pads
+    let awaitingMIDIInput = false; // Flag to track if waiting for MIDI mapping
+    let currentPadForMapping = null; // Stores the pad being mapped
+
+    
+    // Request MIDI permissions
     navigator.permissions.query({ name: "midi", sysex: true }).then((result) => {
-        if (result.state === "granted" && midiConnectionCounter) {
-          //  alert('MIDI Connection Allowed');
+        if (result.state === "granted") {
+            console.log("MIDI connection allowed.");
         } else if (result.state === "prompt") {
-            alert('Allow MIDI Connection');
+            alert("Please allow MIDI connection.");
         }
-        // Permission was denied by user prompt or permission policy
+        // If permission is denied, the user will not see this message as it's restricted by the policy.
     });
     
-    let midi = null; // global MIDIAccess object
-    let midiMappings = {}; // Oggetto per memorizzare la mappatura tra note MIDI e pad
-    let awaitingMIDIInput = false; // Flag per sapere se stiamo aspettando una mappatura MIDI
-    let currentPadForMapping = null; // Memorizza il pad attualmente in fase di mappatura
-    
-    
+    // Callback for successful MIDI access
     function onMIDISuccess(midiAccess) {
         console.log("MIDI ready!");
-        midi = midiAccess; // store in the global object
+        midi = midiAccess; // Store in the global object
         startLoggingMIDIInput(midiAccess);
-       // listInputsAndOutputs(midiAccess); // Optional: If you want to list inputs/outputs
+      
     }
-    
+
+
+    // Callback for failed MIDI access
     function onMIDIFailure(msg) {
         console.error(`Failed to get MIDI access - ${msg}`);
     }
     
-    // Funzione che gestisce i messaggi MIDI
+    // Function to handle incoming MIDI messages
     function onMIDIMessage(event) {
+        let midiStatus = event.data[0];
         let midiNote = event.data[1];
-        
-        // Se stiamo aspettando un input MIDI per la mappatura
-        if (awaitingMIDIInput && currentPadForMapping) {
-            console.log(`Mappatura del pad a nota MIDI ${midiNote}`);
-            midiMappings[midiNote] = currentPadForMapping; // Mappa la nota MIDI al pad
-            awaitingMIDIInput = false;
-            currentPadForMapping = null;
-            alert(`Nota MIDI ${midiNote} mappata correttamente al pad!`);
-        }
+        if (editModeActive) {
+            // If waiting for a MIDI input to map
+            if (awaitingMIDIInput && currentPadForMapping && midiStatus === 144) {
+                console.log(`Mapping pad to MIDI note ${midiNote}`);
+                midiMappings[midiNote] = currentPadForMapping; // Map MIDI note to the pad  
+                
+                alert(`MIDI note ${midiNote} successfully mapped to the pad!`);
+                awaitingMIDIInput = false;
+                currentPadForMapping.classList.remove('active');   
+                currentPadForMapping = null;
+            }   
+
+
+        } else {
     
-        // Controlla se la nota MIDI è mappata a un pad
-        if (midiMappings[midiNote]) {
-            let pad = midiMappings[midiNote];
-            pad.click(); // Simula il click sul pad mappato
+        // Trigger the mapped pad if the MIDI note matches
+            if (midiMappings[midiNote]) {
+                let pad = midiMappings[midiNote];
+                pad.click(); // Simulate a click on the mapped pad
+                // deactivateAllPads();  
+                
+            }
+
         }
     }
     
+    
+    // Function to start logging MIDI inputs and set up listeners
     function startLoggingMIDIInput(midiAccess) {
+        
         midiAccess.inputs.forEach((input) => {
             console.log(`Listening to MIDI input: ${input.name}`);
-            input.onmidimessage = onMIDIMessage; // Assign onMIDIMessage for each input
+            input.onmidimessage = onMIDIMessage; // Assign message handler
         });
     }
     
-    // Request MIDI Access and set up MIDI message handling
-    navigator.requestMIDIAccess().then(
-        (midiAccess) => {
-            console.log("MIDI access obtained.");
-            onMIDISuccess(midiAccess);
-        },
-        onMIDIFailure
-    );
+    // Request MIDI access and set up message handling
+    navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+
+        // Funzione per avviare la mappatura MIDI
+    function midiConnectionFunction(pad) {
+        alert("Premi una nota sulla tastiera MIDI per mappare questo pad.");
+            awaitingMIDIInput = true;  // Imposta lo stato di attesa di input MIDI            
+            currentPadForMapping = pad; // Memorizza il pad da mappare
+         
+        }
+
+
+
+    async function initMIDI() {
+        // Controlla se l'API MIDI è supportata
+        if (!navigator.requestMIDIAccess) {
+            alert("Le API Web MIDI non sono supportate dal tuo browser.");
+            return;
+        }
     
-    // Handling MIDI pad toggle
-    navigator.requestMIDIAccess().then((midiAccess) => {
-        midiAccess.inputs.forEach((input) => {
-            input.onmidimessage = (msg) => {
-                console.log(`MIDI message received on ${input.name}`);
-                midiToggle.classList.toggle('on');
-                setTimeout(() => {
-                    midiToggle.classList.toggle('on');
-                }, 100);
+        try {
+            // Richiedi l'accesso ai dispositivi MIDI
+            const midiAccess = await navigator.requestMIDIAccess();
     
-                if (msg.data[1] === 24 && msg.data[2] > 0) {
-                    let pad1 = document.getElementById('pad1');
-                    if (pad1) {
-                        pad1.click(); // Trigger click for pad1
-                    }
-                }
+            // Ottenere i dispositivi MIDI
+            const inputs = midiAccess.inputs.values();
+    
+            // Trova il menu a tendina
+            const dropdown = document.getElementById("midi-devices");
+    
+            // Aggiungi i dispositivi MIDI al menu
+            for (let input of inputs) {
+                const option = document.createElement("option");
+                option.value = input.id; // Usa l'ID del dispositivo come valore
+                option.textContent = input.name; // Usa il nome del dispositivo come testo
+                dropdown.appendChild(option);
+            }
+    
+            // Listener per cambiamenti nei dispositivi MIDI
+            midiAccess.onstatechange = (event) => {
+                console.log(`Stato cambiato: ${event.port.name} (${event.port.state})`);
+                
+                updateMIDIDevices(midiAccess);
             };
-        });
-    });
+        } catch (error) {
+            console.error("Errore durante l'accesso ai dispositivi MIDI:", error);
+        }
+    }
     
-    // Funzione per la richiesta di accesso MIDI
-    navigator.requestMIDIAccess().then(
-        (midiAccess) => {
-            console.log("MIDI access obtained.");
-            onMIDISuccess(midiAccess);
-        },
-        onMIDIFailure
-    );
+    // Aggiorna il menu a tendina quando cambia lo stato dei dispositivi MIDI
+    function updateMIDIDevices(midiAccess) {
+        const dropdown = document.getElementById("midi-devices");
+        dropdown.innerHTML = '<option value="">-- Scegli un dispositivo --</option>'; // Reset del menu 
+        startLoggingMIDIInput(midiAccess);
+        const inputs = midiAccess.inputs.values();
+
+        
+        for (let input of inputs) {
+            const option = document.createElement("option");
+            option.value = input.id;
+            option.textContent = input.name;
+            dropdown.appendChild(option);
+        }
+    }
     
+    // Funzione chiamata quando l'utente seleziona un dispositivo
+     window.handleDeviceChange = function() {
+        const selectedDevice = document.getElementById("midi-devices").value;
+        console.log("Dispositivo selezionato:", selectedDevice);
+        // Aggiungi qui il codice per interagire con il dispositivo MIDI selezionato
+        if (midi) {
+            const input = midi.inputs.get(selectedDevice);
+            if (input) {
+                console.log("Input MIDI selezionato:", input);
+                input.onmidimessage = onMIDIMessage; // Assegna il gestore dei messaggi
+            } else {
+                console.error("Dispositivo MIDI non trovato.");
+            }
+        }
+        
+    }
+    
+    // Inizializza l'app MIDI
+    initMIDI();
+    
+
     });
     
