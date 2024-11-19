@@ -470,7 +470,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("video_frame").src = `/frames/frame_${videoPosition}.jpg`; 
         }
         if (!editModeActive && padManual.classList.contains('active')) {
-
             startFrameLoop(videoPosition, currentGrainLength);
 
         }     
