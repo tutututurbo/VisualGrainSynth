@@ -20,7 +20,7 @@
             </div>
 
             <select id="midi-devices" onchange="handleDeviceChange()">
-                <option value="">-- Scegli un dispositivo --</option>
+                <option value="">- Select a device -</option>
             </select>
         
             <div id="padPanel">
@@ -61,42 +61,56 @@
                             <div class="knob" id="knob1"></div>
                         </div>
                         <div id="preview_display">
-                            <div class="grainWindow" id="manualWindow"></div>
-                            <div class="line" id="movingLine"></div>
-                            <div class="grainWindow" id="window1"></div>
-                            <div class="small_line" id="line1">
-                                <div class="movablePoint" id="point1">
-                                    <span class="pointText">1</span>
+                            <div class="movementContainer">
+                                <div class="grainWindow" id="manualWindow"></div>
+                                <div class="line" id="movingLine"></div>
+                            </div>
+                            <div class="movementContainer">
+                                <div class="grainWindow" id="window1"></div>
+                                <div class="small_line" id="line1">
+                                    <div class="movablePoint" id="point1">
+                                        <span class="pointText">1</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="grainWindow" id="window2"></div>
-                            <div class="small_line" id="line2">
-                                <div class="movablePoint" id="point2">
-                                    <span class="pointText">2</span>
+                            <div class="movementContainer">
+                                <div class="grainWindow" id="window2"></div>
+                                <div class="small_line" id="line2">
+                                    <div class="movablePoint" id="point2">
+                                        <span class="pointText">2</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="grainWindow" id="window3"></div>
-                            <div class="small_line" id="line3">
-                                <div class="movablePoint" id="point3">
-                                    <span class="pointText">3</span>
+                            <div class="movementContainer">
+                                <div class="grainWindow" id="window3"></div>
+                                <div class="small_line" id="line3">
+                                    <div class="movablePoint" id="point3">
+                                        <span class="pointText">3</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="grainWindow" id="window4"></div>
-                            <div class="small_line" id="line4">
-                                <div class="movablePoint" id="point4">
-                                    <span class="pointText">4</span>
+                            <div class="movementContainer">
+                                <div class="grainWindow" id="window4"></div>
+                                <div class="small_line" id="line4">
+                                    <div class="movablePoint" id="point4">
+                                        <span class="pointText">4</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="grainWindow" id="window5"></div>
-                            <div class="small_line" id="line5">
-                                <div class="movablePoint" id="point5">
-                                    <span class="pointText">5</span>
+                            <div class="movementContainer">
+                                <div class="grainWindow" id="window5"></div>
+                                <div class="small_line" id="line5">
+                                    <div class="movablePoint" id="point5">
+                                        <span class="pointText">5</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="grainWindow" id="window6"></div>
-                            <div class="small_line" id="line6">
-                                <div class="movablePoint" id="point6">
-                                    <span class="pointText">6</span>
+                            <div class="movementContainer">
+                                <div class="grainWindow" id="window6"></div>
+                                <div class="small_line" id="line6">
+                                    <div class="movablePoint" id="point6">
+                                        <span class="pointText">6</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

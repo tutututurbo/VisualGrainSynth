@@ -49,6 +49,7 @@ body {
 .column {
     width: 200px;  /* Larghezza fissa per le colonne laterali */
     height: 695px;  /* Altezza completa della container */
+    align-items: center;
     background-color: rgb(54, 34, 34); /* Colore di sfondo per le colonne */
     border-radius: 8%;
     border: black solid 2px;
@@ -446,6 +447,13 @@ body {
     cursor: pointer;
 }
 
+.movementContainer {
+    position: absolute;
+    top: 0; /* Adjust based on your layout */
+    left: 0; /* Initial position */
+    transition: left 0.1s ease; /* Smooth movement */
+}
+
 .line {
     position: absolute; /* Use absolute to position it relative to the parent */
     height: 100px;
@@ -466,9 +474,6 @@ body {
     box-shadow: 1.5px 0.75px 3px 0px rgb(0, 0, 0); 
 }
 
-.small_line, .line {
-    transition: left 0.1s ease; /* Smooth movement */
-}
 
 .grainWindow {
     position: absolute;
@@ -486,7 +491,6 @@ body {
 #window4 { background-color: #75034469; }
 #window5 { background-color: #ff99335f; }
 #window6 { background-color: #33fff557; }
-
 
 .movablePoint {
     visibility: hidden;
