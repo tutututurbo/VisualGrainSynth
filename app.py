@@ -4,7 +4,8 @@ from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')  # Modifica la configurazione per la cartella 'static'
+
 CORS(app, resources={r"/*": {"origins": "*"}})  # Abilita CORS per l'indirizzo della pagina HTML
 
 # Percorso della cartella dei frame
@@ -25,7 +26,7 @@ def clear_frames_folder():
 @app.route('/')
 def home():
     # Renderizza la tua pagina HTML
-    return render_template('index.html')
+    return render_template('templates/index.html')
 
 @app.route('/upload-video', methods=['POST'])
 def upload_video():
