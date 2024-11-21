@@ -26,7 +26,7 @@ def clear_frames_folder():
 @app.route('/')
 def home():
     # Renderizza la tua pagina HTML
-    return render_template('templates/index.html')
+    return render_template('index.html')
 
 @app.route('/upload-video', methods=['POST'])
 def upload_video():
