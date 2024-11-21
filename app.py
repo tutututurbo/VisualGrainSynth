@@ -1,14 +1,14 @@
 import os
 import cv2
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})    # Abilita CORS per l'indirizzo della pagina HTML
+CORS(app, resources={r"/*": {"origins": "*"}})  # Abilita CORS per l'indirizzo della pagina HTML
 
 # Percorso della cartella dei frame
-frames_folder = 'frames'
+frames_folder = 'static/frames'  # Aggiungi "static" nel percorso
 
 # Funzione per pulire la cartella dei frame
 def clear_frames_folder():
@@ -24,7 +24,8 @@ def clear_frames_folder():
 
 @app.route('/')
 def home():
-    return "Applicazione Flask è attiva e funzionante!"
+    # Renderizza la tua pagina HTML
+    return render_template('index.html')
 
 @app.route('/upload-video', methods=['POST'])
 def upload_video():
