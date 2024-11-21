@@ -3,6 +3,8 @@ import cv2
 from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
+from flask import send_from_directory
+
 
 app = Flask(__name__, static_folder='static')  # Modifica la configurazione per la cartella 'static'
 
@@ -62,6 +64,11 @@ def upload_video():
     os.remove(video_path)  # Elimina il file video temporaneo, se non è più necessario
 
     return jsonify({'message': frame_count})
+
+
+@app.route('/frames/<filename>')
+def get_frame(filename):
+    return send_from_directory('frames', filename)
 
 if __name__ == '__main__':
      app.run(debug=True, host='0.0.0.0', port=os.environ.get('PORT', 5001))
