@@ -1,26 +1,31 @@
 import os
 import cv2
 import tempfile
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
-from flask import send_from_directory
 
 app = Flask(__name__, static_folder='static')  # Usa static_folder per il resto del sito
 CORS(app, resources={r"/*": {"origins": "*"}})
 
+# Variabile globale per tenere traccia della cartella dei frame
+frames_folder = '/tmp/frames'  # Usa la cartella temporanea di Heroku (localizzata in /tmp)
+
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html')  # Serve la pagina HTML
 
 @app.route('/upload-video', methods=['POST'])
 def upload_video():
+    global frames_folder  # Utilizza la variabile globale per tenere traccia della cartella dei frame
+
     # Verifica se il file video è stato caricato
     if 'video' not in request.files:
         return jsonify({'message': 'Nessun file video inviato'}), 400
 
-    # Creare una cartella temporanea per i frame
-    frames_folder = tempfile.mkdtemp()
+    # Creare la cartella dei frame nella cartella temporanea di Heroku
+    if not os.path.exists(frames_folder):
+        os.makedirs(frames_folder)  # Crea la cartella per i frame in /tmp
 
     # Salvataggio temporaneo del file video
     video_file = request.files['video']
@@ -50,7 +55,7 @@ def upload_video():
 
 @app.route('/frames/<filename>')
 def get_frame(filename):
-    # Servire i frame dalla cartella temporanea
+    # Restituisce il frame dalla cartella temporanea /tmp
     return send_from_directory(frames_folder, filename)
 
 if __name__ == '__main__':
