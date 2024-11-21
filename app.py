@@ -23,10 +23,11 @@ def clear_frames_folder():
     else:
         os.makedirs(frames_folder)
 
+
+
 @app.route('/')
 def home():
-    # Renderizza la tua pagina HTML
-     return "Applicazione Flask è attiva e funzionante!"
+    return render_template('index.html')  # Serve la pagina HTML
 
 @app.route('/upload-video', methods=['POST'])
 def upload_video():

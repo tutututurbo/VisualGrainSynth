@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web App Layout</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="static/style.css">
 </head>
 <body>
     <div class="container">
@@ -152,8 +152,9 @@
             </div>
         </div>
     </div>
-    <script src="jquery-3.7.1.js"></script>
-    <script src="java.js"></script>
+
+    <script src="{{ url_for('static', filename='java.js') }}"></script>
+    <script src="{{ url_for('static', filename='jquery-3.7.1.js') }}"></script>
 
 </body>
 </html>
