@@ -5,15 +5,27 @@ from flask import Flask, request, jsonify, render_template, send_from_directory
 from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
-app = Flask(__name__, static_folder='static')  # Usa static_folder per il resto del sito
-CORS(app, resources={r"/*": {"origins": "*"}})
+ # --- > HEROKU
+ # app = Flask(__name__, static_folder='static')  # Usa static_folder per il resto del sito
+ # CORS(app, resources={r"/*": {"origins": "*"}})
+
+ # --- > LOCALHOST
+app = Flask(__name__)
+CORS(app, origins=["http://127.0.0.1:5500"])
+
+
 
 # Variabile globale per tenere traccia della cartella dei frame
-frames_folder = '/tmp/frames'  # Usa la cartella temporanea di Heroku (localizzata in /tmp)
+ # --- > HEROKU
+ # frames_folder = '/tmp/frames'  # Usa la cartella temporanea di Heroku (localizzata in /tmp)
 
-@app.route('/')
-def home():
-    return render_template('index.html')  # Serve la pagina HTML
+ # --- > LOCALHOST
+frames_folder = 'frames'  # Usa la cartella locale (localizzata in /frames)
+
+# --- > HEROKU
+# @app.route('/')
+# def home():
+#     return render_template('index.html')  # Serve la pagina HTML
 
 @app.route('/upload-video', methods=['POST'])
 def upload_video():
@@ -59,4 +71,8 @@ def get_frame(filename):
     return send_from_directory(frames_folder, filename)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=os.environ.get('PORT', 5001))
+    # --- > HEROKU
+    # app.run(debug=True, host='0.0.0.0', port=os.environ.get('PORT', 5001))
+
+    # --- > LOCALHOST
+    app.run(debug=True, port=5001)
