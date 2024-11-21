@@ -13,6 +13,8 @@ CORS(app, resources={r"/*": {"origins": "*"}})  # Abilita CORS per l'indirizzo d
 # Percorso della cartella dei frame
 frames_folder = 'static/frames'  # Aggiungi "static" nel percorso
 
+
+
 # Funzione per pulire la cartella dei frame
 def clear_frames_folder():
     if os.path.exists(frames_folder):
