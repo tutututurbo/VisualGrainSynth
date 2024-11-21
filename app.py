@@ -9,7 +9,7 @@ app = Flask(__name__, static_folder='static')  # Modifica la configurazione per 
 CORS(app, resources={r"/*": {"origins": "*"}})  # Abilita CORS per l'indirizzo della pagina HTML
 
 # Percorso della cartella dei frame
-frames_folder = 'frames'  # Aggiungi "static" nel percorso
+frames_folder = 'static/frames'  # Aggiungi "static" nel percorso
 
 # Funzione per pulire la cartella dei frame
 def clear_frames_folder():
