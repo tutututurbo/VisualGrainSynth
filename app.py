@@ -22,6 +22,10 @@ def clear_frames_folder():
     else:
         os.makedirs(frames_folder)
 
+@app.route('/')
+def home():
+    return "Applicazione Flask è attiva e funzionante!"
+
 @app.route('/upload-video', methods=['POST'])
 def upload_video():
     # Verifica se il file video è stato caricato
@@ -56,5 +60,3 @@ def upload_video():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
-
-
