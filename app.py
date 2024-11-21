@@ -5,7 +5,7 @@ from flask_cors import CORS
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-CORS(app, origins=["http://127.0.0.1:5500"])  # Abilita CORS per l'indirizzo della pagina HTML
+CORS(app, resources={r"/*": {"origins": "*"}})    # Abilita CORS per l'indirizzo della pagina HTML
 
 # Percorso della cartella dei frame
 frames_folder = 'frames'
