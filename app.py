@@ -51,6 +51,12 @@ def upload_video():
     cap.release()
     os.remove(video_path)  # Elimina il file video temporaneo
 
+    # Liberare spazio eliminando i frame (se non più necessari)
+    # Potresti voler fare questo solo se non servono più i frame
+    # Un'ulteriore ottimizzazione potrebbe essere quella di offrire l'opzione di scaricare tutti i frame come zip
+    for filename in frame_filenames:
+        os.remove(os.path.join(frames_folder, filename))  # Elimina ogni frame temporaneo
+
     return jsonify({'message': frame_count, 'frames': frame_filenames})
 
 @app.route('/frames/<filename>')
