@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const $input = document.querySelector('.box__file');
     let videoElement = document.getElementById('videoElement');
     let videoPosition = 0; // Frame of the current video position for each grain
-    
+    let isnewWindwOpen = false;
+    let newWindow = null;
     // Retrieve the stored frameIndexMax value, or default to 0
     let frameIndexMax = parseInt(localStorage.getItem('frameIndexMax')) || 0;
 
@@ -54,6 +55,58 @@ document.addEventListener('DOMContentLoaded', function() {
     //     // Supponendo che l'angolo sia in gradi da 0 a 270
     //     updateFrameFromKnob(angles[0]); // Aggiorna il frame corrispondente
     // })
+
+    // Full Screen
+    window.openNewWindow = function() {
+        // Apri una nuova finestra
+        newWindow = window.open("", "_blank", "width=800,height=600");
+        
+        if (newWindow) {
+            // Imposta il contenuto iniziale della nuova finestra
+            
+            newWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="it">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                   
+                    <style>
+                        body {
+                            margin: 0;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            background-color: black;
+                        }
+                        #dynamicImg {
+                            max-width: 200%;
+                            max-height: 200%;
+                            object-fit: contain; /* Mantiene le proporzioni */
+                            background-color: black; /* Evita zone bianche */
+                        }
+                    </style>
+                </head>
+                <body>
+                </body>
+                </html>
+            `);
+
+            // Aggiungi la div dinamicamente alla nuova finestra
+            newWindow.document.body.innerHTML = `
+                <img id="dynamicDiv"></img>
+            `;
+
+            newWindow.document.title = "Les Lunettes de Dalì";  // Imposta il titolo della nuova finestra
+            // (Facoltativo) Mostra un log per confermare
+            console.log("Div inizializzata nella nuova finestra.");
+        } else {
+            alert("Impossibile aprire la finestra. Controlla che i popup non siano bloccati.");
+        }
+    }
+
+    // --------------------- EFFECTS -------------------------
     
     // --------------------- KNOBS ---------------------------
     var knobs = document.getElementsByClassName('knob');
@@ -351,7 +404,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Avvia il loop dei frame
                 startFrameLoop(videoPosition, currentGrainLength);
-
                 // Aggiorna la classe 'active' per gestire la selezione di un solo pad
                 if (activeElement) {
                     activeElement.classList.remove('active');
@@ -367,8 +419,14 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Funzione per avviare il ciclo dei frame
-    function startFrameLoop(startFrame, grainLength) {
+
+
+
+       // Aggiorna il frame nella nuova finestra
+
+  
+     // Funzione per avviare il ciclo dei frame
+     function startFrameLoop(startFrame, grainLength) {
         if (isLooping) {
             clearInterval(frameInterval); // Cancella l'eventuale loop precedente
         }
@@ -380,13 +438,55 @@ document.addEventListener('DOMContentLoaded', function() {
             // Aggiorna il frame dell'immagine
             document.getElementById("video_frame").src = `/frames/frame_${currentFrame}.jpg`;
             
+            if (newWindow && !newWindow.closed) {
+                const dynamicImg = newWindow.document.getElementById("dynamicDiv");
+                dynamicImg.src = `/frames/frame_${currentFrame}.jpg`;
+            }
             // Incrementa il frame corrente e ricomincia se ha raggiunto il limite del grain
             currentFrame++;
             if (currentFrame >= startFrame + grainLength) {
                 currentFrame = startFrame; // Ritorna al primo frame del grain
             }
-        }, 1); // Intervallo in millisecondi (puoi regolarlo per la velocità di visualizzazione)
+        }, calculateVideoFrequency(midiNote)); // Intervallo in millisecondi (puoi regolarlo per la velocità di visualizzazione)
     }
+    
+    /*// Funzione per avviare il ciclo dei frame
+      let currentFrame = 0; // Frequenza di aggiornamento dei frame (30 fps)
+    
+    function startFrameLoop(startFrame, currentPos, grainLength, videoFrequency) {
+        if(isLooping){
+        stopFrameLoop(); 
+        }// Assicurati che il loop sia interrotto prima di avviarlo di nuovo
+        currentFrame = currentPos; // Inizia dal frame corrente
+    
+        isLooping = true; // Indica che il loop è attivo
+    
+        // Usa requestAnimationFrame per una maggiore velocità e fluidità
+        function updateFrame() {
+            // Aggiorna il frame dell'immagine
+            document.getElementById("video_frame").src = `/frames/frame_${currentFrame}.jpg`;
+    
+  
+            // Incrementa il frame corrente e ricomincia se ha raggiunto il limite del grain
+            currentFrame++;
+    
+            if (currentFrame >= startFrame + grainLength) {
+                currentFrame = startFrame; // Ritorna al primo frame del grain
+            }
+            
+            // Richiama se stesso per il prossimo frame
+            if (isLooping) {
+                setTimeout(() => requestAnimationFrame(updateFrame), videoFrequency);
+
+                console.log(videoFrequency);
+            }
+        }
+    
+        // Inizia l'aggiornamento del frame
+        requestAnimationFrame(updateFrame);
+    }
+    
+    */
     
     // Funzione per interrompere il ciclo dei frame
     function stopFrameLoop() {
@@ -472,7 +572,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (!editModeActive && padManual.classList.contains('active')) {
             startFrameLoop(videoPosition, currentGrainLength);
-
         }     
     });
     
@@ -487,8 +586,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let midiMappings = {}; // Mapping between MIDI notes and pads
     let awaitingMIDIInput = false; // Flag to track if waiting for MIDI mapping
     let currentPadForMapping = null; // Stores the pad being mapped
-
-    
+    let midiStatus = null; // Stores the MIDI status
+    let midiNote = null; // Stores the MIDI note
+        
     // Request MIDI permissions
     navigator.permissions.query({ name: "midi", sysex: true }).then((result) => {
         if (result.state === "granted") {
@@ -515,8 +615,10 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to handle incoming MIDI messages
     function onMIDIMessage(event) {
-        let midiStatus = event.data[0];
-        let midiNote = event.data[1];
+        midiStatus = event.data[0];
+        midiNote = event.data[1];
+
+       
         if (editModeActive) {
             // If waiting for a MIDI input to map
             if (awaitingMIDIInput && currentPadForMapping && midiStatus === 144) {
@@ -540,9 +642,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 
             }
 
-        }
+            if (midiStatus === 144){
+                
+                if (isLooping) {
+                    stopFrameLoop(); // Ferma il loop se è in esecuzione
+                    startFrameLoop(videoPosition, currentGrainLength);                
+                    
+                }
+            }
+    }
+        
     }
     
+    function calculateVideoFrequency(midiNote = 60) {
+        // Calcola la frequenza esponenziale basata sul valore di midiNote
+        let videoFrequency =  [Math.exp(90/midiNote)]; // Dividendo per 20 per controllare l'esplosività
+        console.log(videoFrequency);
+        // Applica i limiti di frequenza tra 1 e 10
+        videoFrequency = Math.max(1, Math.min(100, videoFrequency));
+        return parseInt(videoFrequency);
+    }
+   
     
     // Function to start logging MIDI inputs and set up listeners
     function startLoggingMIDIInput(midiAccess) {

@@ -67,6 +67,24 @@ body {
         inset -20px 0px 40px 0px rgb(36, 14, 14);
 }
 
+.normbutton {
+    background-color: rgb(177, 136, 82);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+    width: 45px;
+    height: 45px;
+    color: #2b2929;
+    border-radius: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: inset -2px -1px 3px 0px rgb(67, 38, 8),
+        inset 0px 0px 0.5px 2.5px rgb(223, 180, 111),
+        4px 2px 7px 0px black;
+    user-select: none; 
+}
+
+
 
 .pad {
     background-color: rgb(177, 136, 82);
