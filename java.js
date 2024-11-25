@@ -111,17 +111,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // --------------------- EFFECTS -------------------------
     
     let invertButton = document.getElementById('colorInvertButton');
+    let isInverted = false;
     invertButton.addEventListener("click", function() {
         console.log("Invert button clicked");
         let videoFrame = document.getElementById("video_frame");
+
         if (videoFrame) {
             console.log("Video frame trovato");
             if (invertButton.classList.contains("active")) {
+
                 invertButton.classList.remove("active");
+                isInverted = false;
                 videoFrame.style.filter = "invert(0)";
                 console.log("Filtro invert disattivato");
             } else {
                 invertButton.classList.add("active");
+                isInverted = true;
                 videoFrame.style.filter = "invert(1)";
                 console.log("Filtro invert attivato");
             }
@@ -418,6 +423,24 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let frameInterval; // Variabile per tenere traccia dell'interval
     let isLooping = false; // Flag per sapere se il loop è in esecuzione
+
+
+    document.addEventListener('keydown', (event) => {
+        const key = event.key; // Nome del tasto premuto
+        const output = document.getElementById('output');
+
+        // Controlla se il tasto è un numero tra 1 e 6 o la barra spaziatrice
+        if (key >= '1' && key <= '6') {
+            const index = parseInt(key, 10) - 1; // Converti il tasto in un indice
+            const pad = document.querySelectorAll('.pad')[index]; // Seleziona il pad corrispondente
+            pad.click(); // Simula un click sul pad
+        } else if (key === ' ') { // Tasto 7
+            padManual.click(); // Simula un click sul pad manuale
+        } else {
+
+            console.log("Tasto premuto non è valido.");
+        }
+    });
     
     document.querySelectorAll(".pad").forEach(function (pad, index) {
         pad.addEventListener("click", function () {
@@ -477,6 +500,12 @@ document.addEventListener('DOMContentLoaded', function() {
             if (newWindow && !newWindow.closed) {
                 const dynamicImg = newWindow.document.getElementById("dynamicDiv");
                 dynamicImg.src = `/frames/frame_${currentFrame}.jpg`;
+                if(isInverted===true){
+                    dynamicImg.style.filter = "invert(1)";
+                   
+                }else{
+                    dynamicImg.style.filter = "invert(0)";
+                }
             }
     
             // Logica per downsampling o oversampling
@@ -660,10 +689,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Se è una nota ON (144), gestisci il loop dei frame
             if (midiStatus === 144) {
-                // const downsampleFactor = calculateDownsampleFactor(midiNote);
-                // const oversampleFactor = calculateOversampleFactor(midiNote);
-            
-                // console.log(`MIDI Note: ${midiNote}, Downsample: ${downsampleFactor}, Oversample: ${oversampleFactor}`);
             
                 if (isLooping) {
                     stopFrameLoop(); // Ferma il loop corrente
