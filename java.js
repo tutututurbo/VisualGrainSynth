@@ -804,3 +804,33 @@ document.addEventListener('DOMContentLoaded', function() {
     
 
     });
+
+
+
+
+
+
+
+
+    // DA FIXARE
+    // -> Il video si ferma quando mi sposto da un pad all'altro con la tastiera (non dovrebbe)
+    // -> Il video si ferma quando muovo il knob (non dovrebbe)
+    // -> Ricezione del messaggio MIDI avvenuta con il blip del led rosso 
+
+    // DA IMPLEMENTARE
+    // -> Effetti come: 
+    //    - Distorsione dinamica immagine
+    //    - LFO da mappare su un parametro
+    //    - Effetti di colore
+    //    - Effetti di overlay
+    //    - Moltiplicazione di video
+    // -> Possibilità di modificare la curva di velocità dell'oversampling e del downsampling
+    // -> Pitch Bend per cambiare la distorsione del video in tempo reale (?)
+    // -> Mod Wheel (?) per qualcosa
+
+    // AGGIUNTIVI
+    // -> Tutta la parte più "grafica" come: 
+    //    - Cambiare il colore dei pad
+    //    - Effetto di inserimento del dvd/cassetta all'interno della TV al posto del caricamento del video
+    //    - Effetto di caricamento del video (televisione grigia in movimento -> video)
+    // -> Riordinare il codice in modo più pulito
