@@ -106,7 +106,31 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+
+
     // --------------------- EFFECTS -------------------------
+    
+    let invertButton = document.getElementById('colorInvertButton');
+    invertButton.addEventListener("click", function() {
+        console.log("Invert button clicked");
+        let videoFrame = document.getElementById("video_frame");
+        if (videoFrame) {
+            console.log("Video frame trovato");
+            if (invertButton.classList.contains("active")) {
+                invertButton.classList.remove("active");
+                videoFrame.style.filter = "invert(0)";
+                console.log("Filtro invert disattivato");
+            } else {
+                invertButton.classList.add("active");
+                videoFrame.style.filter = "invert(1)";
+                console.log("Filtro invert attivato");
+            }
+        } else {
+            console.error("Elemento video_frame non trovato!");
+        }
+    });
+    
+    
     
     // --------------------- KNOBS ---------------------------
     var knobs = document.getElementsByClassName('knob');
@@ -178,9 +202,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
         }  else {
 
-            // Qui non siamo più in edit mode: il knob ora sarà assegnato all'effetto speciale live
+            if (!editModeActive){
+            // Activate Lamp 7 (Manual Lamp)
+            activeLamp = [6];
 
+            // Position of the Manual Line
+            anglesStart[6] = angles[0]; 
+            lampPosition[6] = (angles[0] / maxangle) * maxPosition;
+            updateLampPosition(0, lampPosition[6]);
+            videoPosition = parseInt((lampPosition[6]) / maxPosition * frameIndexMax, 10);
+            
+            // Grain Length of the Manual Line
+            updateGrainLengthFromKnob(angles[1]);
+            currentGrainLength = Math.max(1, grainLength[index]); // Assicurati che grainLength sia almeno 1
+            startFrameLoop(videoPosition, currentGrainLength, midiNote);
         }    
+    }
     }
 
     function updateLampPosition(index, newLeft) {
@@ -403,7 +440,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 currentGrainLength = Math.max(1, grainLength[index]); // Assicurati che grainLength sia almeno 1
                 
                 // Avvia il loop dei frame
-                startFrameLoop(videoPosition, currentGrainLength);
+                startFrameLoop(videoPosition, currentGrainLength, midiNote);
                 // Aggiorna la classe 'active' per gestire la selezione di un solo pad
                 if (activeElement) {
                     activeElement.classList.remove('active');
@@ -418,75 +455,48 @@ document.addEventListener('DOMContentLoaded', function() {
             
         });
     });
-    
-
-
 
        // Aggiorna il frame nella nuova finestra
 
-  
-     // Funzione per avviare il ciclo dei frame
-     function startFrameLoop(startFrame, grainLength) {
+       function startFrameLoop(startFrame, grainLength, midiNote) {
         if (isLooping) {
-            clearInterval(frameInterval); // Cancella l'eventuale loop precedente
+            clearInterval(frameInterval); // Cancella il loop precedente
         }
     
-        let currentFrame = startFrame; // Imposta il frame iniziale
-        isLooping = true; // Indica che il loop è attivo
+        let currentFrame = startFrame; 
+        let oversampleCounter = 0; 
+        isLooping = true;
+    
+        // Calcola il fattore in base alla nota MIDI
+        const { mode, factor } = calculateFrameFactor(midiNote);
     
         frameInterval = setInterval(() => {
-            // Aggiorna il frame dell'immagine
+            // Aggiorna il frame mostrato
             document.getElementById("video_frame").src = `/frames/frame_${currentFrame}.jpg`;
-            
+    
             if (newWindow && !newWindow.closed) {
                 const dynamicImg = newWindow.document.getElementById("dynamicDiv");
                 dynamicImg.src = `/frames/frame_${currentFrame}.jpg`;
             }
-            // Incrementa il frame corrente e ricomincia se ha raggiunto il limite del grain
-            currentFrame++;
-            if (currentFrame >= startFrame + grainLength) {
-                currentFrame = startFrame; // Ritorna al primo frame del grain
+    
+            // Logica per downsampling o oversampling
+            if (mode === "downsample") {
+                currentFrame += factor; // Salta frame per accelerare
+            } else if (mode === "oversample") {
+                oversampleCounter++;
+                if (oversampleCounter >= factor) {
+                    oversampleCounter = 0;
+                    currentFrame++; // Mostra il frame successivo dopo ripetizioni
+                }
             }
-        }, calculateVideoFrequency(midiNote)); // Intervallo in millisecondi (puoi regolarlo per la velocità di visualizzazione)
+    
+            // Loop dei frame
+            if (currentFrame >= startFrame + grainLength) {
+                currentFrame = startFrame; // Riparti dal primo frame del grain
+            }
+        }, 1000 / 30); // Mantieni il frame rate a 30 fps
     }
     
-    /*// Funzione per avviare il ciclo dei frame
-      let currentFrame = 0; // Frequenza di aggiornamento dei frame (30 fps)
-    
-    function startFrameLoop(startFrame, currentPos, grainLength, videoFrequency) {
-        if(isLooping){
-        stopFrameLoop(); 
-        }// Assicurati che il loop sia interrotto prima di avviarlo di nuovo
-        currentFrame = currentPos; // Inizia dal frame corrente
-    
-        isLooping = true; // Indica che il loop è attivo
-    
-        // Usa requestAnimationFrame per una maggiore velocità e fluidità
-        function updateFrame() {
-            // Aggiorna il frame dell'immagine
-            document.getElementById("video_frame").src = `/frames/frame_${currentFrame}.jpg`;
-    
-  
-            // Incrementa il frame corrente e ricomincia se ha raggiunto il limite del grain
-            currentFrame++;
-    
-            if (currentFrame >= startFrame + grainLength) {
-                currentFrame = startFrame; // Ritorna al primo frame del grain
-            }
-            
-            // Richiama se stesso per il prossimo frame
-            if (isLooping) {
-                setTimeout(() => requestAnimationFrame(updateFrame), videoFrequency);
-
-                console.log(videoFrequency);
-            }
-        }
-    
-        // Inizia l'aggiornamento del frame
-        requestAnimationFrame(updateFrame);
-    }
-    
-    */
     
     // Funzione per interrompere il ciclo dei frame
     function stopFrameLoop() {
@@ -556,6 +566,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let lampPosition = new Array(7).fill(0);
     const previewDisplay = document.getElementById('preview_display');
     const line = document.querySelector('.line');
+
     previewDisplay.addEventListener('click', function (event) {
         const rect = previewDisplay.getBoundingClientRect();
         const x = event.clientX - rect.left;
@@ -571,7 +582,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById("video_frame").src = `/frames/frame_${videoPosition}.jpg`; 
         }
         if (!editModeActive && padManual.classList.contains('active')) {
-            startFrameLoop(videoPosition, currentGrainLength);
+            startFrameLoop(videoPosition, currentGrainLength, midiNote);
         }     
     });
     
@@ -588,7 +599,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentPadForMapping = null; // Stores the pad being mapped
     let midiStatus = null; // Stores the MIDI status
     let midiNote = null; // Stores the MIDI note
-        
+
+    const validMidiNotes = Array.from({ length: 48 }, (_, i) => i + 36);     // Definisci l'intervallo di note supportate (2 ottave sotto e sopra C3) : [36, 37, ..., 83]
+
     // Request MIDI permissions
     navigator.permissions.query({ name: "midi", sysex: true }).then((result) => {
         if (result.state === "granted") {
@@ -615,44 +628,75 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Function to handle incoming MIDI messages
     function onMIDIMessage(event) {
-        midiStatus = event.data[0];
-        midiNote = event.data[1];
+        midiStatus = event.data[0]; // Stato MIDI (es: 144 = nota ON)
+        midiNote = event.data[1]; // Nota MIDI
 
-       
+        // Verifica se la nota è valida
+
+
         if (editModeActive) {
-            // If waiting for a MIDI input to map
+            // Modalità mappatura: associa una nota MIDI a un pad
             if (awaitingMIDIInput && currentPadForMapping && midiStatus === 144) {
                 console.log(`Mapping pad to MIDI note ${midiNote}`);
-                midiMappings[midiNote] = currentPadForMapping; // Map MIDI note to the pad  
+                midiMappings[midiNote] = currentPadForMapping; // Mappa la nota MIDI al pad
                 
                 alert(`MIDI note ${midiNote} successfully mapped to the pad!`);
                 awaitingMIDIInput = false;
-                currentPadForMapping.classList.remove('active');   
+                currentPadForMapping.classList.remove('active');
                 currentPadForMapping = null;
-            }   
-
-
+            }
         } else {
-    
-        // Trigger the mapped pad if the MIDI note matches
+
+
+            // Modalità normale: triggera il pad mappato
             if (midiMappings[midiNote]) {
                 let pad = midiMappings[midiNote];
-                pad.click(); // Simulate a click on the mapped pad
-                // deactivateAllPads();  
-                
+                pad.click(); // Simula un click sul pad mappato
             }
 
-            if (midiStatus === 144){
-                
-                if (isLooping) {
-                    stopFrameLoop(); // Ferma il loop se è in esecuzione
-                    startFrameLoop(videoPosition, currentGrainLength);                
-                    
-                }
+            if (!validMidiNotes.includes(midiNote)) {
+                return; // Ignora note fuori dall'intervallo
             }
+
+            // Se è una nota ON (144), gestisci il loop dei frame
+            if (midiStatus === 144) {
+                // const downsampleFactor = calculateDownsampleFactor(midiNote);
+                // const oversampleFactor = calculateOversampleFactor(midiNote);
+            
+                // console.log(`MIDI Note: ${midiNote}, Downsample: ${downsampleFactor}, Oversample: ${oversampleFactor}`);
+            
+                if (isLooping) {
+                    stopFrameLoop(); // Ferma il loop corrente
+                    startFrameLoop(videoPosition, currentGrainLength, midiNote); // Passa i nuovi fattori
+                }
+            } 
+        }
     }
-        
+
+    
+    function calculateFrameFactor(note) {
+        const c3 = 48; // Nota di riferimento (C3)
+        const minNote = 36; // Nota MIDI più bassa
+        const maxNote = 83; // Nota MIDI più alta
+        const range = maxNote - minNote;
+    
+        const base = 1000; // Base esponenziale per amplificare l'effetto
+    
+        if (note >= c3 ) {
+            // Calcolo downsampling per note sopra C3
+            const normalizedNote = (note - c3) / (maxNote - c3); // Normalizza tra 0 e 1
+            const downsampleFactor = Math.max(1, Math.round(1 + 250 * Math.pow(base, normalizedNote - 1)));
+            return { mode: "downsample", factor: downsampleFactor };
+        } else {
+            // Calcolo oversampling per note sotto C3
+            const normalizedNote = (c3 - note) / (c3 - minNote); // Normalizza tra 0 e 1
+            const oversampleFactor = Math.max(1, Math.round(1 + 20 * Math.pow(base, normalizedNote - 1)));
+            return { mode: "oversample", factor: oversampleFactor };
+        }
     }
+
+
+    
     
     function calculateVideoFrequency(midiNote = 60) {
         // Calcola la frequenza esponenziale basata sul valore di midiNote

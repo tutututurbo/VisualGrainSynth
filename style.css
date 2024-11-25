@@ -15,7 +15,8 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
-    background: #333;
+    background-color: #3f140f;
+   /* background: #333; */
     overflow-x: auto;
 }
 
@@ -38,6 +39,7 @@ body {
         0px 0px 5px 8px rgb(78, 9, 9),
         0px 0px 0px 10px black;
 }
+
 
 
 .row {
@@ -84,7 +86,12 @@ body {
     user-select: none; 
 }
 
-
+  
+.normbutton:active {
+    background-color: #870000;
+    box-shadow: 0 1px #666;
+    transform: translateY(4px);
+}
 
 .pad {
     background-color: rgb(177, 136, 82);

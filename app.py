@@ -38,7 +38,12 @@ def upload_video():
     # Creare la cartella dei frame nella cartella temporanea di Heroku
     if not os.path.exists(frames_folder):
         os.makedirs(frames_folder)  # Crea la cartella per i frame in /tmp
-
+    else:
+        # Svuota la cartella frames
+        for file in os.listdir(frames_folder):
+            file_path = os.path.join(frames_folder, file)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
     # Salvataggio temporaneo del file video
     video_file = request.files['video']
     video_filename = secure_filename(video_file.filename)
