@@ -93,6 +93,7 @@ body {
     transform: translateY(2px);
 }
 
+
 .pad {
     background-color: rgb(177, 136, 82);
     transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
@@ -126,7 +127,7 @@ body {
 /* Resto del CSS */
 #padPanel {
     position: relative;
-    top: 250px;
+    top: 0 px;
     right: 5px;
 }
 
@@ -456,20 +457,26 @@ body {
 }
 
 
+
 .knob_filter {
-    position: absolute;
-    width: 100%;
-    height: 100%;
+    position: relative;
+    background-color: rgb(213, 172, 117);
+    box-shadow: inset 0px 0px 0px 3px #4a240d,
+        0px 0px 0px 2px rgb(94, 53, 0),
+        8px 4px 8px 2px rgb(57, 12, 12);
+    width: 2rem;
+    height: 2rem;
     border-radius: 50%;
-    z-index: 10;
+    border: solid .25rem darken(black, 100%);
+    margin: 4rem auto;
 }
 
 
 .knob_filter:before {
     content: "";
     position: absolute;
-    bottom: 0.4em;
-    left: 1.5em;
+    bottom: 0.3em;
+    left: 1.2em;
     width: 10%;
     height: 30%;
     background-color: black;
@@ -495,6 +502,8 @@ body {
 #knob_bw {
     transform: rotate(0deg);
 }
+
+
 #preview_display {
     margin-top: 25px;
     height: 100px;
@@ -652,4 +661,18 @@ body {
     border-radius: 50%;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
     transition: transform 0.1s ease;
+}
+
+
+#spectrum-container {
+    width: 100%;
+    height: 200px; /* Adjust as needed */
+    background-color: #000; /* Optional: background color for the canvas container */
+    margin-top: 10px;
+}
+
+#spectrum-canvas {
+    width: 100%;
+    height: 100%;
+    background-color: #333; /* Optional: background color for the canvas */
 }
