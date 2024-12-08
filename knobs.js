@@ -1,10 +1,10 @@
 // Function to move the knob
 function moveKnob(knobIndex, newAngle, anglesArray) {
-    if (newAngle >= minangle && newAngle <= maxangle && currentKnob != null) {
+    if (newAngle >= minangle && newAngle <= maxangle && currentKnob !== null) {
         anglesArray[knobIndex] = newAngle;
         setAngle(knobIndex, newAngle);
     }
-    if (newAngle >= minangle && newAngle <= 100 && fxCurrentKnob != null) {
+    if (newAngle >= minangle && newAngle <= 100 && fxCurrentKnob !== null) {
         anglesArray[knobIndex] = newAngle;
         setAngle(knobIndex, newAngle);
     }
@@ -16,7 +16,7 @@ function calculateRotationAngle(angle) {
 
 // Set angle and update corresponding value
 function setAngle(knobIndex, angle) {
-    if(currentKnob != null){
+    if(currentKnob !== null){
         var knob = knobs[knobIndex];
         knob.style.transform = 'rotate(' + calculateRotationAngle(angle) + 'deg)';  
         if(knobIndex === 0 && editModeActive){
@@ -61,7 +61,7 @@ function setAngle(knobIndex, angle) {
             }    
         }
     }
-    if(fxCurrentKnob != null){
+    if(fxCurrentKnob !== null){
         var knob = fxKnobs[knobIndex];
         knob.style.transform = 'rotate(' + angle/100 * 270 + 'deg)'; 
     }
@@ -73,8 +73,14 @@ function calculateAngleDelta(lastY, currentY, currentAngle) {
     var sensitivity = 1; // Sensitivity of angle change
     var newAngle = currentAngle + deltaY * sensitivity;
     // Clamp the new angle between the min and max angles
+    if(currentKnob !== null){
     if (newAngle < minangle) newAngle = minangle;
     if (newAngle > maxangle) newAngle = maxangle;  
+    }
+    if(fxCurrentKnob !== null){
+        if (newAngle < minangle) newAngle = minangle;
+        if (newAngle > 100) newAngle = 100;  
+    }
     return newAngle;
 }
 
@@ -106,31 +112,42 @@ function onDrag(e) {
             }  
         }
         if(fxCurrentKnob !== null) {
-            var newAngle = calculateAngleDelta(lastY, e.pageY, fxLastAngle);
-            moveKnob(fxCurrentKnob, newAngle, fxAngles);
-            lastY = e.pageY; // Update last Y position
-            fxLastAngle = newAngle; // Update the angle for continuous movement
+            var fxNewAngle = calculateAngleDelta(fxLastY, e.pageY, fxLastAngle);
+            moveKnob(fxCurrentKnob, fxNewAngle, fxAngles);
+            fxLastY = e.pageY; // Update last Y position
+            fxLastAngle = fxNewAngle; // Update the angle for continuous movement
+            // Aggiorna i filtri con i nuovi valori
+            let effects = getEffectValues();
+            document.getElementById("video_frame").style.filter = `
+                grayscale(${effects.grayscale}%) 
+                invert(${effects.invert}%) 
+                hue-rotate(${effects.hueRotate}deg) 
+                saturate(${effects.saturate}%)
+            `;
         }
     }
     
-}
 
+}
 
 // Stop dragging
 function stopDrag() {
     isDragging = false;
     // Stop dragging the knob for frame and grain
-    if (grainPixels > (maxPosition-lampPosition[index]) && currentKnob != null) {
-        grainPixels = maxPosition-lampPosition[index];
-        console.log(grainPixels);
-        grainLength[index] = Math.floor((grainPixels / maxPosition) * frameIndexMax);
+    if (currentKnob !== null) {
+        if ((grainPixels > (maxPosition-lampPosition[index])))  {
+            grainPixels = maxPosition-lampPosition[index];
+            console.log(grainPixels);
+            grainLength[index] = Math.floor((grainPixels / maxPosition) * frameIndexMax);
+        }
+        currentKnob = null; // Reset the current knob for frame and grain
     }
     // Stop dragging the knob for FX
-    if (fxCurrentKnob != null) {
-      
+    if (fxCurrentKnob !== null) {
+        fxCurrentKnob = null; // Reset the current knob for FX
     }
-    currentKnob = null; // Reset the current knob
-    fxCurrentKnob = null; // Reset the current knob for FX
+  
+    
     
     document.removeEventListener('mousemove', onDrag); // Remove drag listener
     document.removeEventListener('mouseup', stopDrag); // Remove mouseup listener

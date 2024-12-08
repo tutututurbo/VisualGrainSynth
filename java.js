@@ -9,14 +9,16 @@ let newWindow = null;
 let frameIndexMax = parseInt(localStorage.getItem('frameIndexMax')) || 0;     // Retrieve the stored frameIndexMax value, or default to 0
 
 // --------------------- EFFECTS -------------------------
-let invertButton = document.getElementById('colorInvertButton');
-let BWButton = document.getElementById('B&WButton');
-let sepiaButton = document.getElementById('sepiaButton');
-let isInverted = false;
+// let invertButton = document.getElementById('colorInvertButton');
+// let BWButton = document.getElementById('B&WButton');
+// let sepiaButton = document.getElementById('sepiaButton');
+// let isInverted = false;
 var fxKnobs = document.getElementsByClassName('knob_filter');
-let fxAngles = new Array(3).fill(0);
+let fxAngles = new Array(4).fill(0);
 var fxLastAngle = 0;
 var fxCurrentKnob = null;
+var fxLastY = 0; // Track the last Y position for FX
+
 
 // --------------------- KNOBS ---------------------------
 var knobs = document.getElementsByClassName('knob');
@@ -144,82 +146,82 @@ window.openNewWindow = function() {
 
 
 // --------------------- EFFECTS -------------------------
-invertButton.addEventListener("click", function() {
-    console.log("Invert button clicked");
-    // BWButton.classList.remove("active");
-    // sepiaButton.classList.remove("active");
-    if(editModeActive) {     
-        midiConnectionFunction(invertButton);
-    } else {
-        let videoFrame = document.getElementById("video_frame");
-        if (videoFrame) {
-            console.log("Video frame trovato");
-            if (invertButton.classList.contains("active")) {       
-                invertButton.classList.remove("active");
-                isInverted = false;
-                videoFrame.style.filter = "invert(0)";
-                console.log("Filtro invert disattivato");
-            } else {
-                invertButton.classList.add("active");
-                isInverted = true;
-                videoFrame.style.filter = "invert(1)";
-                console.log("Filtro invert attivato");
-            }
-        } else {
-            console.error("Elemento video_frame non trovato!");
-        }
-    }
-});
+// invertButton.addEventListener("click", function() {
+//     console.log("Invert button clicked");
+//     // BWButton.classList.remove("active");
+//     // sepiaButton.classList.remove("active");
+//     if(editModeActive) {     
+//         midiConnectionFunction(invertButton);
+//     } else {
+//         let videoFrame = document.getElementById("video_frame");
+//         if (videoFrame) {
+//             console.log("Video frame trovato");
+//             if (invertButton.classList.contains("active")) {       
+//                 invertButton.classList.remove("active");
+//                 isInverted = false;
+//                 videoFrame.style.filter = "invert(0)";
+//                 console.log("Filtro invert disattivato");
+//             } else {
+//                 invertButton.classList.add("active");
+//                 isInverted = true;
+//                 videoFrame.style.filter = "invert(1)";
+//                 console.log("Filtro invert attivato");
+//             }
+//         } else {
+//             console.error("Elemento video_frame non trovato!");
+//         }
+//     }
+// });
         
-BWButton.addEventListener("click", function() {
-    console.log("B&W button clicked");
-    // invertButton.classList.remove("active");
-    // sepiaButton.classList.remove("active");
-    if(editModeActive){
-        midiConnectionFunction(BWButton);
-    } else {
-        let videoFrame = document.getElementById("video_frame");
-        if (videoFrame) {
-            console.log("Video frame trovato");
-            if (BWButton.classList.contains("active")) {
-                BWButton.classList.remove("active");
-                videoFrame.style.filter = "grayscale(0)";
-                console.log("Filtro B&W disattivato");
-            } else {
-                BWButton.classList.add("active");
-                videoFrame.style.filter = "grayscale(100%)";
-                console.log("Filtro B&W attivato");
-            }
-        } else {
-            console.error("Elemento video_frame non trovato!");
-        }
-    }
-});
+// BWButton.addEventListener("click", function() {
+//     console.log("B&W button clicked");
+//     // invertButton.classList.remove("active");
+//     // sepiaButton.classList.remove("active");
+//     if(editModeActive){
+//         midiConnectionFunction(BWButton);
+//     } else {
+//         let videoFrame = document.getElementById("video_frame");
+//         if (videoFrame) {
+//             console.log("Video frame trovato");
+//             if (BWButton.classList.contains("active")) {
+//                 BWButton.classList.remove("active");
+//                 videoFrame.style.filter = "grayscale(0)";
+//                 console.log("Filtro B&W disattivato");
+//             } else {
+//                 BWButton.classList.add("active");
+//                 videoFrame.style.filter = "grayscale(100%)";
+//                 console.log("Filtro B&W attivato");
+//             }
+//         } else {
+//             console.error("Elemento video_frame non trovato!");
+//         }
+//     }
+// });
 
-sepiaButton.addEventListener("click", function() {  
-    console.log("Sepia button clicked");
-    // BWButton.classList.remove("active");
-    // invertButton.classList.remove("active");   
-    if(editModeActive){
-        midiConnectionFunction(sepiaButton);
-    } else{
-        let videoFrame = document.getElementById("video_frame");
-        if (videoFrame) {
-            console.log("Video frame trovato");
-            if (sepiaButton.classList.contains("active")) {
-                sepiaButton.classList.remove("active");
-                videoFrame.style.filter = "sepia(0)";
-                console.log("Filtro sepia disattivato");
-            } else {
-                sepiaButton.classList.add("active");
-                videoFrame.style.filter = "sepia(1)";
-                console.log("Filtro sepia attivato");
-            }
-        } else {
-            console.error("Elemento video_frame non trovato!");
-        }
-    }
-});
+// sepiaButton.addEventListener("click", function() {  
+//     console.log("Sepia button clicked");
+//     // BWButton.classList.remove("active");
+//     // invertButton.classList.remove("active");   
+//     if(editModeActive){
+//         midiConnectionFunction(sepiaButton);
+//     } else{
+//         let videoFrame = document.getElementById("video_frame");
+//         if (videoFrame) {
+//             console.log("Video frame trovato");
+//             if (sepiaButton.classList.contains("active")) {
+//                 sepiaButton.classList.remove("active");
+//                 videoFrame.style.filter = "sepia(0)";
+//                 console.log("Filtro sepia disattivato");
+//             } else {
+//                 sepiaButton.classList.add("active");
+//                 videoFrame.style.filter = "sepia(1)";
+//                 console.log("Filtro sepia attivato");
+//             }
+//         } else {
+//             console.error("Elemento video_frame non trovato!");
+//         }
+//     }
+// });
         
 // --------------------- KNOBS ---------------------------    
 
@@ -248,7 +250,7 @@ Array.from(knobs).forEach((knob, index) => {
 Array.from(fxKnobs).forEach((knob, index) => {
     knob.addEventListener('mousedown', function(e) {
         isDragging = true;
-        lastY = e.pageY; // Store the initial Y position    
+        fxLastY = e.pageY; // Store the initial Y position    
         fxCurrentKnob = index;   
         fxLastAngle = fxAngles[index]; // Store the initial angle of the knob
         // Attach the move and mouseup event listeners to the document for global handling
@@ -264,7 +266,7 @@ document.addEventListener('touchmove', function(e) {
     if (isDragging){
         if( currentKnob !== null) {
         var touch = e.touches[0];
-        var newAngle = calculateAngleDelta(lastY, touch.pageY, lastAngle);
+        var newAngle = calculateAngleDelta(fxLastY, touch.pageY, lastAngle);
         moveKnob(currentKnob, newAngle, angles);
         lastY = touch.pageY;
         lastAngle = newAngle;
@@ -275,7 +277,7 @@ document.addEventListener('touchmove', function(e) {
         var touch = e.touches[0];
         var newAngle = calculateAngleDelta(lastY, touch.pageY, fxLastAngle);
         moveKnob(fxCurrentKnob, newAngle, fxAngles);
-        lastY = touch.pageY;
+        fxLastY = touch.pageY;
         fxLastAngle = newAngle;
         e.preventDefault();
       }
