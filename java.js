@@ -1,4 +1,3 @@
-
 // ============================================ VARIABLES DECLARATION =============================================
 
 //--------------------- VIDEO -------------------------
@@ -10,10 +9,16 @@ let newWindow = null;
 let frameIndexMax = parseInt(localStorage.getItem('frameIndexMax')) || 0;     // Retrieve the stored frameIndexMax value, or default to 0
 
 // --------------------- EFFECTS -------------------------
-let invertButton = document.getElementById('colorInvertButton');
-let BWButton = document.getElementById('B&WButton');
-let sepiaButton = document.getElementById('sepiaButton');
-let isInverted = false;
+// let invertButton = document.getElementById('colorInvertButton');
+// let BWButton = document.getElementById('B&WButton');
+// let sepiaButton = document.getElementById('sepiaButton');
+// let isInverted = false;
+var fxKnobs = document.getElementsByClassName('knob_filter');
+let fxAngles = new Array(4).fill(0);
+var fxLastAngle = 0;
+var fxCurrentKnob = null;
+var fxLastY = 0; // Track the last Y position for FX
+
 
 // --------------------- KNOBS ---------------------------
 var knobs = document.getElementsByClassName('knob');
@@ -35,9 +40,9 @@ let editModeActive = true;
 
 // --------------------- PADS --------------------
 let activePad = null;  // Variabile per tenere traccia del pad attivo
-let padManual = document.getElementById('padManual');  // Seleziona pad7, il pad che attiva la modalitÃ  manuale
+let padManual = document.getElementById('padManual');  // Seleziona pad7, il pad che attiva la modalità manuale
 let frameInterval; // Variabile per tenere traccia dell'interval
-let isLooping = false; // Flag per sapere se il loop Ã¨ in esecuzione
+let isLooping = false; // Flag per sapere se il loop è in esecuzione
 
 //---------------- LAMPS AND INDICATORS -------------------
 // Seleziona tutti i bottoni, i lamp e le small_line
@@ -130,7 +135,7 @@ window.openNewWindow = function() {
         newWindow.document.body.innerHTML = `
             <img id="dynamicDiv"></img>
         `;
-        newWindow.document.title = "Les Lunettes de DalÃ¬";  // Imposta il titolo della nuova finestra
+        newWindow.document.title = "Les Lunettes de Dalì";  // Imposta il titolo della nuova finestra
         // (Facoltativo) Mostra un log per confermare
         console.log("Div inizializzata nella nuova finestra.");
     } else {
@@ -141,82 +146,82 @@ window.openNewWindow = function() {
 
 
 // --------------------- EFFECTS -------------------------
-invertButton.addEventListener("click", function() {
-    console.log("Invert button clicked");
-    // BWButton.classList.remove("active");
-    // sepiaButton.classList.remove("active");
-    if(editModeActive) {     
-        midiConnectionFunction(invertButton);
-    } else {
-        let videoFrame = document.getElementById("video_frame");
-        if (videoFrame) {
-            console.log("Video frame trovato");
-            if (invertButton.classList.contains("active")) {       
-                invertButton.classList.remove("active");
-                isInverted = false;
-                videoFrame.style.filter = "invert(0)";
-                console.log("Filtro invert disattivato");
-            } else {
-                invertButton.classList.add("active");
-                isInverted = true;
-                videoFrame.style.filter = "invert(1)";
-                console.log("Filtro invert attivato");
-            }
-        } else {
-            console.error("Elemento video_frame non trovato!");
-        }
-    }
-});
+// invertButton.addEventListener("click", function() {
+//     console.log("Invert button clicked");
+//     // BWButton.classList.remove("active");
+//     // sepiaButton.classList.remove("active");
+//     if(editModeActive) {     
+//         midiConnectionFunction(invertButton);
+//     } else {
+//         let videoFrame = document.getElementById("video_frame");
+//         if (videoFrame) {
+//             console.log("Video frame trovato");
+//             if (invertButton.classList.contains("active")) {       
+//                 invertButton.classList.remove("active");
+//                 isInverted = false;
+//                 videoFrame.style.filter = "invert(0)";
+//                 console.log("Filtro invert disattivato");
+//             } else {
+//                 invertButton.classList.add("active");
+//                 isInverted = true;
+//                 videoFrame.style.filter = "invert(1)";
+//                 console.log("Filtro invert attivato");
+//             }
+//         } else {
+//             console.error("Elemento video_frame non trovato!");
+//         }
+//     }
+// });
         
-BWButton.addEventListener("click", function() {
-    console.log("B&W button clicked");
-    // invertButton.classList.remove("active");
-    // sepiaButton.classList.remove("active");
-    if(editModeActive){
-        midiConnectionFunction(BWButton);
-    } else {
-        let videoFrame = document.getElementById("video_frame");
-        if (videoFrame) {
-            console.log("Video frame trovato");
-            if (BWButton.classList.contains("active")) {
-                BWButton.classList.remove("active");
-                videoFrame.style.filter = "grayscale(0)";
-                console.log("Filtro B&W disattivato");
-            } else {
-                BWButton.classList.add("active");
-                videoFrame.style.filter = "grayscale(100%)";
-                console.log("Filtro B&W attivato");
-            }
-        } else {
-            console.error("Elemento video_frame non trovato!");
-        }
-    }
-});
+// BWButton.addEventListener("click", function() {
+//     console.log("B&W button clicked");
+//     // invertButton.classList.remove("active");
+//     // sepiaButton.classList.remove("active");
+//     if(editModeActive){
+//         midiConnectionFunction(BWButton);
+//     } else {
+//         let videoFrame = document.getElementById("video_frame");
+//         if (videoFrame) {
+//             console.log("Video frame trovato");
+//             if (BWButton.classList.contains("active")) {
+//                 BWButton.classList.remove("active");
+//                 videoFrame.style.filter = "grayscale(0)";
+//                 console.log("Filtro B&W disattivato");
+//             } else {
+//                 BWButton.classList.add("active");
+//                 videoFrame.style.filter = "grayscale(100%)";
+//                 console.log("Filtro B&W attivato");
+//             }
+//         } else {
+//             console.error("Elemento video_frame non trovato!");
+//         }
+//     }
+// });
 
-sepiaButton.addEventListener("click", function() {  
-    console.log("Sepia button clicked");
-    // BWButton.classList.remove("active");
-    // invertButton.classList.remove("active");   
-    if(editModeActive){
-        midiConnectionFunction(sepiaButton);
-    } else{
-        let videoFrame = document.getElementById("video_frame");
-        if (videoFrame) {
-            console.log("Video frame trovato");
-            if (sepiaButton.classList.contains("active")) {
-                sepiaButton.classList.remove("active");
-                videoFrame.style.filter = "sepia(0)";
-                console.log("Filtro sepia disattivato");
-            } else {
-                sepiaButton.classList.add("active");
-                videoFrame.style.filter = "sepia(1)";
-                console.log("Filtro sepia attivato");
-            }
-        } else {
-            console.error("Elemento video_frame non trovato!");
-        }
-    }
-});
+// sepiaButton.addEventListener("click", function() {  
+//     console.log("Sepia button clicked");
+//     // BWButton.classList.remove("active");
+//     // invertButton.classList.remove("active");   
+//     if(editModeActive){
+//         midiConnectionFunction(sepiaButton);
+//     } else{
+//         let videoFrame = document.getElementById("video_frame");
+//         if (videoFrame) {
+//             console.log("Video frame trovato");
+//             if (sepiaButton.classList.contains("active")) {
+//                 sepiaButton.classList.remove("active");
+//                 videoFrame.style.filter = "sepia(0)";
+//                 console.log("Filtro sepia disattivato");
+//             } else {
+//                 sepiaButton.classList.add("active");
+//                 videoFrame.style.filter = "sepia(1)";
+//                 console.log("Filtro sepia attivato");
+//             }
+//         } else {
+//             console.error("Elemento video_frame non trovato!");
+//         }
+//     }
+// });
         
 // --------------------- KNOBS ---------------------------    
 
@@ -240,15 +245,43 @@ Array.from(knobs).forEach((knob, index) => {
     });
 });
 
-// // Touch support for mobile devices
+
+// FX Knobs
+Array.from(fxKnobs).forEach((knob, index) => {
+    knob.addEventListener('mousedown', function(e) {
+        isDragging = true;
+        fxLastY = e.pageY; // Store the initial Y position    
+        fxCurrentKnob = index;   
+        fxLastAngle = fxAngles[index]; // Store the initial angle of the knob
+        // Attach the move and mouseup event listeners to the document for global handling
+        document.addEventListener('mousemove', onDrag);
+        document.addEventListener('mouseup', stopDrag);
+        e.preventDefault();
+    });
+});
+
+
+// Touch support for mobile devices
 document.addEventListener('touchmove', function(e) {
-    if (isDragging && currentKnob !== null) {
+    if (isDragging){
+        if( currentKnob !== null) {
         var touch = e.touches[0];
-        var newAngle = calculateAngleDelta(lastY, touch.pageY, lastAngle);
-        moveKnob(currentKnob, newAngle);
+        var newAngle = calculateAngleDelta(fxLastY, touch.pageY, lastAngle);
+        moveKnob(currentKnob, newAngle, angles);
         lastY = touch.pageY;
         lastAngle = newAngle;
         e.preventDefault();
+      }
+
+      if(fxCurrentKnob !== null){
+        var touch = e.touches[0];
+        var newAngle = calculateAngleDelta(lastY, touch.pageY, fxLastAngle);
+        moveKnob(fxCurrentKnob, newAngle, fxAngles);
+        fxLastY = touch.pageY;
+        fxLastAngle = newAngle;
+        e.preventDefault();
+      }
+
     }
 });
 
@@ -261,7 +294,7 @@ document.addEventListener('touchend', function() {
 
 // Aggiunge un evento per ascoltare la pressione del tasto "E"
 document.addEventListener('keydown', function(event) {
-    if (event.key === 'e' || event.key === 'E') { // Verifica se il tasto Ã¨ "E" o "e"
+    if (event.key === 'e' || event.key === 'E') { // Verifica se il tasto è "E" o "e"
         toggleSwitch();
         if(!editModeActive){
             const windows = [
@@ -297,7 +330,7 @@ document.addEventListener('keydown', (event) => {
     const key = event.key; // Nome del tasto premuto
     const output = document.getElementById('output');
 
-    // Controlla se il tasto Ã¨ un numero tra 1 e 6 o la barra spaziatrice
+    // Controlla se il tasto è un numero tra 1 e 6 o la barra spaziatrice
     if (key >= '1' && key <= '6') {
         const index = parseInt(key, 10) - 1; // Converti il tasto in un indice
         const pad = document.querySelectorAll('.pad')[index]; // Seleziona il pad corrispondente
@@ -479,13 +512,13 @@ lampButtons.forEach((button, index) => {
             });
             // Toggle dello stato del lamp selezionato (accende o spegne)
             if (lamps[index].classList.contains('on')) {
-                lamps[index].classList.remove('on'); // Spegni il lamp selezionato se Ã¨ giÃ  acceso
+                lamps[index].classList.remove('on'); // Spegni il lamp selezionato se è già acceso
                 // Rimuovi l'indice dal array activeLamps
                 activeLamp = activeLamp.filter(activeIndex => activeIndex !== index);
             } else {
                 lamps[index].classList.add('on'); // Accendi il lamp selezionato
                 // Aggiungi l'indice al array activeLamps
-                activeLamp = [index]; // Solo un lamp puÃ² essere attivo, quindi lo sovrascriviamo
+                activeLamp = [index]; // Solo un lamp può essere attivo, quindi lo sovrascriviamo
             }
             if (activeLamp.length === 0) {
                 activeLamp = [6];
@@ -564,7 +597,7 @@ navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
 
 
 async function initMIDI() {
-    // Controlla se l'API MIDI Ã¨ supportata
+    // Controlla se l'API MIDI è supportata
     if (!navigator.requestMIDIAccess) {
         alert("Le API Web MIDI non sono supportate dal tuo browser.");
         return;
@@ -628,14 +661,14 @@ initMIDI();
 //    - Effetti di colore
 //    - Effetti di overlay
 //    - Moltiplicazione di video
-// -> PossibilitÃ  di modificare la curva di velocitÃ  dell'oversampling e del downsampling
+// -> Possibilità di modificare la curva di velocità dell'oversampling e del downsampling
 // -> Video buffering
 // -> Pitch Bend per cambiare la distorsione del video in tempo reale (?)
 // -> Mod Wheel (?) per qualcosa
 
     // AGGIUNTIVI
-    // -> Tutta la parte piÃ¹ "grafica" come: 
+    // -> Tutta la parte più "grafica" come: 
     //    - Cambiare il colore dei pad
     //    - Effetto di inserimento del dvd/cassetta all'interno della TV al posto del caricamento del video
     //    - Effetto di caricamento del video (televisione grigia in movimento -> video)
-    // -> Riordinare il codice in modo piÃ¹ pulito
+    // -> Riordinare il codice in modo più pulito
