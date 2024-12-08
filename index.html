@@ -9,20 +9,23 @@
 <body>
     <div class="container">
         <div class="column" id="column_left">
-            <div class="midiToggle"></div>
-            <div class="switchContainer">
-                <!-- LED -->
-                <div class="led" id="led"></div>
-                
-                <!-- Levetta -->
-                <div class="switchLever" id="editMode" onclick="toggleSwitch(this)"></div>
-
+  
+            <!--
+            <div class="knob_filter" id="knob_invert"></div>
+            <div class="knob_filter" id="knob_bw"></div>
+            <div class="knob_filter" id="knob_sepia"></div>
+            <div class="knob_filter" id="knob_hue"></div>
+            -->      
+            <div class = "normbutton" id="colorInvertButton">Invert</div>
+            <div class = "normbutton" id="sepiaButton">Sepia</div>
+            <div class = "normbutton" id="B&WButton">B&W</div>
+            <!--    
+            <div class="joystick-container">
+                <div class="joystick" id="joystick">
+                    <div class="stick" id="stick"></div>
+                </div>
             </div>
-
-            <select id="midi-devices" onchange="handleDeviceChange()">
-                <option value="">- Select a device -</option>
-            </select>
-        
+            --> 
             <div id="padPanel">
                 <div class="row">
                     <div class="row padRow">
@@ -56,7 +59,8 @@
             
             <div class="row">
                 <div class="bottom-box">
-                    <div class="row">                       
+                    <div class="row">     
+                        <div class="midiToggle"></div>                  
                         <div class="knob-surround">
                             <div class="knob" id="knob1"></div>
                         </div>
@@ -150,11 +154,34 @@
                 <input type="file" id = "videoInput" accept = "video/*" /></input>
                 <button id="uploadButton">Upload Video</button>
             </div>
+            <select id="midi-devices" onchange="handleDeviceChange()">
+                <option value="">- Select a device -</option>
+            </select>
+            <div>
+                <button class="normbutton" id="openWindowButton" onclick="openNewWindow()">Full Screen</button>
+            </div>
+            <div class="switchContainer">
+                <!-- LED -->
+                <div class="led" id="led"></div>
+                
+                <!-- Levetta -->
+                <div class="switchLever" id="editMode" onclick="toggleSwitch(this)"></div>
+
+            </div>
+
         </div>
     </div>
+
     <script type="text/javascript" src="/jquery-3.7.1.js"></script>
     <script type="text/javascript" src="/java.js"></script>
-
-
+    <script type="text/javascript" src="/knobs.js"></script>
+    <script type="text/javascript" src="/lamps.js"></script>
+    <script type="text/javascript" src="/frameLogic.js"></script>
+    <script type="text/javascript" src="/grain.js"></script>
+    <script type="text/javascript" src="/ledToggle.js"></script>
+    <script type="text/javascript" src="/midi.js"></script>
+    <script type="text/javascript" src="/audio.js"></script>
+    
+   
 </body>
 </html>
