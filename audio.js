@@ -109,12 +109,11 @@ async function captureFromBlackHole(deviceId) {
         const dataArray = new Uint8Array(analyser.frequencyBinCount); // Array to store frequency data
         source.connect(analyser);
 
-        // Create a canvas for visualization
-        const canvas = document.createElement('canvas');
+        // Access the new canvas for drawing
+        const canvas = document.getElementById('spectrum-canvas');
         const canvasCtx = canvas.getContext('2d');
-        canvas.width = 200;
-        canvas.height = 100;
-        document.body.appendChild(canvas);
+        canvas.width = 800; // Set canvas width
+        canvas.height = 200; // Set canvas height
 
         // Function to calculate RMS for a frequency band
         function calculateRMSForBands() {
@@ -174,6 +173,7 @@ async function captureFromBlackHole(deviceId) {
             // Calculate and log RMS values for each band
             calculateRMSForBands();
         }
+
         draw(); // Start the visualization loop
 
         console.log("Successfully capturing audio from BlackHole");
@@ -189,24 +189,33 @@ async function captureFromBlackHole(deviceId) {
 
 
 
+
 // Dropdown menu to select audio input
 async function setupAudioInputSelector() {
     const devices = await navigator.mediaDevices.enumerateDevices();
     const audioDevices = devices.filter(device => device.kind === "audioinput");
 
-    const select = document.createElement("select");
+    const audioSelect = document.getElementById("audio-devices");
+    audioSelect.innerHTML = '<option value="">- Select an audio device -</option>'; // Reset options
+
     audioDevices.forEach(device => {
         const option = document.createElement("option");
         option.value = device.deviceId;
         option.textContent = device.label || `Unnamed Device (${device.deviceId})`;
-        select.appendChild(option);
-    });
-
-    document.body.appendChild(select);
-
-    select.addEventListener("change", (event) => {
-        const selectedDeviceId = event.target.value;
-        captureFromBlackHole(selectedDeviceId);
+        audioSelect.appendChild(option);
     });
 }
+
 setupAudioInputSelector();
+
+// Handle audio device change
+async function handleAudioDeviceChange() {
+    const audioSelect = document.getElementById("audio-devices");
+    const selectedDeviceId = audioSelect.value;
+
+    if (selectedDeviceId) {
+        captureFromBlackHole(selectedDeviceId);
+    } else {
+        console.warn("No audio device selected.");
+    }
+}
