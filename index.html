@@ -10,11 +10,18 @@
     <div class="container">
         <div class="column" id="column_left">
   
-            
-            <div class="knob_filter" id="knob_invert"></div>
-            <div class="knob_filter" id="knob_bw"></div>
-            <div class="knob_filter" id="knob_sepia"></div>
-            <div class="knob_filter" id="knob_hue"></div>
+            <div class="knob_filter-container">
+                <div class="knob_filter" id="knob_invert"></div>
+            </div>
+            <div class="knob_filter-container">
+                <div class="knob_filter" id="knob_bw"></div>
+            </div>
+            <div class="knob_filter-container">
+                <div class="knob_filter" id="knob_sepia"></div>
+            </div>
+            <div class="knob_filter-container">
+                <div class="knob_filter" id="knob_hue"></div>
+            </div>
                
             <!-- <div class = "normbutton" id="colorInvertButton">Invert</div>
             <div class = "normbutton" id="sepiaButton">Sepia</div>
@@ -148,7 +155,7 @@
                 <button id="uploadButton">Upload Video</button>
             </div>
             <select id="midi-devices" onchange="handleDeviceChange()">
-                <option value="">- Select a device -</option>
+                <option value="">- Select a MIDI device -</option>
             </select>
             <select id="audio-devices" onchange="handleAudioDeviceChange()">
                 <option value="">- Select an audio device -</option>
