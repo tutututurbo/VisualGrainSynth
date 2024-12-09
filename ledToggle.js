@@ -19,3 +19,12 @@ function toggleSwitch() {
         });
     }
 }
+
+
+function autoSwitch() {
+    const switchElement = document.getElementById('autoMode');
+    const led = document.getElementById('ledAutoMode');
+    switchElement.classList.toggle('off');
+    led.classList.toggle('off');
+    autoModeActive = !autoModeActive; 
+}
