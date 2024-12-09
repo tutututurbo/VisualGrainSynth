@@ -124,7 +124,9 @@ async function captureFromBlackHole(deviceId) {
 
             // Map frequency ranges to bin indices
             const bandIndices = {
-                bass: { start: Math.floor((20 / nyquist) * numBins), end: Math.ceil((300 / nyquist) * numBins) },
+                subBass: { start: Math.floor((20 / nyquist) * numBins), end: Math.ceil((60 / nyquist) * numBins) },
+                lowBass: { start: Math.floor((60 / nyquist) * numBins), end: Math.ceil((100 / nyquist) * numBins) },
+                bass: { start: Math.floor((100 / nyquist) * numBins), end: Math.ceil((300 / nyquist) * numBins) },
                 mid: { start: Math.floor((300 / nyquist) * numBins), end: Math.ceil((2000 / nyquist) * numBins) },
                 high: { start: Math.floor((2000 / nyquist) * numBins), end: Math.ceil((20000 / nyquist) * numBins) },
             };
@@ -140,12 +142,21 @@ async function captureFromBlackHole(deviceId) {
             }
 
             // Calculate RMS for each band
+            const subBassRMS = calculateRMS(bandIndices.subBass.start, bandIndices.subBass.end);
+            const lowBassRMS = calculateRMS(bandIndices.lowBass.start, bandIndices.lowBass.end);
             const bassRMS = calculateRMS(bandIndices.bass.start, bandIndices.bass.end);
             const midRMS = calculateRMS(bandIndices.mid.start, bandIndices.mid.end);
             const highRMS = calculateRMS(bandIndices.high.start, bandIndices.high.end);
 
             // Log RMS values
-            console.log(`Bass RMS: ${bassRMS.toFixed(3)}, Mid RMS: ${midRMS.toFixed(3)}, High RMS: ${highRMS.toFixed(3)}`);
+            console.log(`Sub Bass RMS: ${subBassRMS.toFixed(3)}, Bass RMS: ${bassRMS.toFixed(3)}, Mid RMS: ${midRMS.toFixed(3)}, High RMS: ${highRMS.toFixed(3)}`);
+
+            if(autoModeActive) {
+                document.getElementById("video_frame").style.filter = `
+                    invert(${Math.round(lowBassRMS * 100)}%)
+                    saturate(${Math.round(subBassRMS * 100 * 40)}%)
+                `;
+            }
         }
 
         // Visualization function
