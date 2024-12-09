@@ -9,6 +9,11 @@
     font-style: normal;
 }
 
+/* Fai in modo che la pagina sia sempre scrollabile */
+html {
+    overflow-x: auto; /* Abilita lo scroll orizzontale */
+}
+
 body {
     display: flex;
     justify-content: center;
@@ -16,12 +21,13 @@ body {
     height: 100vh;
     margin: 0;
     background-color: #3f140f;
-   /* background: #333; */
-    overflow-x: auto;
+    overflow-x: auto; /* Cambia questo in scroll */
+    overflow-y: hidden; /* Nasconde lo scroll verticale se non necessario */
 }
 
 .container {
-    width: 1200px;
+    width: 100%; /* Fai adattare la larghezza */
+    max-width: 1200px; /* Mantieni un limite massimo */
     height: 700px;
     display: flex;
     flex-direction: row;
@@ -29,7 +35,7 @@ body {
     border: solid black 2px;
     box-shadow: inset 0px 0px 10px 20px;
     border-radius: 15px;
-    min-width: 1200px;
+    min-width: 1200px; /* Mantieni una larghezza minima */
 }
 
 .container {
@@ -127,7 +133,7 @@ body {
 /* Resto del CSS */
 #padPanel {
     position: relative;
-    top: 0 px;
+    top: 0px;
     right: 5px;
 }
 
@@ -458,19 +464,30 @@ body {
 
 
 
-.knob_filter {
+.knob_filter-container {
     position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: rgb(213, 172, 117);
+    width: 2rem; /* Adjust to match knob size */
+    height: 2rem; /* Adjust to match knob size */
     box-shadow: inset 0px 0px 0px 3px #4a240d,
         0px 0px 0px 2px rgb(94, 53, 0),
-        8px 4px 8px 2px rgb(57, 12, 12);
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
+        5px 2.5px 4px 2px rgb(17, 3, 3); /* Shadow on the container */
+    border-radius: 50%; /* Ensure it matches the knob's shape */
+    margin: 3rem auto;
     border: solid .25rem darken(black, 100%);
-    margin: 4rem auto;
 }
 
+.knob_filter {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+
+    
+}
 
 .knob_filter:before {
     content: "";
@@ -484,6 +501,7 @@ body {
     box-shadow: 0px 0px .4rem 0px darken(black, 10%);
     transform: translate(-10px, 0px) rotate(45deg);
 }
+
 
 
 #knob_invert {
@@ -663,6 +681,22 @@ body {
     transition: transform 0.1s ease;
 }
 
+#videoInput {
+    margin-top: 10px;
+}
+
+#uploadButton {
+    margin-top: 10px;
+}
+
+#midi-devices {
+    margin-top: 10px;
+}
+
+#audio-devices {
+    width: 90%;
+    margin-top: 10px;
+}
 
 #spectrum-container {
     width: 100%;
@@ -676,3 +710,4 @@ body {
     height: 100%;
     background-color: #333; /* Optional: background color for the canvas */
 }
+
