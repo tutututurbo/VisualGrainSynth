@@ -13,6 +13,7 @@ let frameIndexMax = parseInt(localStorage.getItem('frameIndexMax')) || 0;     //
 // let BWButton = document.getElementById('B&WButton');
 // let sepiaButton = document.getElementById('sepiaButton');
 // let isInverted = false;
+var autoModeActive = false;
 var fxKnobs = document.getElementsByClassName('knob_filter');
 let fxAngles = new Array(4).fill(0);
 var fxLastAngle = 0;
