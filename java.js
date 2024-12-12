@@ -7,6 +7,10 @@ let videoPosition = 0; // Frame of the current video position for each grain
 let isnewWindwOpen = false;
 let newWindow = null;
 let frameIndexMax = parseInt(localStorage.getItem('frameIndexMax')) || 0;     // Retrieve the stored frameIndexMax value, or default to 0
+let isForward = true;
+let isBackward = false;
+let isForback = false;
+const modeSelect = document.getElementById('modeSelect');
 
 // --------------------- EFFECTS -------------------------
 // let invertButton = document.getElementById('colorInvertButton');
@@ -19,7 +23,6 @@ let fxAngles = new Array(4).fill(0);
 var fxLastAngle = 0;
 var fxCurrentKnob = null;
 var fxLastY = 0; // Track the last Y position for FX
-
 
 // --------------------- KNOBS ---------------------------
 var knobs = document.getElementsByClassName('knob');
@@ -653,6 +656,7 @@ initMIDI();
 // DA FIXARE
 // -> Il video si ferma quando mi sposto da un pad all'altro con la tastiera (non dovrebbe)
 // -> Il video si ferma quando muovo il knob0 (in setAngle dovrei fare l'update della videoPosition prima di fare startFrameLoop solo una volta aver smesso di muovere il knob0 -> stopDrag)
+// -> Quando esco dalla perfermance mode activeLamp è uguale a 6 ma dovrebbe mantenere l'ultimo lamp attivo della editMode
 
 // DA IMPLEMENTARE
 // -> Estrazione di feature (RMS su almeno tre bande: basse, medie e alte) da traccia/ingresso audio
