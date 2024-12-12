@@ -3,11 +3,34 @@
 }
 
 @font-face {
-    font-family: 'MioFont';
+    font-family: 'Dalì';
     src: url('Assets/Photograph Signature.ttf') format('truetype');
     font-weight: bold;
     font-style: normal;
 }
+
+@font-face {
+    font-family: 'Arcane';
+    src: url('Assets/Arcane Nine.otf') format('opentype'); /* Change the path if needed */
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Saint';
+    src: url('Assets/SaintCarell_PERSONAL_USE_ONLY.otf') format('opentype'); /* Change the path if needed */
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'SaintClean';
+    src: url('Assets/SaintCarellClean_PERSONAL_USE_ONLY.otf') format('opentype'); /* Change the path if needed */
+    font-weight: normal;
+    font-style: normal;
+}
+
+
 
 /* Fai in modo che la pagina sia sempre scrollabile */
 html {
@@ -81,7 +104,7 @@ body {
     cursor: pointer;
     width: 45px;
     height: 45px;
-    color: #2b2929;
+    color: #000000;
     border-radius: 30%;
     display: flex;
     justify-content: center;
@@ -144,11 +167,14 @@ body {
     left: 20px;
     top: 20px;
     margin-top: 20px;
+    color: #000000;
 }
 
 #padManual {
     width: 160px;
     border-radius: 15%;
+    font-family: 'Saint';
+    font-weight: bold;
 }
 
  /* Contenitore generale */
@@ -157,6 +183,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 15px;
+    padding-top: 10px;
 }
 
 /* LED */
@@ -167,6 +194,7 @@ body {
     border-radius: 50%;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
 }
 
 /* Stato "on" del LED */
@@ -215,6 +243,7 @@ body {
     justify-content: flex-start;
     padding-left: 5px;
     margin-top: 5px;
+    user-select: none; /* Disable text selection */
 }
 
 /* Pallina della levetta   */
@@ -346,6 +375,7 @@ body {
     width: 500px; /* Make sure the rows span the full width */
     margin: 10px 0;
     max-width: 350px;
+    user-select: none; /* Disable text selection */
 }
 .button, .lamp {
     width: 18px;
@@ -354,7 +384,11 @@ body {
     justify-content: center;
     align-items: center;
     border-radius: 50%;
-  
+}
+
+.lamp{
+    user-select: none; /* Disable text selection */
+    cursor: default; /* Optional: Set a default cursor */
 }
 
 .button {
@@ -617,6 +651,7 @@ body {
     transform: translateX(-50%); /* Centra il testo orizzontalmente */
     color: black; /* Colore del testo per vederlo sopra il cerchio nero */
     font-size: 14px; /* Puoi modificare la dimensione del testo */
+    user-select: none; /* Disable text selection */
 }
 
 
@@ -624,7 +659,7 @@ body {
     position: relative;
     left: 270px;
     bottom: 80px;
-    font-family: 'MioFont', sans-serif;
+    font-family: 'Dalì', sans-serif;
     font-size: 36px;
     color: #b8860b; /* Colore di fallback dorato */
     background: linear-gradient(45deg, #f7d794, #f9a825, #c7881d, #b6861b, #ffc107);
@@ -633,33 +668,12 @@ body {
     -webkit-text-fill-color: transparent;
     font-weight: bold;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Ombra per dare effetto di profondità */
+    user-select: none; /* Disable text selection */
+    cursor: default; /* Optional: Set a default cursor */
 }
 
-.box.is-uploading .box__input {
-    visibility: hidden;
-}
 
-.box.is-uploading .box__uploading {
-    display: block;
-}
 
-.box__uploading,
-.box__success,
-.box__error {
-    display: none;
-}
-
-.box.is-uploading .box__uploading {
-    display: block;
-}
-
-.box.is-success .box__success {
-    display: block;
-}
-
-.box.is-error .box__error {
-    display: block;
-}
 .joystick {
     position: relative;
     width: 100px;
@@ -682,15 +696,63 @@ body {
     transition: transform 0.1s ease;
 }
 
-#videoInput {
+
+
+#videoInput::-webkit-file-upload-button {
+    visibility: hidden;
+}
+
+#videoInput::before {
+    width: 68%;
+    font-family: 'SaintClean', sans-serif;
+    font-weight: 700;
     margin-top: 10px;
+    content: 'Choose File';
+    display: inline-block;
+    border: 1px solid #201000;
+    background: linear-gradient(45deg,  #7f5a1e, #b97d1d, #d1ad6e, #c3942e, #ba8d06);
+    border-radius: 6px;
+    padding: 1px;
+    outline: none;
+    white-space: nowrap;
+    -webkit-user-select: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: rgb(0, 0, 0); /* Text color */
+    /* Add these properties to center the text */
+    text-align: center; /* Align text horizontally */
+    line-height: 20px; /* Adjust this to vertically center the text */
+    vertical-align: middle; /* Ensure that it's properly aligned within the button */
+}
+
+
+#videoInput:active::before {
+background: -webkit-linear-gradient(top, #746868, #887e7e);
 }
 
 #uploadButton {
+    width: 90%;
+    font-family: 'SaintClean', sans-serif;
+    font-weight: 700;
     margin-top: 10px;
+    padding: 1px;
+    font-size: 13px;
+    border-radius: 6px;
+    border: 1px solid #201000;
+    background: linear-gradient(45deg,  #7f5a1e, #b97d1d, #d1ad6e, #c3942e, #ba8d06);
+    color: rgb(0, 0, 0); /* Text color */
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    outline: none; /* Removes the focus outline */
+    box-shadow: none; /* Removes any focus box-shadow */
+}
+
+#uploadButton:active {
+    background-color: -webkit-linear-gradient(top, #746868, #887e7e);
 }
 
 #midi-devices {
+    width: 90%;
     margin-top: 10px;
 }
 
@@ -700,15 +762,116 @@ body {
 }
 
 #spectrum-container {
-    width: 100%;
-    height: 200px; /* Adjust as needed */
-    background-color: #000; /* Optional: background color for the canvas container */
+    top: 60px;
+    position: relative;
+    left: 7px;
+    width: 90%;
+    height: 150px; /* Adjust as needed */
+    background-color: rgba(223, 179, 91, 0.804); /* Optional: background color for the canvas container */
+    box-shadow: inset  3px 1.5px 2px 1px rgb(19, 14, 4),
+        inset  0px 0px 4px 4px rgba(167, 123, 22, 0.905),
+        inset  0px 0px 3px 3px rgb(205, 177, 115),
+        0px 0px 0px 7px rgb(33, 18, 1),
+        7px 3.5px 10px 0px rgb(0, 0, 0);
     margin-top: 10px;
+    border-radius: 2%;
 }
+
 
 #spectrum-canvas {
-    width: 100%;
-    height: 100%;
-    background-color: #333; /* Optional: background color for the canvas */
+    position: relative;
+    left: 5%;
+    top: 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    height: 90%;
+    background-color: #000000; /* Optional: background color for the canvas */
+    border-radius: 10%;
 }
 
+
+
+
+select {
+    padding: 1px;
+    font-size: 13px;
+    border-radius: 6px;
+    box-shadow: 2px 1px 3px  #191301;
+    border: 1px solid rgb(24, 22, 22);
+    background: linear-gradient(45deg,  #7f5a1e, #b97d1d, #d1ad6e, #c3942e, #ba8d06);
+    color: rgb(0, 0, 0); /* Text color */
+    font-family: 'SaintClean';
+    font-weight: 700;
+}
+
+/* Remove the highlight effect when the dropdown is clicked */
+select:focus {
+    outline: none; /* Removes the focus outline */
+    box-shadow: none; /* Removes any focus box-shadow */
+}
+
+
+option {
+    background-color: black; /* Background color for options */
+    /* color: #a79464; Text color for options */
+    font-size: 14px;
+}
+
+
+/* Additional styling for the dropdown to look seamless */
+option:focus {
+    background-color: black; /* Keeps background consistent with the menu */
+    color: #b8860b; /* Keeps text color gold */
+}
+
+#audioMode{
+    position: relative;
+    font-family: 'Saint', sans-serif;
+    font-size: 15px;
+    left: 60px;
+    padding-top: 10px;
+    color: #b8860b; /* Colore di fallback dorato */
+    background: linear-gradient(45deg, #dab054, #f9a825, #c7881d, #b6861b, #ffc107);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Ombra per dare effetto di profondità */
+    user-select: none; /* Disable text selection */
+    cursor: default; /* Optional: Set a default cursor */
+}
+
+
+#modeSelect{
+    position: relative;
+    left: 55px;
+}
+
+
+#openWindowButton {
+    width: 55px;
+    height: 55px;;
+    font-family: 'SaintClean';
+    color: #000000;
+}
+
+
+#editModeText {
+    position: relative;
+    font-family: 'Saint', sans-serif;
+    font-size: 15px;
+    padding-top: 10px;
+    left: -5px;
+    top: 30px;
+    color: #b8860b; /* Colore di fallback dorato */
+    background: linear-gradient(45deg, #dab054, #f9a825, #c7881d, #b6861b, #ffc107);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Ombra per dare effetto di profondità */
+    user-select: none; /* Disable text selection */
+    cursor: default; /* Optional: Set a default cursor */
+}
