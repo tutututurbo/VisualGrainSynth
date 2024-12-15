@@ -69,6 +69,19 @@ let midiStatus = null; // Stores the MIDI status
 let midiNote = 48; // Stores the MIDI note
 const validMidiNotes = Array.from({ length: 48 }, (_, i) => i + 36);     // Definisci l'intervallo di note supportate (2 ottave sotto e sopra C3) : [36, 37, ..., 83]
 
+//---------------- BPM SLIDER -------------------
+let bpm = 120; // Global variable to store the BPM
+let sliderLastY = null; // Track the last Y position
+let sliderPenultimateY = null; // Track the penultimate Y position
+const slider = document.getElementById("tempo-slider");
+const sliderValue = document.getElementById("slider-value");
+
+//---------------- SPECTRUM -------------------
+let xBands = new Array(4).fill(0);
+const sliderBands = document.querySelectorAll(".slider-band");
+let threshold = new Array(5).fill(0);
+
+
 // ============================================== LOGIC IMPLEMENTATION ==============================================
 
 //--------------------- VIDEO -------------------------
@@ -339,7 +352,7 @@ document.addEventListener('keydown', (event) => {
         const index = parseInt(key, 10) - 1; // Converti il tasto in un indice
         const pad = document.querySelectorAll('.pad')[index]; // Seleziona il pad corrispondente
         pad.click(); // Simula un click sul pad
-    } else if (key === ' ') { // Tasto 7
+    } else if (key === '7') { // Tasto 7
         padManual.click(); // Simula un click sul pad manuale
     }
 });
