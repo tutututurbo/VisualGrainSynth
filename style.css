@@ -30,6 +30,13 @@
     font-style: normal;
 }
 
+@font-face {
+    font-family: 'Rumble';
+    src: url('Assets/rumble_brave/Rumble\ Brave.otf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
 
 
 /* Fai in modo che la pagina sia sempre scrollabile */
@@ -60,6 +67,8 @@ body {
     border-radius: 15px;
     min-width: 1200px; /* Mantieni una larghezza minima */
 }
+
+
 
 .container {
     content: "";
@@ -302,9 +311,22 @@ body {
 }
 
 
-.center_box_container {
+/* .center_box_container {
     width: 800px;
     height: 450px;
+    background-color: rgb(249, 214, 168); 
+    border-radius: 3%;
+    border: black solid;
+    box-shadow: inset 0px 0px 60px 25px rgb(88, 61, 26);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+} */
+
+.center_box_container {
+    width: 800px;
+    height: 400px;
     background-color: rgb(249, 214, 168); 
     border-radius: 3%;
     border: black solid;
@@ -316,9 +338,28 @@ body {
 }
 
 
-.center-box {
+/* .center-box {
     width: 710px;
     height: 400px;
+    border-radius: 10%;
+    margin: 60px;
+    background-color:rgb(170, 179, 189); 
+    box-shadow: 0px 0px 1px 10px black, 
+        inset 0px 0px 100px 30px slategray,
+        inset -30px -15px 30px 10px rgb(81, 78, 78),
+        inset 30px 15px 20px 10px whitesmoke,
+        10px 10px 5px 1px rgb(66, 19, 19);
+    display: flex;
+    justify-content: center;
+    object-fit: cover;
+    align-items: center;
+    position: relative;
+    overflow: hidden; 
+} */
+
+.center-box {
+    width: 620px;
+    height: 350px;
     border-radius: 10%;
     margin: 60px;
     background-color:rgb(170, 179, 189); 
@@ -336,11 +377,19 @@ body {
 }
 
 
-#video_frame {
+/* #video_frame {
     max-width: 140%;
     max-height: 150%;
+    border-radius: 10%; 
+    object-fit: cover;
+} */
+
+#video_frame {
+    max-width: 100%;
+    max-height: 90%;
     border-radius: 10%; /* Arrotonda gli angoli del video */
     object-fit: cover;
+    user-select: none; /* Disable text selection */
 }
 
 
@@ -358,9 +407,19 @@ body {
     z-index: 10;
 }
 
-.bottom-box {
+/* .bottom-box {
     width: 800px;
     height: 240px;
+    border: black, solid, 1px;
+    border-radius: 7%;
+    background-color: #a0522d; 
+    box-shadow: inset 0px 0px 1000px 10px #4b1f0b;
+
+} */
+
+.bottom-box {
+    width: 800px;
+    height: 180px;
     border: black, solid, 1px;
     border-radius: 7%;
     background-color: #a0522d; 
@@ -461,8 +520,8 @@ body {
     box-shadow: inset 0px 0px 0px 3px #4a240d,
         0px 0px 0px 2px rgb(94, 53, 0),
         8px 4px 8px 2px rgb(57, 12, 12);
-    width: 4rem;
-    height: 4rem;
+    width: 3.5rem;
+    height: 3.5rem;
     border-radius: 50%;
     border: solid .25rem darken(black, 100%);
     margin: 4rem auto; 
@@ -557,9 +616,26 @@ body {
 }
 
 
-#preview_display {
+/* #preview_display {
     margin-top: 25px;
     height: 100px;
+    width: 500px;
+    background-color: #f4d77a;
+    border: 5px solid #000000; 
+    box-shadow: inset 10px 5px 10px 1px rgba(0, 0, 0, 0.5), 
+                inset 0px 0px 50px 30px rgba(159, 70, 6, 0.727),
+                inset -10px -5px 5px 1px rgb(96, 88, 88),
+                inset 10px 5px 15px 15px rgb(255, 255, 255);
+    border-radius: 15px;
+    background: linear-gradient(145deg, #f6d58e, #e0be61); 
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+} */
+
+#preview_display {
+    margin-top: 25px;
+    height: 80px;
     width: 500px;
     background-color: #f4d77a; /* Warm yellow for vintage effect */
     border: 5px solid #000000; /* Darker yellow-brown border */
@@ -655,12 +731,29 @@ body {
 }
 
 
-.signature {
+/* .signature {
     position: relative;
     left: 270px;
     bottom: 80px;
     font-family: 'Dalì', sans-serif;
     font-size: 36px;
+    color: #b8860b; 
+    background: linear-gradient(45deg, #f7d794, #f9a825, #c7881d, #b6861b, #ffc107);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); 
+    user-select: none;
+    cursor: default; 
+} */
+
+.signature {
+    position: relative;
+    left: 810px;
+    bottom: 20px;
+    font-family: 'Dalì', sans-serif;
+    font-size: 25px;
     color: #b8860b; /* Colore di fallback dorato */
     background: linear-gradient(45deg, #f7d794, #f9a825, #c7881d, #b6861b, #ffc107);
     background-clip: text;
@@ -761,20 +854,22 @@ background: -webkit-linear-gradient(top, #746868, #887e7e);
     margin-top: 10px;
 }
 
-#spectrum-container {
+/* #spectrum-container {
     top: 60px;
     position: relative;
     left: 7px;
     width: 90%;
-    height: 150px; /* Adjust as needed */
-    background-color: rgba(223, 179, 91, 0.804); /* Optional: background color for the canvas container */
-    box-shadow: inset  3px 1.5px 2px 1px rgb(19, 14, 4),
+    height: 150px;
+    background-color: rgba(223, 179, 91, 0.804); 
+    box-shadow: inset  3px 1.5px 3px 1px rgb(221, 198, 151),
+        inset  -3px -1.5px 3px 1px rgb(109, 88, 47),
         inset  0px 0px 4px 4px rgba(167, 123, 22, 0.905),
         inset  0px 0px 3px 3px rgb(205, 177, 115),
-        0px 0px 0px 7px rgb(33, 18, 1),
+        3px 1.5px 2px 0.5px rgb(0, 0, 0),
+        0px 0px 0px 7px rgb(38, 22, 3),
         7px 3.5px 10px 0px rgb(0, 0, 0);
     margin-top: 10px;
-    border-radius: 2%;
+    border-radius: 1%;
 }
 
 
@@ -787,12 +882,39 @@ background: -webkit-linear-gradient(top, #746868, #887e7e);
     justify-content: center;
     width: 90%;
     height: 90%;
-    background-color: #000000; /* Optional: background color for the canvas */
-    border-radius: 10%;
+    background-color: #000000; 
+} */
+
+
+#spectrum-container {
+    position: relative;
+    width: 770px;
+    height: 100px; 
+    background-color: rgb(0, 0, 0); 
+    /* box-shadow: inset  3px 1.5px 3px 1px rgb(221, 198, 151),
+        inset  -3px -1.5px 3px 1px rgb(109, 88, 47),
+        inset  0px 0px 4px 4px rgba(167, 123, 22, 0.905),
+        inset  0px 0px 3px 3px rgb(205, 177, 115),
+        3px 1.5px 2px 0.5px rgb(0, 0, 0),
+        0px 0px 0px 7px rgb(38, 22, 3),
+        7px 3.5px 10px 0px rgb(0, 0, 0);
+    margin-top: 10px; */
+    border-radius: 1%;
+    justify-content: center;
+    align-items: center;
 }
 
 
-
+#spectrum-canvas {
+    position: relative;
+    top: 5%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 770px;
+    height: 100px;
+    background-color: #000000; /* Optional: background color for the canvas */
+}
 
 select {
     padding: 1px;
@@ -874,4 +996,125 @@ option:focus {
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Ombra per dare effetto di profondità */
     user-select: none; /* Disable text selection */
     cursor: default; /* Optional: Set a default cursor */
+}
+
+
+
+.cell-slider {  
+    position: relative;
+    width: 50px;
+    height: 20px;
+    background: linear-gradient(45deg,  #7f5a1e, #b97d1d, #d1ad6e, #c3942e, #ba8d06);
+    border: 1px solid  rgb(24, 22, 22);
+    border-radius: 3px;
+    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.5);
+    cursor: ns-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    margin: 10px auto;
+}
+
+.slider-value {
+    font-size: 15px;
+    color: #000000;
+    font-family: 'Rumble';
+    pointer-events: none;
+    font-weight: bold;
+}
+
+#BPM {
+    position: relative;
+    font-family: 'SaintClean';
+    font-size: 12px;
+    left: 80px;
+    color: #b8860b; /* Colore di fallback dorato */
+    background: linear-gradient(45deg, #dab054, #f9a825, #c7881d, #b6861b, #ffc107);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Ombra per dare effetto di profondità */
+    user-select: none; /* Disable text selection */
+    cursor: default; /* Optional: Set a default cursor */
+}
+
+.fxText{
+    position: relative;
+    font-family: 'SaintClean';
+    font-size: 12px;
+    top: 30px;
+    color: #b8860b; /* Colore di fallback dorato */
+    background: linear-gradient(45deg, #dab054, #f9a825, #c7881d, #b6861b, #ffc107);
+    background-clip: text;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Ombra per dare effetto di profondità */
+    user-select: none; /* Disable text selection */
+    cursor: default; /* Optional: Set a default cursor */
+    transform: none;
+}
+
+.row-bands{
+    display: flex;
+}
+
+
+.slider-band {
+    position: relative;
+    height: 100px;
+    bottom: 95px;
+    z-index: 2;
+    cursor: ns-resize;
+    user-select: none; /* Disable text selection */
+}
+
+#sub-slider{
+    width: 122px;
+}
+
+#lowBass-slider{
+    width: 57px;
+}
+
+#bass-slider{
+    width: 123px;
+}
+
+#mid-slider{
+    width: 211px;
+}
+
+#high-slider{
+    width: 257px;
+}
+
+.slider-indicator {
+    position: relative;
+    height: 0px;
+    max-height: 100px;
+    background-color: rgba(255, 255, 254, 0.267);
+    cursor: ns-resize;
+}
+
+#sub{
+    width: 122px;
+}
+
+
+#lowBass{
+    width: 57px;
+}
+
+#bass{
+    width: 123px;
+}
+
+#mid{
+
+    width: 211px;
+}
+
+#high{
+    width: 257px;
 }
