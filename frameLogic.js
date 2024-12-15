@@ -14,6 +14,7 @@ function startFrameLoop(startFrame, grainLength, midiNote) {
     let outOfBound = null;
     let currentFrame = startFrame; 
     let oversampleCounter = 0; 
+    videoDiv = document.getElementById("video_frame");
     isLooping = true;
  
     // Calcola il fattore in base alla nota MIDI
@@ -21,13 +22,13 @@ function startFrameLoop(startFrame, grainLength, midiNote) {
     frameInterval = setInterval(() => {
         console.log("FX Angles:", fxAngles);
         // Aggiorna il frame mostrato
-        document.getElementById("video_frame").src = `/frames/frame_${currentFrame}.jpg`;
+        videoDiv.src = `/frames/frame_${currentFrame}.jpg`;
         // Applica gli effetti all'immagine
         let effects = getEffectValues(); // Ottieni i valori degli effetti
         // document.getElementById("video_frame").style.filter = "grayscale(50%) invert(50%) hue-rotate(180deg) sepia(50%)";
-        console.log(effects.grayscale, effects.invert, effects.hueRotate, effects.sepia);
+       // console.log(effects.grayscale, effects.invert, effects.hueRotate, effects.sepia);
         // Applica i valori degli effetti all'immagine
-        document.getElementById("video_frame").style.filter = `
+        videoDiv.style.filter = `
            
             invert(${effects.invert}%) 
             hue-rotate(${effects.hueRotate}deg)
@@ -36,43 +37,25 @@ function startFrameLoop(startFrame, grainLength, midiNote) {
         `;
 
         //   
-        
-        // Se c'è una finestra aperta, applica anche lì
         if (newWindow && !newWindow.closed) {
-            const dynamicImg = newWindow.document.getElementById("dynamicDiv");
-            dynamicImg.src = `/frames/frame_${currentFrame}.jpg`;
-            dynamicImg.style.filter = `
-                
-                invert(${effects.invert}%) 
-                hue-rotate(${effects.hueRotate}deg)
-                saturate(${effects.saturate}%)
-                 grayscale(${effects.grayscale}%)
-            `;
+            newWindow.document.getElementById("dynamicDiv").src = videoDiv.src;
+            newWindow.document.getElementById("dynamicDiv").style.filter = videoDiv.style.filter;
         }
 
-        console.log("Applied filter:", document.getElementById("video_frame").style.filter);
-        
-
+        // Se c'è una finestra aperta, applica anche lì
         // if (newWindow && !newWindow.closed) {
-        //     const dynamicImg = newWindow.document.getElementById("dynamicDiv");
-        //     dynamicImg.src = `/frames/frame_${currentFrame}.jpg`;
-
-
-       
-        //     dynamicImg.style.filter = `grayscale(${bwValue}%) invert(${invertValue}%) hue-rotate(${hueValue}deg) sepia(${sepiaValue}%)`;
-        //     document.getElementById("video_frame").style.filter = `grayscale(${bwValue}%) invert(${invertValue}%) hue-rotate(${hueValue}deg) sepia(${sepiaValue}%)`;
-        //     // // Applica gli effetti all'immagine             
-        //     // if(isInverted===true){
-        //     //     dynamicImg.style.filter = "invert(1)";
-                           
-        //     // }else if (BWButton.classList.contains("active")){
-        //     //     dynamicImg.style.filter = "grayscale(100%)";
-        //     // }else if (sepiaButton.classList.contains("active")){
-        //     //     dynamicImg.style.filter = "sepia(1)";
-        //     // }else {
-        //     //     dynamicImg.style.filter = "invert(0)";
-        //     // }   
+        //     newWindow.document.getElementById("dynamicDiv").src = `/frames/frame_${currentFrame}.jpg`;
+        //     newWindow.document.getElementById("dynamicDiv").style.filter = `
+                
+        //         invert(${effects.invert}%) 
+        //         hue-rotate(${effects.hueRotate}deg)
+        //         saturate(${effects.saturate}%)
+        //          grayscale(${effects.grayscale}%)
+        //     `;
         // }
+
+        console.log("Applied filter:", document.getElementById("video_frame").style.filter);
+
 
         // Forward
         if(isForward){

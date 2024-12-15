@@ -247,13 +247,19 @@ async function captureFromBlackHole(deviceId) {
 
 
             if(autoModeActive) {
-                if(subBassRMS >= 100-threshold[0] && lowBassRMS >= 100-threshold[1] ) {
-                    document.getElementById("video_frame").style.filter = `
-                    invert(${Math.round((lowBassRMS-threshold[1]) * 3)}%)
+                if(lowBassRMS >= 100-threshold[1] ) {
+                    videoDiv.style.filter = `
+                    invert(${Math.max(Math.round((lowBassRMS-threshold[1]) * 3), 100)}%)
                     hue-rotate(${Math.round(midRMS * 3)}deg)
                     saturate(${Math.round(subBassRMS * 40)}%)
+                    
 
                 `;
+
+                if (newWindow && !newWindow.closed) {
+                    newWindow.document.getElementById("dynamicDiv").src = videoDiv.src;
+                    newWindow.document.getElementById("dynamicDiv").style.filter = videoDiv.style.filter;
+                }
                 console.log(lowBassRMS+  'soooos'+canvas.offsetHeight-threshold[1]);
                 }
                 else{
