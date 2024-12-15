@@ -9,23 +9,49 @@
 <body>
     <div class="container">
         <div class="column" id="column_left">
+
+            <div class="switchContainer">
+                <!-- LED -->
+                <div class="led" id="ledAutoMode"></div>                
+                <!-- Levetta -->
+                <div class="switchLever" id="autoMode" onclick="autoSwitch(this)"></div>
+            </div>
+
+            <div id="audioMode">
+                Auto Mode
+            </div>
   
             <div class="knob_filter-container">
-                <div class="knob_filter" id="knob_invert"></div>
+                <div class="knob_filter" id="knob_invert">
+                    <span class='fxText'>Invert</span>
+                </div>
             </div>
             <div class="knob_filter-container">
-                <div class="knob_filter" id="knob_bw"></div>
+                <div class="knob_filter" id="knob_bw">
+                    <span class='fxText'>Black & White</span>
+                </div>
             </div>
             <div class="knob_filter-container">
-                <div class="knob_filter" id="knob_sepia"></div>
+                <div class="knob_filter" id="knob_sepia">
+                    <span class='fxText'>Sepia</span>
+                </div>
             </div>
             <div class="knob_filter-container">
-                <div class="knob_filter" id="knob_hue"></div>
+                <div class="knob_filter" id="knob_hue">
+                    <span class='fxText'>Hue</span>
+                </div>
             </div>
                
             <!-- <div class = "normbutton" id="colorInvertButton">Invert</div>
             <div class = "normbutton" id="sepiaButton">Sepia</div>
             <div class = "normbutton" id="B&WButton">B&W</div> -->
+
+            <select id="modeSelect">
+                <option value="forward">Forward</option>
+                <option value="backward">Backward</option>
+                <option value="forback">Forback</option>
+            </select>
+
             <div id="padPanel">
                 <div class="row">
                     <div class="row padRow">
@@ -52,7 +78,7 @@
             <div class="center_box_container">
                 <div class="center-box">
                     <div id="videoplayer">
-                        <img id="video_frame" src="/frames/frame_0.jpg" alt="Video Frame" width="680" height="410">
+                        <img id="video_frame" src="/frames/frame_0.jpg" alt="Video Frame" width="620" height="355">
                     </div>
                 </div>
             </div>
@@ -148,44 +174,68 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Spectrogram -->
+            <div class="row">
+                <!-- Spectrum visualization -->
+                <div id="spectrum-container">
+                    <canvas id="spectrum-canvas"></canvas>    
+                    <div class="row-bands">
+                        <div class="slider-band" id="sub-slider">
+                            <div class="slider-indicator" id="sub"></div>
+                        </div>
+                        <div class="slider-band" id="lowBass-slider">
+                            <div class="slider-indicator" id="lowBass"></div> 
+                        </div>
+                        <div class="slider-band" id="bass-slider">
+                            <div class="slider-indicator" id="bass"></div> 
+                        </div>
+                        <div class="slider-band" id="mid-slider">
+                            <div class="slider-indicator" id="mid"></div>  
+                        </div> 
+                        <div class="slider-band" id="high-slider">
+                            <div class="slider-indicator" id="high"></div>  
+                        </div> 
+                    </div>             
+                </div>
+
+            </div>
         </div>
         <div class="column" id="column_right">
             <div class="upload">
                 <input type="file" id = "videoInput" accept = "video/*" /></input>
                 <button id="uploadButton">Upload Video</button>
             </div>
+
             <select id="midi-devices" onchange="handleDeviceChange()">
-                <option value="">- Select a MIDI device -</option>
+                <option value="">Select a MIDI device</option>
             </select>
+
             <select id="audio-devices" onchange="handleAudioDeviceChange()">
-                <option value="">- Select an audio device -</option>
+                <option value="">Select an AUDIO device</option>
             </select>
+
+            <div class="cell-slider" id="tempo-slider">
+                <div class="slider-value" id="slider-value"><span>120</span></div>
+            </div>
+            <div id="BPM">BPM</div>
+            
             
             <div>
                 <button class="normbutton" id="openWindowButton" onclick="openNewWindow()">Full Screen</button>
             </div>
             <div class="switchContainer">
                 <!-- LED -->
-                <div class="led" id="led"></div>
-                
+                <div class="led" id="led"></div>           
                 <!-- Levetta -->
-                <div class="switchLever" id="editMode" onclick="toggleSwitch(this)"></div>
-
-            </div>
-
-            <div class="switchContainer">
-                <!-- LED -->
-                <div class="led" id="ledAutoMode"></div>
-                
-                <!-- Levetta -->
-                <div class="switchLever" id="autoMode" onclick="autoSwitch(this)"></div>
-
+                <div class="switchLever" id="editMode" onclick="toggleSwitch(this)">
+                    <div id="editModeText">
+                        Edit Mode
+                    </div>        
+                </div>
             </div>
             
-            <!-- Spectrum visualization -->
-            <div id="spectrum-container">
-                <canvas id="spectrum-canvas"></canvas>
-            </div>
+            
 
         </div>
     </div>
@@ -203,3 +253,7 @@
    
 </body>
 </html>
+
+
+
+
