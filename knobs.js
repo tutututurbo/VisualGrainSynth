@@ -119,15 +119,13 @@ function onDrag(e) {
             // Aggiorna i filtri con i nuovi valori
             let effects = getEffectValues();
             document.getElementById("video_frame").style.filter = `
-                grayscale(${effects.grayscale}%) 
                 invert(${effects.invert}%) 
                 hue-rotate(${effects.hueRotate}deg) 
                 saturate(${effects.saturate}%)
+                grayscale(${effects.grayscale}%) 
             `;
         }
     }
-    
-
 }
 
 // Stop dragging
@@ -147,8 +145,6 @@ function stopDrag() {
         fxCurrentKnob = null; // Reset the current knob for FX
     }
   
-    
-    
     document.removeEventListener('mousemove', onDrag); // Remove drag listener
     document.removeEventListener('mouseup', stopDrag); // Remove mouseup listener
 }

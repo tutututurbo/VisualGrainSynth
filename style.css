@@ -750,8 +750,8 @@ body {
 
 .signature {
     position: relative;
-    left: 810px;
-    bottom: 20px;
+    left: 10px;
+    top: 20px;
     font-family: 'Dalì', sans-serif;
     font-size: 25px;
     color: #b8860b; /* Colore di fallback dorato */
@@ -796,6 +796,9 @@ body {
 }
 
 #videoInput::before {
+    position: relative;
+    left: 5px;
+    justify-content: center;
     width: 68%;
     font-family: 'SaintClean', sans-serif;
     font-weight: 700;
@@ -820,10 +823,12 @@ body {
 
 
 #videoInput:active::before {
-background: -webkit-linear-gradient(top, #746868, #887e7e);
+    background: -webkit-linear-gradient(top, #746868, #887e7e);
 }
 
 #uploadButton {
+    position: relative;
+    left: 5px;
     width: 90%;
     font-family: 'SaintClean', sans-serif;
     font-weight: 700;
@@ -847,11 +852,13 @@ background: -webkit-linear-gradient(top, #746868, #887e7e);
 #midi-devices {
     width: 90%;
     margin-top: 10px;
+    user-select: none;
 }
 
 #audio-devices {
     width: 90%;
     margin-top: 10px;
+    user-select: none;
 }
 
 /* #spectrum-container {
@@ -917,9 +924,11 @@ background: -webkit-linear-gradient(top, #746868, #887e7e);
 }
 
 select {
+    position: relative;
     padding: 1px;
     font-size: 13px;
     border-radius: 6px;
+    left: 5px;
     box-shadow: 2px 1px 3px  #191301;
     border: 1px solid rgb(24, 22, 22);
     background: linear-gradient(45deg,  #7f5a1e, #b97d1d, #d1ad6e, #c3942e, #ba8d06);
@@ -998,8 +1007,6 @@ option:focus {
     cursor: default; /* Optional: Set a default cursor */
 }
 
-
-
 .cell-slider {  
     position: relative;
     width: 50px;
@@ -1059,7 +1066,6 @@ option:focus {
     display: flex;
 }
 
-
 .slider-band {
     position: relative;
     height: 100px;
@@ -1069,52 +1075,87 @@ option:focus {
     user-select: none; /* Disable text selection */
 }
 
-#sub-slider{
-    width: 122px;
-}
-
-#lowBass-slider{
-    width: 57px;
-}
-
-#bass-slider{
-    width: 123px;
-}
-
-#mid-slider{
-    width: 211px;
-}
-
-#high-slider{
-    width: 257px;
-}
+#sub-slider{ width: 122px;}
+#lowBass-slider{ width: 57px; }
+#bass-slider{ width: 123px;}
+#mid-slider{ width: 211px;}
+#high-slider{ width: 257px;}
 
 .slider-indicator {
     position: relative;
     height: 0px;
     max-height: 100px;
     background-color: rgba(255, 255, 254, 0.267);
-    cursor: ns-resize;
+    user-select: none; 
 }
 
-#sub{
-    width: 122px;
+.band-line {
+    position: absolute;
+    width: 4px;
+    height: 100%;
+    bottom: -5px;
+    background-color: rgb(129, 58, 3);
+    border-radius: 2px;
+    z-index: 3;
+    cursor: ew-resize;
+    user-select: none; 
 }
 
-
-#lowBass{
-    width: 57px;
+.band-line::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 100%;
+    left: 25%;
+    bottom: 0px;
+    background-color: rgba(255, 255, 255, 0.157);
+    border-radius: 2px;
 }
 
-#bass{
-    width: 123px;
+#band1{ left: 122px;}
+#band2{ left: 179px;}
+#band3{ left: 302px;}
+#band4{ left: 513px;}
+
+/* Stile per i buchi */
+.hole {
+    width: 15px;
+    height: 15px;
+    background-color: #000;
+    border: 2px solid #4a3823;
+    border-radius: 50%;
+    box-shadow: inset 0 0 5px #333;
 }
 
-#mid{
-
-    width: 211px;
+/* Stile per le punte */
+.point {
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle at 50% 50%, #d4af7a 20%, #8b6f4a 70%, #4a3823 100%);
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease;
+}
+.point.selected {
+    box-shadow: 0 0 5px 3px #d4af7a;
 }
 
-#high{
-    width: 257px;
+.fxlabel {
+    margin-top: 30px;
+    margin-bottom: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: #b88a4a;
+    text-shadow: 1px 1px 1px #4a3823;
+    letter-spacing: 1px;
 }
+
+.label {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: #b88a4a;
+    text-shadow: 1px 1px 1px #4a3823;
+    letter-spacing: 1px;
+}
+

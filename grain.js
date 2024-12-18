@@ -15,8 +15,8 @@ function updateGrainLengthFromKnob(angle) {
         document.getElementById(`window${index + 1}`).style.width = `${grainPixels}px`;
     }     
     anglesEnd[index] = angle; 
-    grainLength[index] = Math.floor((grainPixels / maxPosition) * frameIndexMax);
-    
+    grainLength[index] = Math.min(Math.floor((grainPixels / maxPosition) * frameIndexMax), frameIndexMax-1);
+    console.log(grainLength[index]);
 }
 
 

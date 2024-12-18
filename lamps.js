@@ -9,3 +9,5 @@ function updateLampPosition(index, newLeft) {
         angles[1] = anglesEnd[lampIndex];
         lastAngle = angles[currentKnob]; // Reset lastAngle to current lamp's angle to prevent carryover
     }
+
+

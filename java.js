@@ -4,7 +4,7 @@
 const $input = document.querySelector('.box__file');
 let videoElement = document.getElementById('videoElement');
 let videoPosition = 0; // Frame of the current video position for each grain
-let videoDiv = null;
+let videoDiv = document.getElementById("video_frame");;
 let isnewWindwOpen = false;
 let newWindow = null;
 let frameIndexMax = parseInt(localStorage.getItem('frameIndexMax')) || 0;     // Retrieve the stored frameIndexMax value, or default to 0
@@ -78,12 +78,29 @@ const slider = document.getElementById("tempo-slider");
 const sliderValue = document.getElementById("slider-value");
 
 //---------------- SPECTRUM -------------------
-let xBands = new Array(4).fill(0);
+let xBands = [60, 100, 300, 2000];
 const sliderBands = document.querySelectorAll(".slider-band");
 let threshold = new Array(5).fill(0);
+const bandLines = document.getElementsByClassName("band-line");
+let rectWidths = [122, 57, 123, 211, 257];
 
 
 // ============================================== LOGIC IMPLEMENTATION ==============================================
+
+
+let isProcessing = true; // Flag to indicate video processing state
+let staticFrameIndex = 0; // Index for the TV_STATIC frames
+const staticFramesPath = "TV_STATIC"; // Path to the folder with static frames
+
+// Function to show static frames
+function showStaticFrames() {
+    if (isProcessing) {
+        videoDiv.src = `${staticFramesPath}/frame_${staticFrameIndex}.jpg`;
+        staticFrameIndex = (staticFrameIndex + 1) % 10; // Assuming you have 10 static frames
+        setTimeout(showStaticFrames, 100); // Update frame every 100ms
+    }
+}
+
 
 //--------------------- VIDEO -------------------------
 document.getElementById('uploadButton').addEventListener('click', function() {
@@ -93,6 +110,10 @@ document.getElementById('uploadButton').addEventListener('click', function() {
         alert('Please select a video file first.');
         return;
     }     
+
+    isProcessing = true;
+    showStaticFrames();
+
     const formData = new FormData();
     formData.append('video', file); 
     // Heroku server: 'https://visualgrainsynth-77df4d6f539a.herokuapp.com/upload-video'
@@ -107,7 +128,9 @@ document.getElementById('uploadButton').addEventListener('click', function() {
         
         // Save frameIndexMax to localStorage
         localStorage.setItem('frameIndexMax', frameIndexMax);
-        
+
+        isProcessing = false;
+        videoFrame.src = `/frames/frame_0.jpg`;      
     })
     .catch(error => {
         console.error('Errore:', error);
@@ -663,6 +686,170 @@ window.handleDeviceChange = function() {
 
 // Inizializza l'app MIDI
 initMIDI();
+
+
+//--------------------------------- SPECTRUM ---------------------------------------
+
+function updateRectangles() {
+    sliderBands[0].style.width = `${rectWidths[0]}px`;
+    sliderBands[1].style.width = `${rectWidths[1]}px`;
+    sliderBands[2].style.width = `${rectWidths[2]}px`;
+    sliderBands[3].style.width = `${rectWidths[3]}px`;
+    sliderBands[4].style.width = `${rectWidths[4]}px`;
+
+    bandLines[0].style.left = `${rectWidths[0]}px`;
+    bandLines[1].style.left = `${rectWidths[0] + rectWidths[1]}px`;
+    bandLines[2].style.left = `${rectWidths[0] + rectWidths[1] + rectWidths[2]}px`;
+    bandLines[3].style.left = `${rectWidths[0] + rectWidths[1] + rectWidths[2] + rectWidths[3]}px`;
+}
+
+Array.from(bandLines).forEach((line, index) => {
+    let isDragging = false;
+    let startX = 0;
+    console.log(startX);
+    line.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        startX = e.clientX;
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+
+        const deltaX = e.clientX - startX;
+
+        // Update widths
+        const newWidth1 = rectWidths[index] + deltaX;
+        const newWidth2 = rectWidths[index + 1] - deltaX;
+
+        // Ensure rectangles stay within bounds
+        const minWidth = 20; // Minimum width for each rectangle
+        if (newWidth1 >= minWidth && newWidth2 >= minWidth) {
+            rectWidths[index] = newWidth1;
+            rectWidths[index + 1] = newWidth2;
+            startX = e.clientX; // Update startX for smooth dragging
+            updateRectangles();
+        }
+
+        xBands[index] =  pixelToFrequency(parseInt(bandLines[index].style.left, 10));
+        console.log(xBands[index])
+        
+    });
+
+    document.addEventListener("mouseup", () => {
+        isDragging = false;
+    });
+
+});
+
+
+function pixelToFrequency(pixelPosition) {
+    // Estrai i limiti delle frequenze
+    const minFreq = 20;
+    const maxFreq = 20000;
+
+    // Inverte la formula originale
+    const freq = minFreq * Math.pow(maxFreq / minFreq, pixelPosition / 770);
+    return freq;
+}
+
+
+// ----------------------------------------- FX LINK ------------------------------------------------------
+const points = document.querySelectorAll(".point");
+const holes = document.querySelectorAll(".hole");
+
+const connections = {}; // Gestisce i collegamenti banda-effetto
+let selectedPoint = null; // Punta selezionata (B1, B2, ecc.)
+
+// Gestione della selezione delle punte
+document.querySelectorAll(".point").forEach(point => {
+    point.addEventListener("click", () => {
+        document.querySelectorAll(".point").forEach(p => p.classList.remove("selected"));
+        point.classList.add("selected");
+        selectedPoint = point; // Memorizza la punta selezionata
+    });
+});
+
+// Gestione del collegamento tra punta e buco
+document.querySelectorAll(".hole").forEach(hole => {
+    hole.addEventListener("click", () => {
+        if (selectedPoint) {
+            const pointId = selectedPoint.id; // Es. "B1"
+            const holeId = hole.id; // Es. "FX1"
+
+            // Salva il collegamento tra banda ed effetto
+            if (!connections[holeId]) {
+                connections[holeId] = [];
+            }
+            if (!connections[holeId].includes(pointId)) {
+                connections[holeId].push(pointId);
+                drawCable(selectedPoint, hole); // Disegna il cavo visivamente
+                console.log('${pointId} ${holeId}');
+            }
+
+            selectedPoint.classList.remove("selected");
+            selectedPoint = null; // Resetta la selezione
+        }
+    });
+});
+
+// Funzione per disegnare il cavo analogico
+function drawCable(point, hole) {
+const svg = document.getElementById("cable-svg");
+const pointRect = point.getBoundingClientRect();
+const holeRect = hole.getBoundingClientRect();
+
+// Calcola le coordinate
+const x1 = pointRect.left + pointRect.width / 2;
+const y1 = pointRect.top + pointRect.height / 2;
+const x2 = holeRect.left + holeRect.width / 2;
+const y2 = holeRect.top + holeRect.height / 2;
+
+// Definisci il gradiente per il cavo
+const defs = svg.querySelector("defs") || document.createElementNS("http://www.w3.org/2000/svg", "defs");
+svg.appendChild(defs);
+
+const gradientId = "cable-gradient";
+if (!document.getElementById(gradientId)) {
+    const linearGradient = document.createElementNS("http://www.w3.org/2000/svg", "linearGradient");
+    linearGradient.setAttribute("id", gradientId);
+    linearGradient.setAttribute("x1", "0%");
+    linearGradient.setAttribute("y1", "0%");
+    linearGradient.setAttribute("x2", "100%");
+    linearGradient.setAttribute("y2", "100%");
+
+    // Colori del gradiente per riflessi lucidi
+    const stop1 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+    stop1.setAttribute("offset", "0%");
+    stop1.setAttribute("stop-color", "#000"); // Nero
+    stop1.setAttribute("stop-opacity", "1");
+
+    const stop2 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+    stop2.setAttribute("offset", "50%");
+    stop2.setAttribute("stop-color", "#333"); // Grigio scuro per riflesso
+    stop2.setAttribute("stop-opacity", "0.8");
+
+    const stop3 = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+    stop3.setAttribute("offset", "100%");
+    stop3.setAttribute("stop-color", "#000"); // Nero
+
+    linearGradient.appendChild(stop1);
+    linearGradient.appendChild(stop2);
+    linearGradient.appendChild(stop3);
+
+    defs.appendChild(linearGradient);
+}
+
+// Crea un nuovo cavo SVG
+const cable = document.createElementNS("http://www.w3.org/2000/svg", "path");
+cable.setAttribute("d", `M ${x1} ${y1} C ${x1} ${(y1 + y2) / 2}, ${x2} ${(y1 + y2) / 2}, ${x2} ${y2}`);
+cable.setAttribute("stroke", `url(#${gradientId})`); // Applica il gradiente
+cable.setAttribute("stroke-width", "5");
+cable.setAttribute("fill", "none");
+cable.setAttribute("stroke-linecap", "round");
+
+// Aggiunge il cavo allo SVG
+svg.appendChild(cable);
+}
 
 
 

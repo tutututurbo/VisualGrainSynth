@@ -14,7 +14,6 @@ function startFrameLoop(startFrame, grainLength, midiNote) {
     let outOfBound = null;
     let currentFrame = startFrame; 
     let oversampleCounter = 0; 
-    videoDiv = document.getElementById("video_frame");
     isLooping = true;
  
     // Calcola il fattore in base alla nota MIDI
@@ -164,7 +163,6 @@ function stopFrameLoop() {
         invert(${effects.invert}%) 
         hue-rotate(${effects.hueRotate}deg)
         saturate(${effects.saturate}%)
-
         grayscale(${effects.grayscale}%) 
     `;
 }
@@ -212,63 +210,3 @@ modeSelect.addEventListener('change', (event) => {
 
 // Initialize with the default mode selected in the dropdown
 updateMode(modeSelect.value);
-
-// function forwardFramePosition(mode, currentFrame, startFrame, grainLength, factor, oversampleCounter, outOfBound) {
-//     // Handle downsampling: Skip frames to accelerate
-//     if (mode === "downsample") {
-//         currentFrame += factor; // Skip frames for acceleration
-//     }
-//     // Handle oversampling: Repeat frames and show the next one after a certain number of repetitions
-//     else if (mode === "oversample") {
-//         oversampleCounter++;
-//         if (oversampleCounter >= factor) {
-//             oversampleCounter = 0;
-//             currentFrame++; // Show the next frame after repetitions
-//         }
-//     }
-
-//     // Ensure currentFrame stays within the bounds of the grain length
-//     if (currentFrame > startFrame + grainLength && outOfBound) {
-//         currentFrame = startFrame + grainLength; // Restart from the first frame of the grain
-//         outOfBound = false;
-//     }
-
-//     if (currentFrame > startFrame + grainLength) {
-//         currentFrame = startFrame; // Restart from the first frame of the grain if it exceeds the grain length
-//         outOfBound = true;
-//     }
-
-//     // Return updated values
-//     return { currentFrame, oversampleCounter, outOfBound };
-// }
-
-
-// function backwardFramePosition(mode, currentFrame, startFrame, grainLength, factor, oversampleCounter, outOfBound) {
-//     // Handle downsampling: Skip frames to accelerate
-//     if (mode === "downsample") {
-//         currentFrame -= factor; // Skip frames for acceleration
-//     }
-//     // Handle oversampling: Repeat frames and show the next one after a certain number of repetitions
-//     else if (mode === "oversample") {
-//         oversampleCounter++;
-//         if (oversampleCounter >= factor) {
-//             oversampleCounter = 0;
-//             currentFrame--; // Show the next frame after repetitions
-//         }
-//     }
-
-//     // Ensure currentFrame stays within the bounds of the grain length
-//     if (currentFrame < startFrame && outOfBound) {
-//         currentFrame = startFrame + grainLength; // Restart from the first frame of the grain
-//         outOfBound = false;
-//     }
-
-//     if (currentFrame < startFrame) {
-//         currentFrame = startFrame + grainLength; // Restart from the first frame of the grain if it exceeds the grain length
-//         outOfBound = true;
-//     }
-
-//     // Return updated values
-//     return { currentFrame, oversampleCounter, outOfBound };
-// }
-
