@@ -208,11 +208,11 @@ async function captureFromBlackHole(deviceId) {
 
             // Map frequency ranges to bin indices
             const bandIndices = {
-                subBass: { start: Math.floor((20 / nyquist) * numBins), end: Math.ceil((60 / nyquist) * numBins) },
-                lowBass: { start: Math.floor((60 / nyquist) * numBins), end: Math.ceil((100 / nyquist) * numBins) },
-                bass: { start: Math.floor((100 / nyquist) * numBins), end: Math.ceil((300 / nyquist) * numBins) },
-                mid: { start: Math.floor((300 / nyquist) * numBins), end: Math.ceil((2000 / nyquist) * numBins) },
-                high: { start: Math.floor((2000 / nyquist) * numBins), end: Math.ceil((20000 / nyquist) * numBins) },
+                subBass: { start: Math.floor((20 / nyquist) * numBins), end: Math.ceil((xBands[0] / nyquist) * numBins) },
+                lowBass: { start: Math.floor((xBands[0] / nyquist) * numBins), end: Math.ceil((xBands[1] / nyquist) * numBins) },
+                bass: { start: Math.floor((xBands[1] / nyquist) * numBins), end: Math.ceil((xBands[2] / nyquist) * numBins) },
+                mid: { start: Math.floor((xBands[2] / nyquist) * numBins), end: Math.ceil((xBands[3] / nyquist) * numBins) },
+                high: { start: Math.floor((xBands[3] / nyquist) * numBins), end: Math.ceil((20000 / nyquist) * numBins) },
             };
 
             // Helper to calculate RMS for a given band
@@ -233,17 +233,16 @@ async function captureFromBlackHole(deviceId) {
             }
 
             // Calculate RMS for each band
-            const subBassRMS = calculateRMS(20, 60);
-            const lowBassRMS = calculateRMS(60, 100);
-            const bassRMS = calculateRMS(100, 300);
-            const midRMS = calculateRMS(300, 2000);
-            const highRMS = calculateRMS(2000, 20000);
+            const subBassRMS = calculateRMS(20, xBands[0]);
+            const lowBassRMS = calculateRMS(xBands[0], xBands[1]);
+            const bassRMS = calculateRMS(xBands[1], xBands[2]);
+            const midRMS = calculateRMS(xBands[2], xBands[3]);
+            const highRMS = calculateRMS(xBands[3], 20000);
 
 
             // Log RMS values
             //console.log(`Sub Bass RMS: ${subBassRMS.toFixed(3)}, Bass RMS: ${bassRMS.toFixed(3)}, Mid RMS: ${midRMS.toFixed(3)}, High RMS: ${highRMS.toFixed(3)}`);
 
-            console.log(100 - threshold[0]);
 
 
             if(autoModeActive) {
@@ -252,8 +251,6 @@ async function captureFromBlackHole(deviceId) {
                     invert(${Math.max(Math.round((lowBassRMS-threshold[1]) * 3), 100)}%)
                     hue-rotate(${Math.round(midRMS * 3)}deg)
                     saturate(${Math.round(subBassRMS * 40)}%)
-                    
-
                 `;
 
                 if (newWindow && !newWindow.closed) {
@@ -285,11 +282,12 @@ async function captureFromBlackHole(deviceId) {
             const nyquist = audioContext.sampleRate / 2;
         
             // Mappa le bande alle loro posizioni sull'asse x
-            const bandFrequencies = [20, 60, 100, 300, 2000, 20000]; // Frequenze dei limiti delle bande
+            const bandFrequencies = [20, xBands[0], xBands[1], xBands[2], xBands[3], 20000]; // Frequenze dei limiti delle bande
             const bandXPositions = bandFrequencies.map(freq => {
                 const logPosition = Math.log10(freq / bandFrequencies[0]) / Math.log10(bandFrequencies[bandFrequencies.length - 1] / bandFrequencies[0]);
                 return Math.round(logPosition * canvas.width); // Converte in posizione X sul canvas
             });
+
         
             // Funzione per calcolare gli RMS normalizzati
             function calculateNormalizedRMS(startFreq, endFreq) {
@@ -310,11 +308,11 @@ async function captureFromBlackHole(deviceId) {
         
             // Disegna le barre RMS per ciascuna banda
             const bandRMS = [
-                calculateNormalizedRMS(20, 60),
-                calculateNormalizedRMS(60, 100),
-                calculateNormalizedRMS(100, 300),
-                calculateNormalizedRMS(300, 2000),
-                calculateNormalizedRMS(2000, 20000),
+                calculateNormalizedRMS(20, xBands[0]),
+                calculateNormalizedRMS(xBands[0], xBands[1]),
+                calculateNormalizedRMS(xBands[1], xBands[2]),
+                calculateNormalizedRMS(xBands[2], xBands[3]),
+                calculateNormalizedRMS(xBands[3], 20000),
             ];
         
             bandRMS.forEach((rmsValue, index) => {
@@ -339,18 +337,11 @@ async function captureFromBlackHole(deviceId) {
                 const logPosition = Math.log10(freq / bandFrequencies[0]) / Math.log10(bandFrequencies[bandFrequencies.length - 1] / bandFrequencies[0]);
                 const xPosition = logPosition * canvas.width; // Map log scale to canvas width
                 xBands[freq] = xPosition;
-                canvasCtx.fillText(`${freq} Hz`, xPosition+20 , canvas.height - 5); // Draw label
-                
-                // Debugging: Draw vertical lines at frequency positions
-                canvasCtx.strokeStyle = 'white';
-                canvasCtx.beginPath();
-                canvasCtx.moveTo(xPosition, 0);
-                canvasCtx.lineTo(xPosition, canvas.height);
-                canvasCtx.stroke();               
+                canvasCtx.fillText(`${parseInt(freq,10)} Hz`, xPosition-30 , canvas.height - 5); // Draw label
+                            
             });
 
-
-        
+   
             // Calculate and log RMS values for each band
             calculateRMSForBands();
         }
@@ -481,7 +472,3 @@ sliderBands.forEach((sliderBand, index) => {
         document.addEventListener("mouseup", onMouseUp);
     });
 });
-
-
-
-
