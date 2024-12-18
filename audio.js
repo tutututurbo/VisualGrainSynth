@@ -248,7 +248,7 @@ async function captureFromBlackHole(deviceId) {
             if(autoModeActive) {
                 if(lowBassRMS >= 100-threshold[1] ) {
                     videoDiv.style.filter = `
-                    invert(${Math.max(Math.round((lowBassRMS-threshold[1]) * 3), 100)}%)
+                    invert(${Math.min(Math.round((lowBassRMS-threshold[1]) * 3), 100)}%)
                     hue-rotate(${Math.round(midRMS * 3)}deg)
                     saturate(${Math.round(subBassRMS * 40)}%)
                 `;
