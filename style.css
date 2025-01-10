@@ -750,8 +750,8 @@ body {
 
 .signature {
     position: relative;
-    left: 810px;
-    bottom: 20px;
+    left: 10px;
+    top: 20px;
     font-family: 'Dalì', sans-serif;
     font-size: 25px;
     color: #b8860b; /* Colore di fallback dorato */
@@ -796,6 +796,9 @@ body {
 }
 
 #videoInput::before {
+    position: relative;
+    left: 5px;
+    justify-content: center;
     width: 68%;
     font-family: 'SaintClean', sans-serif;
     font-weight: 700;
@@ -820,10 +823,12 @@ body {
 
 
 #videoInput:active::before {
-background: -webkit-linear-gradient(top, #746868, #887e7e);
+    background: -webkit-linear-gradient(top, #746868, #887e7e);
 }
 
 #uploadButton {
+    position: relative;
+    left: 5px;
     width: 90%;
     font-family: 'SaintClean', sans-serif;
     font-weight: 700;
@@ -847,79 +852,23 @@ background: -webkit-linear-gradient(top, #746868, #887e7e);
 #midi-devices {
     width: 90%;
     margin-top: 10px;
+    user-select: none;
 }
 
 #audio-devices {
     width: 90%;
     margin-top: 10px;
-}
-
-/* #spectrum-container {
-    top: 60px;
-    position: relative;
-    left: 7px;
-    width: 90%;
-    height: 150px;
-    background-color: rgba(223, 179, 91, 0.804); 
-    box-shadow: inset  3px 1.5px 3px 1px rgb(221, 198, 151),
-        inset  -3px -1.5px 3px 1px rgb(109, 88, 47),
-        inset  0px 0px 4px 4px rgba(167, 123, 22, 0.905),
-        inset  0px 0px 3px 3px rgb(205, 177, 115),
-        3px 1.5px 2px 0.5px rgb(0, 0, 0),
-        0px 0px 0px 7px rgb(38, 22, 3),
-        7px 3.5px 10px 0px rgb(0, 0, 0);
-    margin-top: 10px;
-    border-radius: 1%;
+    user-select: none;
 }
 
 
-#spectrum-canvas {
-    position: relative;
-    left: 5%;
-    top: 5%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 90%;
-    height: 90%;
-    background-color: #000000; 
-} */
-
-
-#spectrum-container {
-    position: relative;
-    width: 770px;
-    height: 100px; 
-    background-color: rgb(0, 0, 0); 
-    /* box-shadow: inset  3px 1.5px 3px 1px rgb(221, 198, 151),
-        inset  -3px -1.5px 3px 1px rgb(109, 88, 47),
-        inset  0px 0px 4px 4px rgba(167, 123, 22, 0.905),
-        inset  0px 0px 3px 3px rgb(205, 177, 115),
-        3px 1.5px 2px 0.5px rgb(0, 0, 0),
-        0px 0px 0px 7px rgb(38, 22, 3),
-        7px 3.5px 10px 0px rgb(0, 0, 0);
-    margin-top: 10px; */
-    border-radius: 1%;
-    justify-content: center;
-    align-items: center;
-}
-
-
-#spectrum-canvas {
-    position: relative;
-    top: 5%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 770px;
-    height: 100px;
-    background-color: #000000; /* Optional: background color for the canvas */
-}
 
 select {
+    position: relative;
     padding: 1px;
     font-size: 13px;
     border-radius: 6px;
+    left: 5px;
     box-shadow: 2px 1px 3px  #191301;
     border: 1px solid rgb(24, 22, 22);
     background: linear-gradient(45deg,  #7f5a1e, #b97d1d, #d1ad6e, #c3942e, #ba8d06);
@@ -998,8 +947,6 @@ option:focus {
     cursor: default; /* Optional: Set a default cursor */
 }
 
-
-
 .cell-slider {  
     position: relative;
     width: 50px;
@@ -1055,66 +1002,163 @@ option:focus {
     transform: none;
 }
 
+
+#spectrum-container {
+    position: relative;
+    width: 800px;
+    height: 115px; 
+    background-color: rgb(0, 0, 0); 
+    box-shadow: inset  3px 1.5px 3px 1px rgb(206, 181, 131),
+        inset  -3px -1.5px 3px 1px rgb(109, 88, 47),
+        inset  0px 0px 4px 4px rgba(167, 123, 22, 0.905),
+        inset  0px 0px 3px 3px rgb(205, 177, 115);
+    border-radius: 1%;
+    justify-content: center;
+    align-items: center;
+}
+
+
+#spectrum-canvas {
+    position: relative;
+    left: 15px;
+    top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 770px;
+    height: 100px;
+    background-color: #000000; /* Optional: background color for the canvas */
+}
+
 .row-bands{
     display: flex;
 }
 
-
 .slider-band {
     position: relative;
     height: 100px;
-    bottom: 95px;
+    bottom: 92px;
+    left: 15px;
     z-index: 2;
     cursor: ns-resize;
     user-select: none; /* Disable text selection */
 }
 
-#sub-slider{
-    width: 122px;
-}
-
-#lowBass-slider{
-    width: 57px;
-}
-
-#bass-slider{
-    width: 123px;
-}
-
-#mid-slider{
-    width: 211px;
-}
-
-#high-slider{
-    width: 257px;
-}
+#sub-slider{ width: 122px;}
+#lowBass-slider{ width: 57px; }
+#bass-slider{ width: 123px;}
+#mid-slider{ width: 211px;}
+#high-slider{ width: 257px;}
 
 .slider-indicator {
     position: relative;
     height: 0px;
-    max-height: 100px;
+    max-height: 100%;
     background-color: rgba(255, 255, 254, 0.267);
-    cursor: ns-resize;
+    user-select: none; 
 }
 
-#sub{
-    width: 122px;
+.band-line {
+    position: absolute;
+    width: 4px;
+    height: 100px;
+    top: 8px;
+    background-color: rgb(104, 4, 25);
+    border-radius: 2px;
+    z-index: 3;
+    cursor: ew-resize;
+    user-select: none; 
+}
+
+.band-line::before {
+    content: '';
+    position: absolute;
+    width: 2px;
+    height: 100px;
+    left: 25%;
+    bottom: 0px;
+    background-color: rgba(255, 255, 255, 0.157);
+    border-radius: 2px;
+}
+
+#band1{ left: 137px;}
+#band2{ left: 194px;}
+#band3{ left: 317px;}
+#band4{ left: 528px;}
+
+/* Stile per i buchi */
+.hole {
+    width: 15px;
+    height: 15px;
+    background-color: #000;
+    border: 2px solid #4a3823;
+    border-radius: 50%;
+    box-shadow: inset 0 0 5px #333;
+}
+
+.hole.selected {
+    box-shadow: 0 0 5px 3px #d4af7a;
+}
+
+/* Stile per le punte */
+.point {
+    width: 8px;
+    height: 8px;
+    background: radial-gradient(circle at 50% 50%, #d4af7a 20%, #8b6f4a 70%, #4a3823 100%);
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    transition: box-shadow 0.2s ease;
+}
+.point.selected {
+    box-shadow: 0 0 5px 3px #d4af7a;
+}
+
+.fxlabel {
+    margin-top: 5px;
+    margin-bottom: 10px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: #b88a4a;
+    text-shadow: 1px 1px 1px #4a3823;
+    letter-spacing: 1px;
+}
+
+.label {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: #b88a4a;
+    text-shadow: 1px 1px 1px #4a3823;
+    letter-spacing: 1px;
 }
 
 
-#lowBass{
-    width: 57px;
+.knob_ratio-container{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(213, 172, 117);
+    width: 1.2rem; /* Adjust to match knob size */
+    height: 1.2rem; /* Adjust to match knob size */
+    box-shadow: inset 0px 0px 0px 1.5px #4a240d,
+        0px 0px 0px 2px rgb(94, 53, 0),
+        5px 2.5px 4px 2px rgb(17, 3, 3); /* Shadow on the container */
+    border-radius: 50%; /* Ensure it matches the knob's shape */
+    margin: 1rem auto;
+    border: solid .25rem darken(black, 100%);
 }
 
-#bass{
-    width: 123px;
-}
 
-#mid{
-
-    width: 211px;
-}
-
-#high{
-    width: 257px;
+#ratio_bw:before, #ratio_inv:before, #ratio_sat:before, #ratio_hue:before {
+    content: "";
+    position: absolute;
+    bottom: 0.18em;
+    left: 1em;
+    width: 10%;
+    height: 30%;
+    background-color: black;
+    border-radius: 0px;
+    box-shadow: 0px 0px .4rem 0px darken(black, 10%);
+    transform: translate(-10px, 0px) rotate(45deg);
 }

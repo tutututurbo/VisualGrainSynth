@@ -20,10 +20,17 @@ const modeSelect = document.getElementById('modeSelect');
 // let isInverted = false;
 var autoModeActive = false;
 var fxKnobs = document.getElementsByClassName('knob_filter');
-let fxAngles = new Array(4).fill(0);
+let fxAngles = new Array(8).fill(0);
 var fxLastAngle = 0;
 var fxCurrentKnob = null;
 var fxLastY = 0; // Track the last Y position for FX
+
+
+// Initialize the last four fxKnobs (5, 6, 7, 8) to half their maximum value
+for (let i = 4; i < 8; i++) {
+    fxAngles[i] = 135; // Assuming the maximum value is 360 degrees
+    fxKnobs[i].style.transform = 'rotate(' + fxAngles[i] + 'deg)';
+}
 
 // --------------------- KNOBS ---------------------------
 var knobs = document.getElementsByClassName('knob');
@@ -78,12 +85,30 @@ const slider = document.getElementById("tempo-slider");
 const sliderValue = document.getElementById("slider-value");
 
 //---------------- SPECTRUM -------------------
-let xBands = new Array(4).fill(0);
+let xBands = [60, 100, 300, 2000];
 const sliderBands = document.querySelectorAll(".slider-band");
 let threshold = new Array(5).fill(0);
+const bandLines = document.getElementsByClassName("band-line");
+let rectWidths = [122, 57, 123, 211, 257];
+const ratios = new Array(5).fill(0);
 
 
 // ============================================== LOGIC IMPLEMENTATION ==============================================
+
+
+let isProcessing = true; // Flag to indicate video processing state
+let staticFrameIndex = 0; // Index for the TV_STATIC frames
+const staticFramesPath = "TV_STATIC"; // Path to the folder with static frames
+
+// Function to show static frames
+function showStaticFrames() {
+    if (isProcessing) {
+        videoDiv.src = `${staticFramesPath}/frame_${staticFrameIndex}.jpg`;
+        staticFrameIndex = (staticFrameIndex + 1) % 10; // Assuming you have 10 static frames
+        setTimeout(showStaticFrames, 100); // Update frame every 100ms
+    }
+}
+
 
 //--------------------- VIDEO -------------------------
 document.getElementById('uploadButton').addEventListener('click', function() {
@@ -93,6 +118,10 @@ document.getElementById('uploadButton').addEventListener('click', function() {
         alert('Please select a video file first.');
         return;
     }     
+
+    isProcessing = true;
+    showStaticFrames();
+
     const formData = new FormData();
     formData.append('video', file); 
     // Heroku server: 'https://visualgrainsynth-77df4d6f539a.herokuapp.com/upload-video'
@@ -107,7 +136,9 @@ document.getElementById('uploadButton').addEventListener('click', function() {
         
         // Save frameIndexMax to localStorage
         localStorage.setItem('frameIndexMax', frameIndexMax);
-        
+
+        isProcessing = false;
+        videoDiv.src = `/frames/frame_0.jpg`;      
     })
     .catch(error => {
         console.error('Errore:', error);
@@ -663,6 +694,372 @@ window.handleDeviceChange = function() {
 
 // Inizializza l'app MIDI
 initMIDI();
+
+
+//--------------------------------- SPECTRUM ---------------------------------------
+
+function updateRectangles() {
+    sliderBands[0].style.width = `${rectWidths[0]}px`;
+    sliderBands[1].style.width = `${rectWidths[1]}px`;
+    sliderBands[2].style.width = `${rectWidths[2]}px`;
+    sliderBands[3].style.width = `${rectWidths[3]}px`;
+    sliderBands[4].style.width = `${rectWidths[4]}px`;
+
+    bandLines[0].style.left = `${rectWidths[0] + 15}px`;
+    bandLines[1].style.left = `${rectWidths[0] + rectWidths[1]+ 15}px`;
+    bandLines[2].style.left = `${rectWidths[0] + rectWidths[1] + rectWidths[2]+ 15}px`;
+    bandLines[3].style.left = `${rectWidths[0] + rectWidths[1] + rectWidths[2] + rectWidths[3]+ 15}px`;
+}
+
+Array.from(bandLines).forEach((line, index) => {
+    let isDragging = false;
+    let startX = 0;
+    console.log(startX);
+    line.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        startX = e.clientX;
+    });
+
+    document.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+
+        const deltaX = e.clientX - startX;
+
+        // Update widths
+        const newWidth1 = rectWidths[index] + deltaX;
+        const newWidth2 = rectWidths[index + 1] - deltaX;
+
+        // Ensure rectangles stay within bounds
+        const minWidth = 20; // Minimum width for each rectangle
+        if (newWidth1 >= minWidth && newWidth2 >= minWidth) {
+            rectWidths[index] = newWidth1;
+            rectWidths[index + 1] = newWidth2;
+            startX = e.clientX; // Update startX for smooth dragging
+            updateRectangles();
+        }
+
+        xBands[index] =  pixelToFrequency(parseInt(bandLines[index].style.left, 10));
+        console.log(xBands[index])
+        
+    });
+
+    document.addEventListener("mouseup", () => {
+        isDragging = false;
+    });
+
+});
+
+
+function pixelToFrequency(pixelPosition) {
+    // Estrai i limiti delle frequenze
+    const minFreq = 20;
+    const maxFreq = 20000;
+
+    // Inverte la formula originale
+    const freq = minFreq * Math.pow(maxFreq / minFreq, (pixelPosition - 15) / 770);
+    return freq;
+}
+
+
+// ----------------------------------------- FX LINK ------------------------------------------------------
+
+
+
+// const points = document.querySelectorAll(".point");
+// const holes = document.querySelectorAll(".hole");
+
+// const connections = {}; // Gestisce i collegamenti punta-buco
+// let selectedPoint = null; // Punta selezionata (B1, B2, ecc.)
+// let selectedHole = null;  // L'hole selezionato per la rimozione del cavo
+
+// // Gestione della selezione delle punte (collegamento iniziale)
+// points.forEach(point => {
+//     point.addEventListener("click", () => {
+//         if (selectedHole) {
+//             // Se un hole è selezionato, collega il punto all'hole
+//             const pointId = point.id; // Es. "B1"
+//             const holeId = selectedHole.id; // Es. "FX1"
+
+//             // Salva il collegamento tra banda ed effetto
+//             if (!connections[holeId]) {
+//                 connections[holeId] = [];
+//             }
+//             if (!connections[holeId].includes(pointId)) {
+//                 connections[holeId].push(pointId);
+//                 drawCable(point, selectedHole); // Disegna il cavo visivamente
+//                 console.log(`${pointId} collegato a ${holeId}`);
+//             }
+
+//             // Resetta la selezione
+//             selectedPoint = null;
+//             selectedHole.classList.remove("selected");
+//             selectedHole = null;
+//             updateHoleCursors();  // Aggiorna i cursori per gli hole
+//         } else {
+//             // Se un hole non è selezionato, seleziona il punto
+//             points.forEach(p => p.classList.remove("selected"));
+//             point.classList.add("selected");
+//             selectedPoint = point; // Memorizza la punta selezionata
+//         }
+//     });
+// });
+
+// // Gestione della selezione dell'hole (cliccare sull'hole per scollegare)
+// holes.forEach(hole => {
+//     hole.addEventListener("click", () => {
+//         // Se c'è una connessione, seleziona l'hole
+//         if (connections[hole.id] && connections[hole.id].length > 0) {
+//             selectedHole = hole;
+//             hole.classList.add("selected"); // Aggiungi la classe di selezione
+//             console.log(`Hole selezionato: ${hole.id}`);
+//         }
+//     });
+// });
+
+// // Gestione della selezione della banda (cliccare sulla banda per rimuoverla)
+// points.forEach(point => {
+//     point.addEventListener("click", () => {
+//         if (selectedHole && selectedHole.id) {
+//             const holeId = selectedHole.id;
+//             const pointId = point.id;
+
+//             // Controlla se la banda è collegata all'hole
+//             if (connections[holeId] && connections[holeId].includes(pointId)) {
+//                 // Rimuovi il cavo SVG
+//                 const cables = document.querySelectorAll(`#cable-svg path`);
+//                 cables.forEach(cable => {
+//                     // Verifica se il cavo è collegato a questa banda e hole
+//                     if (cable.getAttribute("data-hole-id") === holeId && cable.getAttribute("data-point-id") === pointId) {
+//                         cable.remove(); // Rimuovi il cavo
+//                     }
+//                 });
+
+//                 // Rimuovi la connessione da 'connections'
+//                 const index = connections[holeId].indexOf(pointId);
+//                 if (index > -1) {
+//                     connections[holeId].splice(index, 1);
+//                 }
+
+//                 // Se non ci sono più connessioni per quell'hole, rimuovilo
+//                 if (connections[holeId].length === 0) {
+//                     delete connections[holeId];
+//                 }
+
+//                 // Reset delle selezioni
+//                 selectedHole.classList.remove("selected");
+//                 selectedHole = null;
+//                 selectedPoint = null;
+
+//                 // Rimuovi il cursore pointer se non ci sono più connessioni
+//                 updateHoleCursors();
+
+//                 console.log(`Cavo rimosso tra ${pointId} e ${holeId}`);
+//             }
+//         }
+//     });
+// });
+
+// // Funzione per aggiornare il cursore sugli hole
+// function updateHoleCursors() {
+//     holes.forEach(hole => {
+//         const holeId = hole.id;
+//         if (connections[holeId] && connections[holeId].length > 0) {
+//             hole.style.cursor = "pointer";  // Mostra il cursore pointer se c'è una connessione
+//         } else {
+//             hole.style.cursor = "default";  // Altrimenti, normale
+//         }
+//     });
+// }
+
+// // Funzione per disegnare il cavo (con dati extra per associarlo correttamente)
+// function drawCable(point, hole) {
+//     const svg = document.getElementById("cable-svg");
+//     const pointRect = point.getBoundingClientRect();
+//     const holeRect = hole.getBoundingClientRect();
+
+//     // Calcola le coordinate relative al viewport
+//     const x1 = pointRect.left + pointRect.width / 2 + window.scrollX;
+//     const y1 = pointRect.top + pointRect.height / 2 + window.scrollY;
+//     const x2 = holeRect.left + holeRect.width / 2 + window.scrollX;
+//     const y2 = holeRect.top + holeRect.height / 2 + window.scrollY;
+
+//     // Crea un nuovo cavo SVG
+//     const cable = document.createElementNS("http://www.w3.org/2000/svg", "path");
+//     cable.setAttribute("d", `M ${x1} ${y1} C ${x1} ${(y1 + y2) / 2}, ${x2} ${(y1 + y2) / 2}, ${x2} ${y2}`);
+//     cable.setAttribute("stroke", `#000`); // Nero
+//     cable.setAttribute("stroke-width", "5");
+//     cable.setAttribute("fill", "none");
+//     cable.setAttribute("stroke-linecap", "round");
+
+//     // Aggiungi attributi per identificare questo cavo
+//     cable.setAttribute("data-hole-id", hole.id);
+//     cable.setAttribute("data-point-id", point.id);
+
+//     // Aggiungi il cavo allo SVG
+//     svg.appendChild(cable);
+
+//     // Aggiungi il cavo alle connessioni
+//     if (!connections[hole.id]) {
+//         connections[hole.id] = [];
+//     }
+//     if (!connections[hole.id].includes(point.id)) {
+//         connections[hole.id].push(point.id);
+//     }
+
+//     // Mostra il cursore pointer sugli hole con connessioni
+//     updateHoleCursors();
+// }
+
+
+
+
+
+
+const points = document.querySelectorAll(".point");
+const holes = document.querySelectorAll(".hole");
+
+const connections = {}; // Gestisce i collegamenti banda-effetto
+let selectedPoint = null; // Punta selezionata (B1, B2, ecc.)
+let selectedHole = null; // Hole selezionato per scollegare
+
+// Gestione della selezione delle punte
+points.forEach(point => {
+    point.addEventListener("click", () => {
+        // Se il selettore di punte è già attivo, cancella la selezione
+        if (selectedPoint === point) {
+            point.classList.remove("selected");
+            selectedPoint = null;
+            return;
+        }
+
+        // Se è già selezionato un punto, rimuovi la selezione
+        points.forEach(p => p.classList.remove("selected"));
+        point.classList.add("selected");
+        selectedPoint = point; // Memorizza la punta selezionata
+
+        holes.forEach(hole => {
+            const holeId = hole.id;
+            if (!connections[holeId] && selectedPoint!= null) {
+                hole.style.cursor = "pointer";  // Mostra il cursore pointer se c'è una connessione
+            }
+        });
+    });
+});
+
+// Gestione della selezione dell'hole per scollegare il cavo
+holes.forEach(hole => {
+    hole.addEventListener("click", () => {
+
+        // Se c'è un punto selezionato
+        if (selectedPoint) {
+            const pointId = selectedPoint.id;
+            const holeId = hole.id;
+
+            // Salva il collegamento tra banda ed effetto
+            if (!connections[holeId]) {
+                connections[holeId] = [];
+            }
+            if (!connections[holeId].includes(pointId)) {
+                connections[holeId].push(pointId);
+                drawCable(selectedPoint, hole); // Disegna il cavo visivamente
+                console.log(`${pointId} collegato a ${holeId}`);
+            }
+
+            selectedPoint.classList.remove("selected");
+            selectedPoint = null; // Resetta la selezione
+        } else if (connections[hole.id] && connections[hole.id].length > 0) {
+            // Se c'è una connessione esistente per questo hole, permetti la rimozione
+            selectedHole = hole;
+            hole.classList.add("selected");
+            console.log(`Hole selezionato per rimuovere il cavo: ${hole.id}`);
+        }
+    });
+});
+
+// Gestione della rimozione del cavo
+points.forEach(point => {
+    point.addEventListener("click", () => {
+        if (selectedHole) {
+            const holeId = selectedHole.id;
+            const pointId = point.id;
+
+            // Se il punto è collegato all'hole selezionato
+            if (connections[holeId] && connections[holeId].includes(pointId)) {
+                // Rimuovi il cavo SVG
+                removeCable(holeId, pointId);
+
+                // Rimuovi la connessione da 'connections'
+                const index = connections[holeId].indexOf(pointId);
+                if (index > -1) {
+                    connections[holeId].splice(index, 1);
+                }
+
+                // Se non ci sono più connessioni per quell'hole, rimuovilo
+                if (connections[holeId].length === 0) {
+                    delete connections[holeId];
+                }
+
+                console.log(`Cavo rimosso tra ${pointId} e ${holeId}`);
+            }
+
+            // Resetta la selezione
+            selectedHole.classList.remove("selected");
+            selectedHole = null;
+        }
+    });
+});
+
+// Funzione per disegnare il cavo
+function drawCable(point, hole) {
+    const svg = document.getElementById("cable-svg");
+    const pointRect = point.getBoundingClientRect();
+    const holeRect = hole.getBoundingClientRect();
+
+    // Calcola le coordinate
+    const x1 = pointRect.left + pointRect.width / 2;
+    const y1 = pointRect.top + pointRect.height / 2;
+    const x2 = holeRect.left + holeRect.width / 2;
+    const y2 = holeRect.top + holeRect.height / 2;
+
+    // Crea un nuovo cavo SVG
+    const cable = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    cable.setAttribute("d", `M ${x1} ${y1} C ${x1} ${(y1 + y2) / 2}, ${x2} ${(y1 + y2) / 2}, ${x2} ${y2}`);
+    cable.setAttribute("stroke", "#000"); // Nero
+    cable.setAttribute("stroke-width", "5");
+    cable.setAttribute("fill", "none");
+    cable.setAttribute("stroke-linecap", "round");
+
+    // Aggiungi identificatori per il cavo
+    cable.setAttribute("data-hole-id", hole.id);
+    cable.setAttribute("data-point-id", point.id);
+
+    // Aggiungi il cavo allo SVG
+    svg.appendChild(cable);
+}
+
+// Funzione per rimuovere il cavo
+function removeCable(holeId, pointId) {
+    const cables = document.querySelectorAll(`#cable-svg path`);
+    cables.forEach(cable => {
+        // Verifica se il cavo è collegato a questa banda e hole
+        if (cable.getAttribute("data-hole-id") === holeId && cable.getAttribute("data-point-id") === pointId) {
+            cable.remove(); // Rimuovi il cavo
+        }
+    });
+}
+
+// Funzione per aggiornare il cursore sugli hole
+function updateHoleCursors() {
+    holes.forEach(hole => {
+        const holeId = hole.id;
+        if (connections[holeId] && connections[holeId].length > 0) {
+            hole.style.cursor = "pointer";  // Mostra il cursore pointer se c'è una connessione
+        } else {
+            hole.style.cursor = "default";  // Altrimenti, normale
+        }
+    });
+}
+
 
 
 

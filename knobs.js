@@ -16,6 +16,7 @@ function calculateRotationAngle(angle) {
 
 // Set angle and update corresponding value
 function setAngle(knobIndex, angle) {
+    
     if(currentKnob !== null){
         var knob = knobs[knobIndex];
         knob.style.transform = 'rotate(' + calculateRotationAngle(angle) + 'deg)';  
@@ -112,11 +113,13 @@ function onDrag(e) {
             }  
         }
         if(fxCurrentKnob !== null) {
+            
             var fxNewAngle = calculateAngleDelta(fxLastY, e.pageY, fxLastAngle);
             moveKnob(fxCurrentKnob, fxNewAngle, fxAngles);
             fxLastY = e.pageY; // Update last Y position
             fxLastAngle = fxNewAngle; // Update the angle for continuous movement
             // Aggiorna i filtri con i nuovi valori
+            if(fxCurrentKnob < 4){
             let effects = getEffectValues();
             document.getElementById("video_frame").style.filter = `
                 grayscale(${effects.grayscale}%) 
@@ -124,6 +127,32 @@ function onDrag(e) {
                 hue-rotate(${effects.hueRotate}deg) 
                 saturate(${effects.saturate}%)
             `;
+            } else {
+                if (fxCurrentKnob >= 4) {
+                    let mappedAngle = fxNewAngle - 50; // Shift zero to the middle
+                    if (mappedAngle < -20) {
+                    ratios[fxCurrentKnob-4] =  -  Math.pow(Math.abs(mappedAngle) / 20, 3);
+                    } else if (mappedAngle > 20) {
+                    ratios[fxCurrentKnob-4] =  + Math.pow(Math.abs(mappedAngle) / 20, 3);
+                    } else {
+                        let ratio = Math.sign(mappedAngle) * Math.pow(Math.abs(mappedAngle) / 20, 2);
+                        if (Math.abs(ratio) > 1) {
+                            if (Math.abs(ratio) <= 1) {
+                                ratios[fxCurrentKnob-4] = Math.sign(ratio) * 1;
+                            } else if (Math.abs(ratio) <= 2) {
+                                ratios[fxCurrentKnob-4] = Math.sign(ratio) * 2;
+                            } else if (Math.abs(ratio) <= 5) {
+                                ratios[fxCurrentKnob-4] = Math.sign(ratio) * 5;
+                            } else {
+                                ratios[fxCurrentKnob-4] = Math.sign(ratio) * 10;
+                            }
+                        } else {
+                            ratios[fxCurrentKnob-4] = ratio;
+                        }
+                    }
+                }
+            }
+
         }
     }
     
