@@ -77,7 +77,8 @@ def get_frame(filename):
 
 if __name__ == '__main__':
     # --- > HEROKU
-    # app.run(debug=True, host='0.0.0.0', port=os.environ.get('PORT', 5001))
+     port = int(os.environ.get('PORT', 5000))
+     app.run(debug=True, host='0.0.0.0', port=os.environ.get('PORT', 5001))
 
     # --- > LOCALHOST
-    app.run(debug=True, port=5001)
+    # app.run(debug=True, port=5001)
