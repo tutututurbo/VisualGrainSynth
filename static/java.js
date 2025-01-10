@@ -125,7 +125,7 @@ document.getElementById('uploadButton').addEventListener('click', function() {
     const formData = new FormData();
     formData.append('video', file); 
 
-    fetch('http://localhost:5001/upload-video', {
+    fetch(' https://visualgrainsynth-265d067aa5d1.herokuapp.com/upload-video', {
         method: 'POST',
         body: formData
     })
