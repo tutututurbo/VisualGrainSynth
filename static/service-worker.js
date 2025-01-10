@@ -1,5 +1,32 @@
 const CACHE_NAME = 'video-frames-cache';
 
+
+// Evento install
+self.addEventListener('install', event => {
+    console.log('Service Worker installing.');
+    event.waitUntil(
+        caches.open(CACHE_NAME).then(cache => {
+            console.log('Cache aperta durante l\'installazione del Service Worker');
+        })
+    );
+});
+
+// Evento activate
+self.addEventListener('activate', event => {
+    console.log('Service Worker activating.');
+    event.waitUntil(
+        caches.keys().then(cacheNames => {
+            return Promise.all(
+                cacheNames.map(cacheName => {
+                    if (cacheName !== CACHE_NAME) {
+                        console.log('Cache vecchia eliminata:', cacheName);
+                        return caches.delete(cacheName);
+                    }
+                })
+            );
+        })
+    );
+});
 // Intercetta le richieste di frame
 self.addEventListener('fetch', event => {
     const url = new URL(event.request.url);
