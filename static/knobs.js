@@ -86,16 +86,25 @@ function calculateAngleDelta(lastY, currentY, currentAngle) {
 }
 
 // Funzione per aggiornare il frame in base all'angolo del knob
-function updateFrameFromKnob(degrees) {   
+async function updateFrameFromKnob(degrees) {   
     videoPosition = Math.floor((degrees / maxangle) * (frameIndexMax - 1));  // Calcola il frameIndex usando la proporzione      
     // Imposta il percorso dell'immagine corrispondente al frame
     if (editModeActive){
-        document.getElementById("video_frame").src = `/frames/frame_${videoPosition}.jpg`;
+        const cachedFrame = await getFrameFromCache(`frame_${videoPosition}.jpg`);
+        
+        if (cachedFrame) {
+            // Se il frame è nella cache, usa il suo URL
+            document.getElementById("video_frame").src = cachedFrame.url;
+        } else {
+            console.log(`Frame ${videoPosition} non trovato nella cache.`);
+            // Se non è nella cache, puoi decidere di caricarlo dal server o gestire l'errore
+            document.getElementById("video_frame").src = `/frames/frame_${videoPosition}.jpg`; // O fallback alla cartella
+        }
     }
 }
 
 // Handle dragging
-function onDrag(e) {
+async function onDrag(e) {
     if (isDragging) {
         if(currentKnob !== null) {
             var newAngle = calculateAngleDelta(lastY, e.pageY, lastAngle);
@@ -107,7 +116,17 @@ function onDrag(e) {
                 if (currentKnob === 0 ) {
                     updateFrameFromKnob(angles[0]);
                 } else if(currentKnob === 1){
-                    document.getElementById("video_frame").src = `/frames/frame_${videoPosition + grainLength[index]}.jpg`;  
+                    videoPosition = Math.floor((angles[0] / maxangle) * (frameIndexMax - 1));  // Calcola la posizione del frame
+                    const cachedFrame = await getFrameFromCache(`frame_${videoPosition + grainLength[index]}.jpg`);
+                    
+                    if (cachedFrame) {
+                        // Se il frame è nella cache, usa il suo URL
+                        document.getElementById("video_frame").src = cachedFrame.url;
+                    } else {
+                        console.log(`Frame ${videoPosition + grainLength[index]} non trovato nella cache.`);
+                        // Se non è nella cache, fallback al percorso classico
+                        document.getElementById("video_frame").src = `/frames/frame_${videoPosition + grainLength[index]}.jpg`;
+                    }
                 }               
                 updateGrainLengthFromKnob(angles[1]);
             }  
