@@ -19,10 +19,23 @@ function startFrameLoop(startFrame, grainLength, midiNote) {
  
     // Calcola il fattore in base alla nota MIDI
     const { mode, factor } = calculateFrameFactor(midiNote);
-    frameInterval = setInterval(() => {
+    frameInterval = setInterval(async () => {  // Modifica per supportare operazioni asincrone
         console.log("FX Angles:", fxAngles);
-        // Aggiorna il frame mostrato
-        videoDiv.src = `/frames/frame_${currentFrame}.jpg`;
+
+        // Ottieni il frame dalla cache
+        const frameFilename = `frame_${currentFrame}.jpg`;
+        const cachedFrame = await getFrameFromCache(frameFilename);
+
+        if (cachedFrame) {
+            // Se il frame è nella cache, crea un URL dal blob
+            const frameBlob = await cachedFrame.blob();  // Converte la risposta in un blob
+            const frameUrl = URL.createObjectURL(frameBlob);  // Crea un URL per il blob
+            videoDiv.src = frameUrl;  // Imposta il src con il blob URL
+        } else {
+            // Se il frame non è nella cache, caricalo dal server
+            videoDiv.src = `/frames/${frameFilename}`;
+        }
+
         // Applica gli effetti all'immagine
         let effects = getEffectValues(); // Ottieni i valori degli effetti
         // document.getElementById("video_frame").style.filter = "grayscale(50%) invert(50%) hue-rotate(180deg) sepia(50%)";

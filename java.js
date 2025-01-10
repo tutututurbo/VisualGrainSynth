@@ -124,7 +124,7 @@ document.getElementById('uploadButton').addEventListener('click', function() {
 
     const formData = new FormData();
     formData.append('video', file); 
-    // Heroku server: 'https://visualgrainsynth-77df4d6f539a.herokuapp.com/upload-video'
+
     fetch('http://localhost:5001/upload-video', {
         method: 'POST',
         body: formData
@@ -138,7 +138,13 @@ document.getElementById('uploadButton').addEventListener('click', function() {
         localStorage.setItem('frameIndexMax', frameIndexMax);
 
         isProcessing = false;
-        videoDiv.src = `/frames/frame_0.jpg`;      
+        // Stop showing static frames
+        clearCache('video-frames-cache');   
+        videoDiv.src = `/frames/frame_0.jpg`;   
+        
+        // Aggiungi i frame alla cache
+        cacheFrames(data.frames);
+
     })
     .catch(error => {
         console.error('Errore:', error);
@@ -420,133 +426,6 @@ document.querySelectorAll(".pad").forEach(function (pad, index) {
     });
 });
 
-
-             
-// // --------------------- JOYSTICK ---------------------------
-// const joystick = document.getElementById('joystick');
-// let joystickActive = false;
-// let joystickStartX = 0;
-// let joystickStartY = 0;
-
-// joystick.addEventListener('mousedown', function(e) {
-//     joystickActive = true;
-//     joystickStartX = e.clientX;
-//     joystickStartY = e.clientY;
-//     document.addEventListener('mousemove', onJoystickMove);
-//     document.addEventListener('mouseup', stopJoystick);
-//     e.preventDefault();
-// });
-
-// function onJoystickMove(e) {
-//     if (joystickActive) {
-//         const deltaX = e.clientX - joystickStartX;
-//         const deltaY = e.clientY - joystickStartY;
-//         applyWarpEffect(deltaX, deltaY);
-//     }
-// }
-
-// function stopJoystick() {
-//     joystickActive = false;
-//     document.removeEventListener('mousemove', onJoystickMove);
-//     document.removeEventListener('mouseup', stopJoystick);
-// }
-
-//    --------------------- VORTEX ---------------------------
-
-
-// let warpEffectActive = false;
-// let warpDeltaX = 0;
-// let warpDeltaY = 0;
-
-// function applyWarpEffect(deltaX, deltaY) {
-//     warpEffectActive = true;
-//     warpDeltaX = deltaX;
-//     warpDeltaY = deltaY;
-//     requestAnimationFrame(updateWarpEffect);
-// }
-
-// function updateWarpEffect() {
-//     if (!warpEffectActive) return;
-
-//     const videoFrame = document.getElementById("video_frame");
-//     if (videoFrame) {
-//         // Apply sinusoidal distortion
-//         const distortionAmount = 10 + warpDeltaX; // Adjust this value for more or less distortion
-//         const frequency = 0.1 + warpDeltaY * 0.01; // Frequency of the sinusoidal wave
-//         const width = videoFrame.clientWidth;
-//         const height = videoFrame.clientHeight;
-//         const canvas = document.createElement('canvas');
-//         canvas.width = width;
-//         canvas.height = height;
-//         const ctx = canvas.getContext('2d');
-//         ctx.drawImage(videoFrame, 0, 0, width, height);
-//         const imageData = ctx.getImageData(0, 0, width, height);
-//         const data = imageData.data;
-        
-//         for (let y = 0; y < height; y++) {
-//             for (let x = 0; x < width; x++) {
-//                 const offsetX = Math.sin(y * frequency) * distortionAmount;
-//                 const offsetY = Math.sin(x * frequency) * distortionAmount;
-//                 const srcX = Math.min(Math.max(x + offsetX, 0), width - 1);
-//                 const srcY = Math.min(Math.max(y + offsetY, 0), height - 1);
-//                 const srcIndex = (Math.floor(srcY) * width + Math.floor(srcX)) * 4;
-//                 const destIndex = (y * width + x) * 4;
-//                 data[destIndex] = data[srcIndex];
-//                 data[destIndex + 1] = data[srcIndex + 1];
-//                 data[destIndex + 2] = data[srcIndex + 2];
-//                 data[destIndex + 3] = data[srcIndex + 3];
-//             }
-//         }
-        
-//         ctx.putImageData(imageData, 0, 0);
-//         videoFrame.src = canvas.toDataURL();
-//     }
-//     applyWarpEffectToNewWindow();
-//     requestAnimationFrame(updateWarpEffect);
-// }
-
-// function applyWarpEffectToNewWindow() {
-//     if (newWindow && !newWindow.closed) {
-//         const dynamicImg = newWindow.document.getElementById("dynamicDiv");
-//         if (dynamicImg) {
-//             // Apply sinusoidal distortion
-//             const distortionAmount = 10 + warpDeltaX; // Adjust this value for more or less distortion
-//             const frequency = 0.1 + warpDeltaY * 0.01; // Frequency of the sinusoidal wave
-//             const width = dynamicImg.clientWidth;
-//             const height = dynamicImg.clientHeight;
-//             const canvas = document.createElement('canvas');
-//             canvas.width = width;
-//             canvas.height = height;
-//             const ctx = canvas.getContext('2d');
-//             ctx.drawImage(dynamicImg, 0, 0, width, height);
-//             const imageData = ctx.getImageData(0, 0, width, height);
-//             const data = imageData.data;
-            
-//             for (let y = 0; y < height; y++) {
-//                 for (let x = 0; x < width; x++) {
-//                     const offsetX = Math.sin(y * frequency) * distortionAmount;
-//                     const offsetY = Math.sin(x * frequency) * distortionAmount;
-//                     const srcX = Math.min(Math.max(x + offsetX, 0), width - 1);
-//                     const srcY = Math.min(Math.max(y + offsetY, 0), height - 1);
-//                     const srcIndex = (Math.floor(srcY) * width + Math.floor(srcX)) * 4;
-//                     const destIndex = (y * width + x) * 4;
-//                     data[destIndex] = data[srcIndex];
-//                     data[destIndex + 1] = data[srcIndex + 1];
-//                     data[destIndex + 2] = data[srcIndex + 2];
-//                     data[destIndex + 3] = data[srcIndex + 3];
-//                 }
-//             }
-            
-//             ctx.putImageData(imageData, 0, 0);
-//             dynamicImg.src = canvas.toDataURL();
-//         }
-//     }
-// }
-
-// function stopWarpEffect() {
-//     warpEffectActive = false;
-// }
-
         
 //---------------- LAMPS AND INDICATORS -------------------
 
@@ -760,6 +639,16 @@ function pixelToFrequency(pixelPosition) {
     return freq;
 }
 
+// -------------------------------------- SERVICE WORKER ------------------------------------------------------
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+        .then(registration => {
+            console.log('Service Worker registrato con successo:', registration.scope);
+        })
+        .catch(error => {
+            console.error('Registrazione del Service Worker fallita:', error);
+        });
+}
 
 // ----------------------------------------- FX LINK ------------------------------------------------------
 
