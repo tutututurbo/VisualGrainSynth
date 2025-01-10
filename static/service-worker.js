@@ -1,5 +1,5 @@
 const CACHE_NAME = 'video-frames-cache';
-alert("Service worker is running");
+
 // Intercetta le richieste di frame
 self.addEventListener('fetch', event => {
     const url = new URL(event.request.url);
@@ -8,6 +8,7 @@ self.addEventListener('fetch', event => {
     if (url.pathname.startsWith('/frames/')) {
         event.respondWith(
             caches.open(CACHE_NAME).then(cache => {
+                alert("Service worker is running");
                 return cache.match(event.request).then(cachedResponse => {
                     // Restituisce il frame dalla cache o lo scarica e lo memorizza
                     return (
