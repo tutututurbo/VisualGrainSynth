@@ -90,7 +90,7 @@ async function updateFrameFromKnob(degrees) {
     videoPosition = Math.floor((degrees / maxangle) * (frameIndexMax - 1));  // Calcola il frameIndex usando la proporzione      
     // Imposta il percorso dell'immagine corrispondente al frame
     if (editModeActive){
-        const cachedFrame = await getFrameFromCache(`frame_${videoPosition}.jpg`);
+        cachedFrame = await getFrameFromCache(`frame_${videoPosition}.jpg`);
         
         if (cachedFrame) {
             // Se il frame è nella cache, usa il suo URL
@@ -117,7 +117,7 @@ async function onDrag(e) {
                     updateFrameFromKnob(angles[0]);
                 } else if(currentKnob === 1){
                     videoPosition = Math.floor((angles[0] / maxangle) * (frameIndexMax - 1));  // Calcola la posizione del frame
-                    const cachedFrame = await getFrameFromCache(`frame_${videoPosition + grainLength[index]}.jpg`);
+                    cachedFrame = await getFrameFromCache(`frame_${videoPosition + grainLength[index]}.jpg`);
                     
                     if (cachedFrame) {
                         // Se il frame è nella cache, usa il suo URL

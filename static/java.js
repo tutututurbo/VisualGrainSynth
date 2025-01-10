@@ -48,6 +48,7 @@ var lastAngle = 0; // Keep track of the last angle
 const maxPosition = 500; // Length in pixel of the previewDisplay
 let grainPixels = 0; 
 let maxLength = 0;
+let cachedFrames = null;
 
 // --------------------- SWITCH ------------------
 let editModeActive = true; 
