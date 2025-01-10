@@ -641,7 +641,7 @@ function pixelToFrequency(pixelPosition) {
 
 // -------------------------------------- SERVICE WORKER ------------------------------------------------------
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/service-worker.js')
+    navigator.serviceWorker.register('/static/service-worker.js')
         .then(registration => {
             console.log('Service Worker registrato con successo:', registration.scope);
         })
