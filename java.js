@@ -4,7 +4,7 @@
 const $input = document.querySelector('.box__file');
 let videoElement = document.getElementById('videoElement');
 let videoPosition = 0; // Frame of the current video position for each grain
-let videoDiv = null;
+let videoDiv = document.getElementById("video_frame");;
 let isnewWindwOpen = false;
 let newWindow = null;
 let frameIndexMax = parseInt(localStorage.getItem('frameIndexMax')) || 0;     // Retrieve the stored frameIndexMax value, or default to 0

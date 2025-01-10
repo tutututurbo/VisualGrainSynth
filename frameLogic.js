@@ -14,7 +14,7 @@ function startFrameLoop(startFrame, grainLength, midiNote) {
     let outOfBound = null;
     let currentFrame = startFrame; 
     let oversampleCounter = 0; 
-    videoDiv = document.getElementById("video_frame");
+    
     isLooping = true;
  
     // Calcola il fattore in base alla nota MIDI
