@@ -93,8 +93,11 @@ async function updateFrameFromKnob(degrees) {
         cachedFrame = await getFrameFromCache(`frame_${videoPosition}.jpg`);
         
         if (cachedFrame) {
-            // Se il frame è nella cache, usa il suo URL
-            document.getElementById("video_frame").src = cachedFrame.url;
+
+            // Se il frame è nella cache, crea un URL dal blob
+            const frameBlob = await cachedFrame.blob();  // Converte la risposta in un blob
+            const frameUrl = URL.createObjectURL(frameBlob);  // Crea un URL per il blob
+            videoDiv.src = frameUrl;  // Imposta il src con il blob URL
         } else {
             console.log(`Frame ${videoPosition} non trovato nella cache.`);
             // Se non è nella cache, puoi decidere di caricarlo dal server o gestire l'errore
@@ -120,8 +123,11 @@ async function onDrag(e) {
                     cachedFrame = await getFrameFromCache(`frame_${videoPosition + grainLength[index]}.jpg`);
                     
                     if (cachedFrame) {
-                        // Se il frame è nella cache, usa il suo URL
-                        document.getElementById("video_frame").src = cachedFrame.url;
+      
+                          // Se il frame è nella cache, crea un URL dal blob
+                        const frameBlob = await cachedFrame.blob();  // Converte la risposta in un blob
+                        const frameUrl = URL.createObjectURL(frameBlob);  // Crea un URL per il blob
+                        videoDiv.src = frameUrl;  // Imposta il src con il blob URL
                     } else {
                         console.log(`Frame ${videoPosition + grainLength[index]} non trovato nella cache.`);
                         // Se non è nella cache, fallback al percorso classico
