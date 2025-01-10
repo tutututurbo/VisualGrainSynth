@@ -9,7 +9,7 @@ let isnewWindwOpen = false;
 let newWindow = null;
 
 
-let frameIndexMax = parseInt(getFrameFromCache()) || 0;     // Retrieve the stored frameIndexMax value, or default to 0
+let frameIndexMax = parseInt(getFramesFromCache()) || 0;     // Retrieve the stored frameIndexMax value, or default to 0
 let isForward = true;
 let isBackward = false;
 let isForback = false;

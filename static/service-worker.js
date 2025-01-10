@@ -105,3 +105,11 @@ async function getFrameFromCache(frameFilename) {
         return null;  // Non trovato nella cache
     }
 }
+
+// Funzione per ottenere il numero di frame memorizzati nella cache
+async function getFramesFromCache() {
+    const cache = await caches.open(CACHE_NAME);
+    const requests = await cache.keys();  // Ottieni tutte le chiavi (URL) nella cache
+    const frameUrls = requests.filter(request => request.url.startsWith('/frames/')); // Filtra per quelli relativi ai frame
+    return frameUrls.length;  // Restituisce il numero di frame memorizzati nella cache
+}
