@@ -1,5 +1,26 @@
+async function requestMicrophoneAccess() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const audioDevices = devices.filter(device => device.kind === "audioinput");
+
+        console.log("Available audio input devices:");
+        audioDevices.forEach((device, index) => {
+            console.log(`${index + 1}: ${device.label || 'Unnamed Device'} (ID: ${device.deviceId})`);
+        });
+
+        // Stop the stream to release the device
+        stream.getTracks().forEach(track => track.stop());
+    } catch (error) {
+        console.error("Error accessing the microphone:", error);
+    }
+}
+
+requestMicrophoneAccess();
+
 // Function to list available audio input devices
 async function listAudioDevices() {
+
     const devices = await navigator.mediaDevices.enumerateDevices();
     const audioDevices = devices.filter(device => device.kind === "audioinput");
     console.log("Available audio input devices:");
