@@ -17,7 +17,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Variabile globale per tenere traccia della cartella dei frame
  # --- > HEROKU
-frames_folder = '/static/frames'  # Usa la cartella temporanea di Heroku (localizzata in /tmp)
+frames_folder = '/tmp/frames'  # Usa la cartella temporanea di Heroku (localizzata in /tmp)
 
  # --- > LOCALHOST
 # frames_folder = 'frames'  # Usa la cartella locale (localizzata in /frames)
