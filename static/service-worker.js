@@ -1,5 +1,5 @@
 const CACHE_NAME = 'video-frames-cache';
-
+alert("Service worker is running");
 // Intercetta le richieste di frame
 self.addEventListener('fetch', event => {
     const url = new URL(event.request.url);
