@@ -98,7 +98,7 @@ const ratios = new Array(5).fill(0);
 
 let isProcessing = true; // Flag to indicate video processing state
 let staticFrameIndex = 0; // Index for the TV_STATIC frames
-const staticFramesPath = "TV_STATIC"; // Path to the folder with static frames
+const staticFramesPath = "/static/TV_STATIC"; // Path to the folder with static frames
 
 // Function to show static frames
 function showStaticFrames() {
