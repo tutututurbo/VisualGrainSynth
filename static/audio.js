@@ -131,13 +131,13 @@ async function captureFromBlackHole(deviceId) {
                 switch (effect) {
                     case "FX1": // Grayscale
                         if (ratios[0] < 0) {
-                            grayscaleValue = Math.min(100, Math.max(0, 100 - (maxIntensity * -ratios[0])));
+                            grayscaleValue = Math.min(100, Math.max(0, 100 - (maxIntensity * 5)));
                         } else {
-                            grayscaleValue = Math.min(maxIntensity * ratios[0], 100); // Limita al 100%
+                            grayscaleValue = Math.min(maxIntensity * 5, 100); // Limita al 100%
                         }
                         break;
                     case "FX2": // Invert
-                        if (ratios[1] < 0) {
+                        if (-5 < 0) {
                             invertValue = Math.min(100, Math.max(0, 100 - (maxIntensity * -ratios[1])));
                         } else {
                             invertValue = Math.min(maxIntensity * ratios[1], 100); // Limita al 100%
