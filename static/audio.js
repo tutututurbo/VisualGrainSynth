@@ -110,7 +110,6 @@ async function captureFromBlackHole(deviceId) {
             // Itera su tutti gli effetti in `connections`
             for (const [effect, bands] of Object.entries(connections)) {
                 let maxIntensity = 0; // Per memorizzare il massimo tra le bande collegate
-                console.log(ratios[1]);
                 // Itera sulle bande collegate all'effetto corrente
                 bands.forEach(band => {
                     const bandIndex = parseInt(band.replace('B', '')) - 1; // "B1" -> 0, "B2" -> 1, ...
@@ -124,7 +123,7 @@ async function captureFromBlackHole(deviceId) {
                     // Aggiorna il massimo
                     maxIntensity = Math.max(maxIntensity, intensity);
 
-                    console.log(`Effect: ${effect}, Band: ${band}, RMS: ${rmsValue}, Threshold: ${thresholdValue}, Ratio: ${ratioValue}, Intensity: ${intensity}`);
+                    console.log(`Effect: ${effect}, Band: ${band}, RMS: ${rmsValue}, Threshold: ${thresholdValue}, Ratio: ${ratios}, Intensity: ${intensity}`);
                 });
 
                 // Applica il massimo all'effetto corrispondente
