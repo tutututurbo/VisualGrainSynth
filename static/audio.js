@@ -299,7 +299,7 @@ async function captureFromBlackHole(deviceId) {
                         grayscaleValue = Math.min(maxIntensity * ratios[0], 100); // Limita al 100%
                         break;
                     case "FX2": // Invert
-                        invertValue = Math.min(maxIntensity * ratios[1], 100) ; // Limita al 100%
+                        invertValue = Math.min(maxIntensity * Math.abs(ratios[1]), 100) ; // Limita al 100%
                         break;
                     case "FX3": // Hue Rotate
                         hueRotateValue = maxIntensity * 5 * ratios[2]; // Valore in gradi
