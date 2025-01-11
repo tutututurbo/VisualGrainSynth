@@ -118,6 +118,7 @@ async function captureFromBlackHole(deviceId) {
                     const rmsValue = rmsValues[bandIndex];
                     
                     // Calcola l'intensità per questa banda
+                    
                     const intensity = Math.max(0, (rmsValue - thresholdValue));
 
                     // Aggiorna il massimo
@@ -132,7 +133,11 @@ async function captureFromBlackHole(deviceId) {
                         grayscaleValue = Math.min(maxIntensity * ratios[0], 100); // Limita al 100%
                         break;
                     case "FX2": // Invert
-                        invertValue = Math.min(maxIntensity * ratios[1], 100) ; // Limita al 100%
+                        if (ratios[1] < 0) {
+                            invertValue = Math.min(100, Math.max(0, 100 - (maxIntensity * -ratios[1])));
+                        } else {
+                            invertValue = Math.min(maxIntensity * ratios[1], 100); // Limita al 100%
+                        }
                         break;
                     case "FX3": // Hue Rotate
                         hueRotateValue = maxIntensity * 5 * ratios[2]; // Valore in gradi
