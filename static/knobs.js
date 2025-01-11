@@ -153,7 +153,8 @@ async function onDrag(e) {
                 hue-rotate(${effects.hueRotate}deg) 
                 saturate(${effects.saturate}%)
             `;
-            } else {
+            }
+        } else {
                 if (fxCurrentKnob >= 4) {
                     console.log(`Ratio: ${ratios[fxCurrentKnob-4]}`);
                     let mappedAngle = fxNewAngle - 50; // Shift zero to the middle
@@ -179,7 +180,7 @@ async function onDrag(e) {
                     }
                 }
             }
-            }
+            
         
 
         }
