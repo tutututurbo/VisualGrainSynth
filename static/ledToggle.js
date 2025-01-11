@@ -21,6 +21,10 @@ function toggleSwitch() {
 }
 
 
+
+switchElement.classList.toggle('off');
+led.classList.toggle('off');
+
 function autoSwitch() {
     const switchElement = document.getElementById('autoMode');
     const led = document.getElementById('ledAutoMode');

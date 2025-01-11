@@ -52,6 +52,8 @@ let cachedFrames = null;
 
 // --------------------- SWITCH ------------------
 let editModeActive = true; 
+const switchElement = document.getElementById('autoMode');
+const led = document.getElementById('ledAutoMode');
 
 // --------------------- PADS --------------------
 let activePad = null;  // Variabile per tenere traccia del pad attivo
