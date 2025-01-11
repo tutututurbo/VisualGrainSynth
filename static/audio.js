@@ -143,14 +143,14 @@ async function captureFromBlackHole(deviceId) {
                             invertValue = Math.min(maxIntensity * ratios[1], 100); // Limita al 100%
                         }
                         break;
-                    case "FX3": // Hue Rotate
+                    case "FX4": // Hue Rotate
                         if (ratios[3] < 0) {
                             hueRotateValue = Math.min(360, Math.max(0, 360 - (maxIntensity * -ratios[3])));
                         } else {
                             hueRotateValue = maxIntensity * 5 * ratios[3]; // Valore in gradi
                         }
                         break;
-                    case "FX4": // Saturate
+                    case "FX3": // Saturate
                         if (ratios[2] < 0) {
                             saturateValue = Math.min(2000, Math.max(0, 2000 - ((maxIntensity * 70) + 40) * -ratios[2]));
                         } else {
