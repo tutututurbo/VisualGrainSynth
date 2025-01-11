@@ -93,7 +93,7 @@ const sliderBands = document.querySelectorAll(".slider-band");
 let threshold = new Array(5).fill(0);
 const bandLines = document.getElementsByClassName("band-line");
 let rectWidths = [122, 57, 123, 211, 257];
-const ratios = new Array(5).fill(0);
+const ratios = new Array(5).fill(1);
 
 
 // ============================================== LOGIC IMPLEMENTATION ==============================================

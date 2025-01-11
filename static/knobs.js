@@ -144,6 +144,7 @@ async function onDrag(e) {
             fxLastY = e.pageY; // Update last Y position
             fxLastAngle = fxNewAngle; // Update the angle for continuous movement
             // Aggiorna i filtri con i nuovi valori
+            if(!autoModeActive){
             if(fxCurrentKnob < 4){
             let effects = getEffectValues();
             document.getElementById("video_frame").style.filter = `
@@ -177,6 +178,8 @@ async function onDrag(e) {
                     }
                 }
             }
+            }
+        
 
         }
     }
