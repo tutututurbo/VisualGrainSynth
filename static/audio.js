@@ -152,9 +152,9 @@ async function captureFromBlackHole(deviceId) {
                         break;
                     case "FX3": // Saturate
                         if (ratios[2] < 0) {
-                            saturateValue = Math.min(2000, Math.max(0, 2000 - ((maxIntensity * 70) + 40) * -ratios[2]));
+                            saturateValue = Math.min(2000, Math.max(0, 2000 - ((maxIntensity * 70 * -ratios[2]) + 40) ));
                         } else {
-                            saturateValue = Math.min(((maxIntensity * 70) + 40) * ratios[2]); // Limita al 200%
+                            saturateValue = Math.min(((maxIntensity * 70* ratios[2]) + 40) ); // Limita al 200%
                         }
                         break;
                 }
