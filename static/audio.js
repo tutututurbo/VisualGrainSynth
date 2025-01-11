@@ -137,7 +137,7 @@ async function captureFromBlackHole(deviceId) {
                         
                         break;
                     case "FX2": // Invert
-                        if (ratio[1] < 0) {
+                        if (ratios[1] < 0) {
                             invertValue = Math.min(100, Math.max(0, 100 - (maxIntensity * 5)));
                         } else {
                             invertValue = Math.min(maxIntensity * ratio[1], 100); // Limita al 100%
