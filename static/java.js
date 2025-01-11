@@ -123,7 +123,8 @@ document.getElementById('uploadButton').addEventListener('click', function() {
     }     
 
  
-
+    isProcessing = true;
+    showStaticFrames();
     const formData = new FormData();
     formData.append('video', file); 
 
@@ -138,8 +139,7 @@ document.getElementById('uploadButton').addEventListener('click', function() {
         
         // Save frameIndexMax to localStorage
         localStorage.setItem('frameIndexMax', frameIndexMax);
-        isProcessing = true;
-        showStaticFrames();
+        
       
         // Stop showing static frames
         clearCache('video-frames-cache');   
