@@ -140,13 +140,14 @@ document.getElementById('uploadButton').addEventListener('click', function() {
         // Save frameIndexMax to localStorage
         localStorage.setItem('frameIndexMax', frameIndexMax);
 
-        isProcessing = false;
+      
         // Stop showing static frames
         clearCache('video-frames-cache');   
         videoDiv.src = `/frames/frame_0.jpg`;   
         
         // Aggiungi i frame alla cache
         cacheFrames(data.frames);
+        isProcessing = false;
 
     })
     .catch(error => {
