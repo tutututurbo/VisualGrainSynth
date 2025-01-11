@@ -116,10 +116,10 @@ async function captureFromBlackHole(deviceId) {
                     const bandIndex = parseInt(band.replace('B', '')) - 1; // "B1" -> 0, "B2" -> 1, ...
                     const thresholdValue = 100 - threshold[bandIndex];
                     const rmsValue = rmsValues[bandIndex];
-                    
+                    const ratioValue = ratios[bandIndex];
                     // Calcola l'intensità per questa banda
                     
-                    const intensity = Math.max(0, (rmsValue - thresholdValue));
+                    const intensity = Math.max(0, (rmsValue - thresholdValue)*ratioValue);
 
                     // Aggiorna il massimo
                     maxIntensity = Math.max(maxIntensity, intensity);
