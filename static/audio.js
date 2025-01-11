@@ -144,17 +144,17 @@ async function captureFromBlackHole(deviceId) {
                         }
                         break;
                     case "FX3": // Hue Rotate
-                        if (ratios[2] < 0) {
-                            hueRotateValue = Math.min(360, Math.max(0, 360 - (maxIntensity * -ratios[2])));
+                        if (ratios[3] < 0) {
+                            hueRotateValue = Math.min(360, Math.max(0, 360 - (maxIntensity * -ratios[3])));
                         } else {
-                            hueRotateValue = maxIntensity * 5 * ratios[2]; // Valore in gradi
+                            hueRotateValue = maxIntensity * 5 * ratios[3]; // Valore in gradi
                         }
                         break;
                     case "FX4": // Saturate
-                        if (ratios[3] < 0) {
-                            saturateValue = Math.min(200, Math.max(0, 200 - ((maxIntensity * 70) + 40) * -ratios[3]));
+                        if (ratios[2] < 0) {
+                            saturateValue = Math.min(200, Math.max(0, 200 - ((maxIntensity * 70) + 40) * -ratios[2]));
                         } else {
-                            saturateValue = Math.min(((maxIntensity * 70) + 40) * ratios[3], 200); // Limita al 200%
+                            saturateValue = Math.min(((maxIntensity * 70) + 40) * ratios[2], 200); // Limita al 200%
                         }
                         break;
                 }
