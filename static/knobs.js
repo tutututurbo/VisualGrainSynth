@@ -155,6 +155,7 @@ async function onDrag(e) {
             `;
             } else {
                 if (fxCurrentKnob >= 4) {
+                    console.log(`Ratio: ${ratios[fxCurrentKnob-4]}`);
                     let mappedAngle = fxNewAngle - 50; // Shift zero to the middle
                     if (mappedAngle < -20) {
                     ratios[fxCurrentKnob-4] =  -  Math.pow(Math.abs(mappedAngle) / 20, 3);
