@@ -110,16 +110,16 @@ async function captureFromBlackHole(deviceId) {
             // Itera su tutti gli effetti in `connections`
             for (const [effect, bands] of Object.entries(connections)) {
                 let maxIntensity = 0; // Per memorizzare il massimo tra le bande collegate
-
+                console.log(ratios[1]);
                 // Itera sulle bande collegate all'effetto corrente
                 bands.forEach(band => {
                     const bandIndex = parseInt(band.replace('B', '')) - 1; // "B1" -> 0, "B2" -> 1, ...
                     const thresholdValue = 100 - threshold[bandIndex];
                     const rmsValue = rmsValues[bandIndex];
-                    const ratioValue = ratios[bandIndex];
+           
                     // Calcola l'intensità per questa banda
                     
-                    const intensity = Math.max(0, (rmsValue - thresholdValue)*ratioValue);
+                    const intensity = Math.max(0, (rmsValue - thresholdValue));
 
                     // Aggiorna il massimo
                     maxIntensity = Math.max(maxIntensity, intensity);
@@ -135,9 +135,10 @@ async function captureFromBlackHole(deviceId) {
                         } else {
                             grayscaleValue = Math.min(maxIntensity * ratios[0], 100); // Limita al 100%
                         }
+                        
                         break;
                     case "FX2": // Invert
-                        if (-5 < 0) {
+                        if (ratio[1] < 0) {
                             invertValue = Math.min(100, Math.max(0, 100 - (maxIntensity * 5)));
                         } else {
                             invertValue = Math.min(maxIntensity * ratio[1], 100); // Limita al 100%
