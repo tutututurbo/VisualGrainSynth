@@ -2,7 +2,7 @@ function getEffectValues() {
     return {
         grayscale: Math.round((fxAngles[0])), // Map angolo (0-100) -> grayscale (0-100%)
         invert: Math.round((fxAngles[1])),    // Map angolo (0-100) -> invert (0-100%)
-        saturate: Math.min(Math.round((fxAngles[2]) + 100), 200),     // Map angolo (0-100) -> saturate (0-100%)
+        saturate: Math.min(Math.round((fxAngles[2])*70)+40),     // Map angolo (0-100) -> saturate (0-100%)
         hueRotate: Math.round((fxAngles[3] * 3.6)) // Map angolo (0-100) -> hue-rotate (0-360deg)
     };
 }

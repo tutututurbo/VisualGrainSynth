@@ -305,7 +305,7 @@ async function captureFromBlackHole(deviceId) {
                         hueRotateValue = maxIntensity * 5 * ratios[2]; // Valore in gradi
                         break;
                     case "FX4": // Saturate
-                        saturateValue = Math.min(maxIntensity * 30  * ratios[3], 200); // Limita al 200%
+                        saturateValue = Math.min(((maxIntensity * 70) + 40)  * ratios[3]); // Limita al 200%
                         break;
                 }
             }
