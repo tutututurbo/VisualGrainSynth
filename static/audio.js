@@ -123,7 +123,7 @@ async function captureFromBlackHole(deviceId) {
                     // Aggiorna il massimo
                     maxIntensity = Math.max(maxIntensity, intensity);
 
-                    console.log(`Effect: ${effect}, Band: ${band}, RMS: ${rmsValue}, Threshold: ${thresholdValue}, Ratio: ${ratios}, Intensity: ${intensity}`);
+                  //  console.log(`Effect: ${effect}, Band: ${band}, RMS: ${rmsValue}, Threshold: ${thresholdValue}, Ratio: ${ratios}, Intensity: ${intensity}`);
                 });
 
                 // Applica il massimo all'effetto corrispondente
@@ -138,7 +138,7 @@ async function captureFromBlackHole(deviceId) {
                         break;
                     case "FX2": // Invert
                         if (ratios[1] < 0) {
-                            invertValue = Math.min(100, Math.max(0, 100 - (maxIntensity * ratios[1])));
+                            invertValue = Math.min(100, Math.max(0, 100 - (maxIntensity * -ratios[1])));
                         } else {
                             invertValue = Math.min(maxIntensity * ratios[1], 100); // Limita al 100%
                         }
@@ -152,9 +152,9 @@ async function captureFromBlackHole(deviceId) {
                         break;
                     case "FX4": // Saturate
                         if (ratios[2] < 0) {
-                            saturateValue = Math.min(200, Math.max(0, 200 - ((maxIntensity * 70) + 40) * -ratios[2]));
+                            saturateValue = Math.min(2000, Math.max(0, 2000 - ((maxIntensity * 70) + 40) * -ratios[2]));
                         } else {
-                            saturateValue = Math.min(((maxIntensity * 70) + 40) * ratios[2], 200); // Limita al 200%
+                            saturateValue = Math.min(((maxIntensity * 70) + 40) * ratios[2]); // Limita al 200%
                         }
                         break;
                 }
