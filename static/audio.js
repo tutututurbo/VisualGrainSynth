@@ -130,7 +130,11 @@ async function captureFromBlackHole(deviceId) {
                 // Applica il massimo all'effetto corrispondente
                 switch (effect) {
                     case "FX1": // Grayscale
-                        grayscaleValue = Math.min(maxIntensity * ratios[0], 100); // Limita al 100%
+                        if (ratios[0] < 0) {
+                            grayscaleValue = Math.min(100, Math.max(0, 100 - (maxIntensity * -ratios[0])));
+                        } else {
+                            grayscaleValue = Math.min(maxIntensity * ratios[0], 100); // Limita al 100%
+                        }
                         break;
                     case "FX2": // Invert
                         if (ratios[1] < 0) {
@@ -140,10 +144,18 @@ async function captureFromBlackHole(deviceId) {
                         }
                         break;
                     case "FX3": // Hue Rotate
-                        hueRotateValue = maxIntensity * 5 * ratios[2]; // Valore in gradi
+                        if (ratios[2] < 0) {
+                            hueRotateValue = Math.min(360, Math.max(0, 360 - (maxIntensity * -ratios[2])));
+                        } else {
+                            hueRotateValue = maxIntensity * 5 * ratios[2]; // Valore in gradi
+                        }
                         break;
                     case "FX4": // Saturate
-                        saturateValue = Math.min(((maxIntensity * 70) + 40)  * ratios[3]); // Limita al 200%
+                        if (ratios[3] < 0) {
+                            saturateValue = Math.min(200, Math.max(0, 200 - ((maxIntensity * 70) + 40) * -ratios[3]));
+                        } else {
+                            saturateValue = Math.min(((maxIntensity * 70) + 40) * ratios[3], 200); // Limita al 200%
+                        }
                         break;
                 }
             }
