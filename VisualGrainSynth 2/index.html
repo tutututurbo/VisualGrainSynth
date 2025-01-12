@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Les Lunettes de Dalì</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="column" id="column_left">
+
+            <div class="switchContainer">
+                <!-- LED -->
+                <div class="led" id="ledAutoMode"></div>                
+                <!-- Levetta -->
+                <div class="switchLever" id="autoMode" onclick="autoSwitch(this)"></div>
+            </div>
+
+            <div id="audioMode">
+                Auto Mode
+            </div>
+  
+            <div class="knob_filter-container">
+                <div class="knob_filter" id="knob_invert">
+                    <span class='fxText'>B&W</span>
+                </div>
+            </div>
+            <div class="knob_filter-container">
+                <div class="knob_filter" id="knob_bw">
+                    <span class='fxText'>Invert</span>
+                </div>
+            </div>
+            <div class="knob_filter-container">
+                <div class="knob_filter" id="knob_sepia">
+                    <span class='fxText'>Satu</span>
+                </div>
+            </div>
+            <div class="knob_filter-container">
+                <div class="knob_filter" id="knob_hue">
+                    <span class='fxText'>Color</span>
+                </div>
+            </div>
+               
+            <!-- <div class = "normbutton" id="colorInvertButton">Invert</div>
+            <div class = "normbutton" id="sepiaButton">Sepia</div>
+            <div class = "normbutton" id="B&WButton">B&W</div> -->
+
+            <select id="modeSelect">
+                <option value="forward">Forward</option>
+                <option value="backward">Backward</option>
+                <option value="forback">Forback</option>
+            </select>
+
+            <div id="padPanel">
+                <div class="row">
+                    <div class="row padRow">
+                        <div class="pad" id="pad1"><span>1</span></div>
+                        <div class="pad" id="pad2"><span>2</span></div>
+                        <div class="pad" id="pad3"><span>3</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row padRow">
+                        <div class="pad" id="pad4"><span>4</span></div>
+                        <div class="pad" id="pad5"><span>5</span></div>
+                        <div class="pad" id="pad6"><span>6</span></div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row padRow">
+                        <div class="pad" id="padManual"><span>Manual</span></div>
+                    </div>
+                </div>   
+            </div>
+        </div>
+        <div class="center-column">
+            <div class="center_box_container">
+                <div class="center-box">
+                    <div id="videoplayer">
+                        <img id="video_frame" src="/frames/" width="625" height="360">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="bottom-box">
+                    <div class="row">     
+                        <div class="midiToggle"></div>                  
+                        <div class="knob-surround">
+                            <div class="knob" id="knob1"></div>
+                        </div>
+                        <div id="preview_display">
+                            <div class="movementContainer">
+                                <div class="grainWindow" id="manualWindow"></div>
+                                <div class="line" id="movingLine"></div>
+                            </div>
+                            <div class="movementContainer">
+                                <div class="grainWindow" id="window1"></div>
+                                <div class="small_line" id="line1">
+                                    <div class="movablePoint" id="point1">
+                                        <span class="pointText">1</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="movementContainer">
+                                <div class="grainWindow" id="window2"></div>
+                                <div class="small_line" id="line2">
+                                    <div class="movablePoint" id="point2">
+                                        <span class="pointText">2</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="movementContainer">
+                                <div class="grainWindow" id="window3"></div>
+                                <div class="small_line" id="line3">
+                                    <div class="movablePoint" id="point3">
+                                        <span class="pointText">3</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="movementContainer">
+                                <div class="grainWindow" id="window4"></div>
+                                <div class="small_line" id="line4">
+                                    <div class="movablePoint" id="point4">
+                                        <span class="pointText">4</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="movementContainer">
+                                <div class="grainWindow" id="window5"></div>
+                                <div class="small_line" id="line5">
+                                    <div class="movablePoint" id="point5">
+                                        <span class="pointText">5</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="movementContainer">
+                                <div class="grainWindow" id="window6"></div>
+                                <div class="small_line" id="line6">
+                                    <div class="movablePoint" id="point6">
+                                        <span class="pointText">6</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="knob-surround">
+                            <div class="knob" id="knob2"></div>
+                        </div>
+                    </div>
+                    <div class="row button-row">
+                        <!-- Buttons -->
+                        <button class="button" id="button1"></button>
+                        <button class="button" id="button2"></button>
+                        <button class="button" id="button3"></button>
+                        <button class="button" id="button4"></button>
+                        <button class="button" id="button5"></button>
+                        <button class="button" id="button6"></button>
+                    </div>
+                    <div class="row lamp-row">
+                        <!-- Lamps -->
+                    
+                        <div class="lamp" id="lamp1">1</div>
+                        <div class="lamp" id="lamp2">2</div>
+                        <div class="lamp" id="lamp3">3</div>
+                        <div class="lamp" id="lamp4">4</div>
+                        <div class="lamp" id="lamp5">5</div>
+                        <div class="lamp" id="lamp6">6</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spectrogram -->
+            <div class="row">
+                <!-- Spectrum visualization -->
+                <div id="spectrum-container">
+                    <canvas id="spectrum-canvas"></canvas>    
+                    <div class="row-bands">
+                        <div class="slider-band" id="sub-slider">
+                            <div class="slider-indicator" id="sub"></div>
+                        </div>
+
+                        <div class="band-line" id="band1"></div>
+
+                        <div class="slider-band" id="lowBass-slider">
+                            <div class="slider-indicator" id="lowBass"></div> 
+                        </div>
+
+                        <div class="band-line" id="band2"></div>
+
+                        <div class="slider-band" id="bass-slider">
+                            <div class="slider-indicator" id="bass"></div> 
+                        </div>
+
+                        <div class="band-line" id="band3"></div>
+
+                        <div class="slider-band" id="mid-slider">
+                            <div class="slider-indicator" id="mid"></div>  
+                        </div> 
+
+                        <div class="band-line" id="band4"></div>
+
+                        <div class="slider-band" id="high-slider">
+                            <div class="slider-indicator" id="high"></div>  
+                        </div> 
+                    </div>             
+                </div>
+
+            </div>
+        </div>
+        <div class="column" id="column_right">
+            <div class="upload">
+                <input type="file" id = "videoInput" accept = "video/*" /></input>
+                <button id="uploadButton">Upload Video</button>
+            </div>
+
+            <select id="midi-devices" onchange="handleDeviceChange()">
+                <option value="">Select a MIDI device</option>
+            </select>
+
+            <select id="audio-devices" onchange="handleAudioDeviceChange()">
+                <option value="">Select an AUDIO device</option>
+            </select>
+
+            <div class="cell-slider" id="tempo-slider">
+                <div class="slider-value" id="slider-value"><span>120</span></div>
+            </div>
+            <div id="BPM">BPM</div>
+            
+            
+            <div>
+                <button class="normbutton" id="openWindowButton" onclick="openNewWindow()">Full Screen</button>
+            </div>
+            <div class="switchContainerRight">
+                <!-- Switch Edit Mode -->
+                <div class="switchGroup">
+                    <div class="led" id="led"></div>  
+                    <div class="switchLever" id="editMode" onclick="toggleSwitch(this)">
+                        <div id="editModeText">Edit Mode</div>        
+                    </div>
+                </div>
+            
+                <!-- Switch Audio Mode -->
+                <div class="switchGroup">
+                    <div class="led" id="ledAudio"></div> 
+                    <div class="switchLever" id="audioMode" onclick="activateAudioMode(this)">
+                        <div id="editModeText">Audio Mode</div>   
+                    </div>
+                </div>
+            </div>
+
+
+               
+            <!-- Spazio tra Edit Mode e FX -->
+            <div style="height: 100px;"></div>
+
+            <div class="row">
+                <div class="knob_ratio-container">
+                    <div class="knob_filter" id="ratio_bw">
+                    </div>
+                </div>
+
+                <div class="knob_ratio-container">
+                    <div class="knob_filter" id="ratio_inv">
+                    </div>
+                </div>
+
+                <div class="knob_ratio-container">
+                    <div class="knob_filter" id="ratio_sat">
+                    </div>
+                </div>
+
+                <div class="knob_ratio-container">
+                    <div class="knob_filter" id="ratio_hue">
+                    </div>
+                </div>         
+            </div>
+            
+            <!-- Sezione Buchi (In Alto) con Label -->
+            <div id="effect-holes" style="display: flex; justify-content: center; gap: 27px; margin-bottom: 30px;">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <span class="fxlabel">FX1</span>
+                    <div class="hole" id="FX1"></div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <span class="fxlabel">FX2</span>
+                    <div class="hole" id="FX2"></div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <span class="fxlabel">FX3</span>
+                    <div class="hole" id="FX3"></div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <span class="fxlabel">FX4</span>
+                    <div class="hole" id="FX4"></div>
+                </div>
+            </div>
+            
+            <!-- Spazio verticale tra Buchi e Punte -->
+            <div style="height: 50px;"></div>
+            
+            <!-- Sezione Punte (In Basso) con Label -->
+            <div id="effect-points" style="display: flex; justify-content: center; gap: 22px;">
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="point" id="B1"></div>
+                    <span class="label" style="margin-top: 5px;">B1</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="point" id="B2"></div>
+                    <span class="label" style="margin-top: 5px;">B2</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="point" id="B3"></div>
+                    <span class="label" style="margin-top: 5px;">B3</span>
+                </div>
+
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="point" id="B4"></div>
+                    <span class="label" style="margin-top: 5px;">B4</span>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="point" id="B5"></div>
+                    <span class="label" style="margin-top: 5px;">B5</span>
+                </div>
+            </div>
+            
+            <!-- SVG per disegnare i cavi -->
+            <svg id="cable-svg" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></svg>
+            
+            <div class="row">
+                <div class="signature">
+                    Les Lunettes de Dalì
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="text/javascript" src="/jquery-3.7.1.js"></script>
+    <script type="text/javascript" src="/java.js"></script>
+    <script type="text/javascript" src="/knobs.js"></script>
+    <script type="text/javascript" src="/lamps.js"></script>
+    <script type="text/javascript" src="/frameLogic.js"></script>
+    <script type="text/javascript" src="/grain.js"></script>
+    <script type="text/javascript" src="/ledToggle.js"></script>
+    <script type="text/javascript" src="/midi.js"></script>
+    <script type="text/javascript" src="/audio.js"></script>
+    <script type="text/javascript" src="/service-worker.js"></script>
+</body>
+</html>
