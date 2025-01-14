@@ -16,10 +16,7 @@ let isForback = false;
 const modeSelect = document.getElementById('modeSelect');
 
 // --------------------- EFFECTS -------------------------
-// let invertButton = document.getElementById('colorInvertButton');
-// let BWButton = document.getElementById('B&WButton');
-// let sepiaButton = document.getElementById('sepiaButton');
-// let isInverted = false;
+
 var autoModeActive = false;
 var fxKnobs = document.getElementsByClassName('knob_filter');
 let fxAngles = new Array(8).fill(0);
@@ -204,86 +201,6 @@ window.openNewWindow = function() {
     }
 }
 
-
-
-// --------------------- EFFECTS -------------------------
-// invertButton.addEventListener("click", function() {
-//     console.log("Invert button clicked");
-//     // BWButton.classList.remove("active");
-//     // sepiaButton.classList.remove("active");
-//     if(editModeActive) {     
-//         midiConnectionFunction(invertButton);
-//     } else {
-//         let videoFrame = document.getElementById("video_frame");
-//         if (videoFrame) {
-//             console.log("Video frame trovato");
-//             if (invertButton.classList.contains("active")) {       
-//                 invertButton.classList.remove("active");
-//                 isInverted = false;
-//                 videoFrame.style.filter = "invert(0)";
-//                 console.log("Filtro invert disattivato");
-//             } else {
-//                 invertButton.classList.add("active");
-//                 isInverted = true;
-//                 videoFrame.style.filter = "invert(1)";
-//                 console.log("Filtro invert attivato");
-//             }
-//         } else {
-//             console.error("Elemento video_frame non trovato!");
-//         }
-//     }
-// });
-        
-// BWButton.addEventListener("click", function() {
-//     console.log("B&W button clicked");
-//     // invertButton.classList.remove("active");
-//     // sepiaButton.classList.remove("active");
-//     if(editModeActive){
-//         midiConnectionFunction(BWButton);
-//     } else {
-//         let videoFrame = document.getElementById("video_frame");
-//         if (videoFrame) {
-//             console.log("Video frame trovato");
-//             if (BWButton.classList.contains("active")) {
-//                 BWButton.classList.remove("active");
-//                 videoFrame.style.filter = "grayscale(0)";
-//                 console.log("Filtro B&W disattivato");
-//             } else {
-//                 BWButton.classList.add("active");
-//                 videoFrame.style.filter = "grayscale(100%)";
-//                 console.log("Filtro B&W attivato");
-//             }
-//         } else {
-//             console.error("Elemento video_frame non trovato!");
-//         }
-//     }
-// });
-
-// sepiaButton.addEventListener("click", function() {  
-//     console.log("Sepia button clicked");
-//     // BWButton.classList.remove("active");
-//     // invertButton.classList.remove("active");   
-//     if(editModeActive){
-//         midiConnectionFunction(sepiaButton);
-//     } else{
-//         let videoFrame = document.getElementById("video_frame");
-//         if (videoFrame) {
-//             console.log("Video frame trovato");
-//             if (sepiaButton.classList.contains("active")) {
-//                 sepiaButton.classList.remove("active");
-//                 videoFrame.style.filter = "sepia(0)";
-//                 console.log("Filtro sepia disattivato");
-//             } else {
-//                 sepiaButton.classList.add("active");
-//                 videoFrame.style.filter = "sepia(1)";
-//                 console.log("Filtro sepia attivato");
-//             }
-//         } else {
-//             console.error("Elemento video_frame non trovato!");
-//         }
-//     }
-// });
-        
 // --------------------- KNOBS ---------------------------    
 
 Array.from(knobs).forEach((knob, index) => {
@@ -599,7 +516,7 @@ function updateRectangles() {
 Array.from(bandLines).forEach((line, index) => {
     let isDragging = false;
     let startX = 0;
-    console.log(startX);
+
     line.addEventListener("mousedown", (e) => {
         isDragging = true;
         startX = e.clientX;
@@ -624,7 +541,6 @@ Array.from(bandLines).forEach((line, index) => {
         }
 
         xBands[index] =  pixelToFrequency(parseInt(bandLines[index].style.left, 10));
-        console.log(xBands[index])
         
     });
 
@@ -656,159 +572,7 @@ if ('serviceWorker' in navigator) {
         });
 }
 
-// ----------------------------------------- FX LINK ------------------------------------------------------
-
-
-
-// const points = document.querySelectorAll(".point");
-// const holes = document.querySelectorAll(".hole");
-
-// const connections = {}; // Gestisce i collegamenti punta-buco
-// let selectedPoint = null; // Punta selezionata (B1, B2, ecc.)
-// let selectedHole = null;  // L'hole selezionato per la rimozione del cavo
-
-// // Gestione della selezione delle punte (collegamento iniziale)
-// points.forEach(point => {
-//     point.addEventListener("click", () => {
-//         if (selectedHole) {
-//             // Se un hole è selezionato, collega il punto all'hole
-//             const pointId = point.id; // Es. "B1"
-//             const holeId = selectedHole.id; // Es. "FX1"
-
-//             // Salva il collegamento tra banda ed effetto
-//             if (!connections[holeId]) {
-//                 connections[holeId] = [];
-//             }
-//             if (!connections[holeId].includes(pointId)) {
-//                 connections[holeId].push(pointId);
-//                 drawCable(point, selectedHole); // Disegna il cavo visivamente
-//                 console.log(`${pointId} collegato a ${holeId}`);
-//             }
-
-//             // Resetta la selezione
-//             selectedPoint = null;
-//             selectedHole.classList.remove("selected");
-//             selectedHole = null;
-//             updateHoleCursors();  // Aggiorna i cursori per gli hole
-//         } else {
-//             // Se un hole non è selezionato, seleziona il punto
-//             points.forEach(p => p.classList.remove("selected"));
-//             point.classList.add("selected");
-//             selectedPoint = point; // Memorizza la punta selezionata
-//         }
-//     });
-// });
-
-// // Gestione della selezione dell'hole (cliccare sull'hole per scollegare)
-// holes.forEach(hole => {
-//     hole.addEventListener("click", () => {
-//         // Se c'è una connessione, seleziona l'hole
-//         if (connections[hole.id] && connections[hole.id].length > 0) {
-//             selectedHole = hole;
-//             hole.classList.add("selected"); // Aggiungi la classe di selezione
-//             console.log(`Hole selezionato: ${hole.id}`);
-//         }
-//     });
-// });
-
-// // Gestione della selezione della banda (cliccare sulla banda per rimuoverla)
-// points.forEach(point => {
-//     point.addEventListener("click", () => {
-//         if (selectedHole && selectedHole.id) {
-//             const holeId = selectedHole.id;
-//             const pointId = point.id;
-
-//             // Controlla se la banda è collegata all'hole
-//             if (connections[holeId] && connections[holeId].includes(pointId)) {
-//                 // Rimuovi il cavo SVG
-//                 const cables = document.querySelectorAll(`#cable-svg path`);
-//                 cables.forEach(cable => {
-//                     // Verifica se il cavo è collegato a questa banda e hole
-//                     if (cable.getAttribute("data-hole-id") === holeId && cable.getAttribute("data-point-id") === pointId) {
-//                         cable.remove(); // Rimuovi il cavo
-//                     }
-//                 });
-
-//                 // Rimuovi la connessione da 'connections'
-//                 const index = connections[holeId].indexOf(pointId);
-//                 if (index > -1) {
-//                     connections[holeId].splice(index, 1);
-//                 }
-
-//                 // Se non ci sono più connessioni per quell'hole, rimuovilo
-//                 if (connections[holeId].length === 0) {
-//                     delete connections[holeId];
-//                 }
-
-//                 // Reset delle selezioni
-//                 selectedHole.classList.remove("selected");
-//                 selectedHole = null;
-//                 selectedPoint = null;
-
-//                 // Rimuovi il cursore pointer se non ci sono più connessioni
-//                 updateHoleCursors();
-
-//                 console.log(`Cavo rimosso tra ${pointId} e ${holeId}`);
-//             }
-//         }
-//     });
-// });
-
-// // Funzione per aggiornare il cursore sugli hole
-// function updateHoleCursors() {
-//     holes.forEach(hole => {
-//         const holeId = hole.id;
-//         if (connections[holeId] && connections[holeId].length > 0) {
-//             hole.style.cursor = "pointer";  // Mostra il cursore pointer se c'è una connessione
-//         } else {
-//             hole.style.cursor = "default";  // Altrimenti, normale
-//         }
-//     });
-// }
-
-// // Funzione per disegnare il cavo (con dati extra per associarlo correttamente)
-// function drawCable(point, hole) {
-//     const svg = document.getElementById("cable-svg");
-//     const pointRect = point.getBoundingClientRect();
-//     const holeRect = hole.getBoundingClientRect();
-
-//     // Calcola le coordinate relative al viewport
-//     const x1 = pointRect.left + pointRect.width / 2 + window.scrollX;
-//     const y1 = pointRect.top + pointRect.height / 2 + window.scrollY;
-//     const x2 = holeRect.left + holeRect.width / 2 + window.scrollX;
-//     const y2 = holeRect.top + holeRect.height / 2 + window.scrollY;
-
-//     // Crea un nuovo cavo SVG
-//     const cable = document.createElementNS("http://www.w3.org/2000/svg", "path");
-//     cable.setAttribute("d", `M ${x1} ${y1} C ${x1} ${(y1 + y2) / 2}, ${x2} ${(y1 + y2) / 2}, ${x2} ${y2}`);
-//     cable.setAttribute("stroke", `#000`); // Nero
-//     cable.setAttribute("stroke-width", "5");
-//     cable.setAttribute("fill", "none");
-//     cable.setAttribute("stroke-linecap", "round");
-
-//     // Aggiungi attributi per identificare questo cavo
-//     cable.setAttribute("data-hole-id", hole.id);
-//     cable.setAttribute("data-point-id", point.id);
-
-//     // Aggiungi il cavo allo SVG
-//     svg.appendChild(cable);
-
-//     // Aggiungi il cavo alle connessioni
-//     if (!connections[hole.id]) {
-//         connections[hole.id] = [];
-//     }
-//     if (!connections[hole.id].includes(point.id)) {
-//         connections[hole.id].push(point.id);
-//     }
-
-//     // Mostra il cursore pointer sugli hole con connessioni
-//     updateHoleCursors();
-// }
-
-
-
-
-
+// -------------------------------------- CABLE CONNECTIONS ------------------------------------------------------
 
 const points = document.querySelectorAll(".point");
 const holes = document.querySelectorAll(".hole");
@@ -894,7 +658,6 @@ points.forEach(point => {
                     delete connections[holeId];
                 }
 
-                console.log(`Cavo rimosso tra ${pointId} e ${holeId}`);
             }
 
             // Resetta la selezione
@@ -955,31 +718,3 @@ function updateHoleCursors() {
     });
 }
 
-
-
-
-
-// DA FIXARE
-// -> Il video si ferma quando mi sposto da un pad all'altro con la tastiera (non dovrebbe)
-// -> Il video si ferma quando muovo il knob0 (in setAngle dovrei fare l'update della videoPosition prima di fare startFrameLoop solo una volta aver smesso di muovere il knob0 -> stopDrag)
-// -> Quando esco dalla perfermance mode activeLamp è uguale a 6 ma dovrebbe mantenere l'ultimo lamp attivo della editMode
-
-// DA IMPLEMENTARE
-// -> Estrazione di feature (RMS su almeno tre bande: basse, medie e alte) da traccia/ingresso audio
-// -> Effetti come: 
-//    - Distorsione dinamica immagine
-//    - LFO da mappare su un parametro
-//    - Effetti di colore
-//    - Effetti di overlay
-//    - Moltiplicazione di video
-// -> Possibilità di modificare la curva di velocità dell'oversampling e del downsampling
-// -> Video buffering
-// -> Pitch Bend per cambiare la distorsione del video in tempo reale (?)
-// -> Mod Wheel (?) per qualcosa
-
-    // AGGIUNTIVI
-    // -> Tutta la parte più "grafica" come: 
-    //    - Cambiare il colore dei pad
-    //    - Effetto di inserimento del dvd/cassetta all'interno della TV al posto del caricamento del video
-    //    - Effetto di caricamento del video (televisione grigia in movimento -> video)
-    // -> Riordinare il codice in modo più pulito

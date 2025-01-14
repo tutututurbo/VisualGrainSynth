@@ -123,7 +123,6 @@ async function captureFromBlackHole(deviceId) {
                     // Aggiorna il massimo
                     maxIntensity = Math.max(maxIntensity, intensity);
 
-                  //  console.log(`Effect: ${effect}, Band: ${band}, RMS: ${rmsValue}, Threshold: ${thresholdValue}, Ratio: ${ratios}, Intensity: ${intensity}`);
                 });
 
                 // Applica il massimo all'effetto corrispondente
@@ -165,37 +164,15 @@ async function captureFromBlackHole(deviceId) {
                 // Applica gli effetti al video
                 videoDiv.style.filter = `
                     grayscale(${grayscaleValue}%)
-                    invert(${invertValue*5}%)
+                    invert(${invertValue}%)
                     hue-rotate(${hueRotateValue}deg)
-                    saturate(${saturateValue + 100}%)
+                    saturate(${saturateValue}%)
                 `;
 
                 if (newWindow && !newWindow.closed) {
                         newWindow.document.getElementById("dynamicDiv").src = videoDiv.src;
                         newWindow.document.getElementById("dynamicDiv").style.filter = videoDiv.style.filter;
                     }
-
-                // if(lowBassRMS >= 100-threshold[1] ) {
-                //     videoDiv.style.filter = `
-                //     grayscale(${Math.min(0, 0)}%)
-                //     invert(${Math.min(Math.round((lowBassRMS - (100-threshold[1])) * 10), 100)}%)
-                //     hue-rotate(${Math.round(midRMS * 5)}deg)
-                //     saturate(${Math.min(Math.round(subBassRMS) * 30, 200)}%)
-                // `;
-
-
-                // if (newWindow && !newWindow.closed) {
-                //     newWindow.document.getElementById("dynamicDiv").src = videoDiv.src;
-                //     newWindow.document.getElementById("dynamicDiv").style.filter = videoDiv.style.filter;
-                // }
-     
-                // }
-                // else{
-                //     document.getElementById("video_frame").style.filter = `
-                //     hue-rotate(${Math.round(midRMS* 5)}deg)
-                //     saturate(${Math.min(Math.round(subBassRMS)*30, 200)}%)
-                // `;
-                // }
                 
             }
         }

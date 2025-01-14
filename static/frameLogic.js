@@ -20,7 +20,7 @@ function startFrameLoop(startFrame, grainLength, midiNote) {
     // Calcola il fattore in base alla nota MIDI
     const { mode, factor } = calculateFrameFactor(midiNote);
     frameInterval = setInterval(async () => {  // Modifica per supportare operazioni asincrone
-        console.log("FX Angles:", fxAngles);
+
 
         // Ottieni il frame dalla cache
         const frameFilename = `frame_${currentFrame}.jpg`;
@@ -38,8 +38,7 @@ function startFrameLoop(startFrame, grainLength, midiNote) {
 
         // Applica gli effetti all'immagine
         let effects = getEffectValues(); // Ottieni i valori degli effetti
-        // document.getElementById("video_frame").style.filter = "grayscale(50%) invert(50%) hue-rotate(180deg) sepia(50%)";
-       // console.log(effects.grayscale, effects.invert, effects.hueRotate, effects.sepia);
+
         // Applica i valori degli effetti all'immagine
         videoDiv.style.filter = `
            
@@ -55,19 +54,6 @@ function startFrameLoop(startFrame, grainLength, midiNote) {
             newWindow.document.getElementById("dynamicDiv").style.filter = videoDiv.style.filter;
         }
 
-        // Se c'è una finestra aperta, applica anche lì
-        // if (newWindow && !newWindow.closed) {
-        //     newWindow.document.getElementById("dynamicDiv").src = `/frames/frame_${currentFrame}.jpg`;
-        //     newWindow.document.getElementById("dynamicDiv").style.filter = `
-                
-        //         invert(${effects.invert}%) 
-        //         hue-rotate(${effects.hueRotate}deg)
-        //         saturate(${effects.saturate}%)
-        //          grayscale(${effects.grayscale}%)
-        //     `;
-        // }
-
-        console.log("Applied filter:", document.getElementById("video_frame").style.filter);
 
 
         // Forward
@@ -225,63 +211,3 @@ modeSelect.addEventListener('change', (event) => {
 
 // Initialize with the default mode selected in the dropdown
 updateMode(modeSelect.value);
-
-// function forwardFramePosition(mode, currentFrame, startFrame, grainLength, factor, oversampleCounter, outOfBound) {
-//     // Handle downsampling: Skip frames to accelerate
-//     if (mode === "downsample") {
-//         currentFrame += factor; // Skip frames for acceleration
-//     }
-//     // Handle oversampling: Repeat frames and show the next one after a certain number of repetitions
-//     else if (mode === "oversample") {
-//         oversampleCounter++;
-//         if (oversampleCounter >= factor) {
-//             oversampleCounter = 0;
-//             currentFrame++; // Show the next frame after repetitions
-//         }
-//     }
-
-//     // Ensure currentFrame stays within the bounds of the grain length
-//     if (currentFrame > startFrame + grainLength && outOfBound) {
-//         currentFrame = startFrame + grainLength; // Restart from the first frame of the grain
-//         outOfBound = false;
-//     }
-
-//     if (currentFrame > startFrame + grainLength) {
-//         currentFrame = startFrame; // Restart from the first frame of the grain if it exceeds the grain length
-//         outOfBound = true;
-//     }
-
-//     // Return updated values
-//     return { currentFrame, oversampleCounter, outOfBound };
-// }
-
-
-// function backwardFramePosition(mode, currentFrame, startFrame, grainLength, factor, oversampleCounter, outOfBound) {
-//     // Handle downsampling: Skip frames to accelerate
-//     if (mode === "downsample") {
-//         currentFrame -= factor; // Skip frames for acceleration
-//     }
-//     // Handle oversampling: Repeat frames and show the next one after a certain number of repetitions
-//     else if (mode === "oversample") {
-//         oversampleCounter++;
-//         if (oversampleCounter >= factor) {
-//             oversampleCounter = 0;
-//             currentFrame--; // Show the next frame after repetitions
-//         }
-//     }
-
-//     // Ensure currentFrame stays within the bounds of the grain length
-//     if (currentFrame < startFrame && outOfBound) {
-//         currentFrame = startFrame + grainLength; // Restart from the first frame of the grain
-//         outOfBound = false;
-//     }
-
-//     if (currentFrame < startFrame) {
-//         currentFrame = startFrame + grainLength; // Restart from the first frame of the grain if it exceeds the grain length
-//         outOfBound = true;
-//     }
-
-//     // Return updated values
-//     return { currentFrame, oversampleCounter, outOfBound };
-// }
-

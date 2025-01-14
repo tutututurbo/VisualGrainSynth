@@ -117,10 +117,6 @@ function startLoggingMIDIInput(midiAccess) {
     });
 }
 
-
-
-
-
 // Aggiorna il menu a tendina quando cambia lo stato dei dispositivi MIDI
 function updateMIDIDevices(midiAccess) {
     const dropdown = document.getElementById("midi-devices");

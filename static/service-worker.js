@@ -80,7 +80,6 @@ async function cacheFrames(frameFilenames) {
                 .then(response => {
                     // Memorizza la risposta nella cache
                     cache.put(frameUrl, response);
-                    console.log(`Frame ${frameFilename} aggiunto alla cache.`);
                 })
                 .catch(error => {
                     console.error(`Errore nel salvataggio del frame ${frameFilename} nella cache:`, error);
@@ -98,7 +97,6 @@ async function getFrameFromCache(frameFilename) {
     // Controlla se il frame è già nella cache
     const cachedResponse = await cache.match(frameUrl);
     if (cachedResponse) {
-        console.log(`Frame ${frameFilename} trovato nella cache.`);
         return cachedResponse;  // Restituisce la risposta (frame) dalla cache
     } else {
         console.log(`Frame ${frameFilename} non trovato nella cache.`);

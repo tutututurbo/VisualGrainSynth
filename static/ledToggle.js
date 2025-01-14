@@ -20,8 +20,6 @@ function toggleSwitch() {
     }
 }
 
-
-
 switchElement.classList.toggle('off');
 led.classList.toggle('off');
 

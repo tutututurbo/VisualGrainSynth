@@ -156,7 +156,6 @@ async function onDrag(e) {
             }
         } else {
                 if (fxCurrentKnob >= 4) {
-                    console.log(`Ratio: ${ratios[fxCurrentKnob-4]}`);
                     let mappedAngle = fxNewAngle - 50; // Shift zero to the middle
                     if (mappedAngle < -20) {
                     ratios[fxCurrentKnob-4] =  -  Math.pow(Math.abs(mappedAngle) / 20, 3);
@@ -196,7 +195,6 @@ function stopDrag() {
     if (currentKnob !== null) {
         if ((grainPixels > (maxPosition-lampPosition[index])))  {
             grainPixels = maxPosition-lampPosition[index];
-            console.log(grainPixels);
             grainLength[index] = Math.floor((grainPixels / maxPosition) * frameIndexMax);
         }
         currentKnob = null; // Reset the current knob for frame and grain
